@@ -1,0 +1,36 @@
+:root{
+	--color-1: #23A287;
+	--color-2: #34495e;
+	--shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+	--shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+	--shadow-sm-hover: 0 .225rem .45rem rgba(0,0,0,.1)!important;
+	--transition: .25s ease;
+}
+.btn-theme-1{background-color: var(--color-1); color: var(--white); transition: var(--transition)}
+.bg-theme-1{background-color: var(--color-1)}
+.bg-theme-2{background-color: var(--color-2)}
+.transition{transition: var(--transition)}
+.rounded-1{border-radius: .5em}
+.rounded-2{border-radius: 1em}
+.rounded-3{border-radius: 1.5em}
+.rounded-4{border-radius: 2em}
+html {scroll-behavior: smooth;}
+
+.custom-shape-divider-top-1617699401 {
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-top-1617699401 svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 150px;
+}
+
+.custom-shape-divider-top-1617699401 .shape-fill {
+    fill: #23A287;
+}

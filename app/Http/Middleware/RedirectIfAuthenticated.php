@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check() && $request->user()->status == 1 && $request->path() == '/login') {
+        if (Auth::guard($guard)->check() && $request->user()->status == 1 && is_int(strpos($request->path(), 'login'))) {
             return redirect('/dashboard');
         }
 

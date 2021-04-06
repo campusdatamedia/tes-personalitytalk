@@ -1,95 +1,119 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
-
-<head>
-
-  @include('template/applicant/_head')
-
+  <head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Assesmen | Tes Online</title>
-
-  <style type="text/css">
-    body {height: calc(100vh); background-repeat: no-repeat; background-size: cover; background-position: center;}
-    .wrapper {background: rgba(0,0,0,.3);}
-    .card {width: 500px; background-color: rgba(0,0,0,.6);}
-    .form-control, .form-control:focus {background-color: transparent; color: #fff;}
-    .input-group .form-control {border-right-width: 0;}
-    .input-group-append .btn {color: #fff; border: 1px solid #d1d3e2; border-left-width: 0; border-radius: 10rem;}
-    .custom-checkbox .custom-control-label::before {background-color: transparent;}
-  </style>
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://www.psikologanda.com/templates/qbs/bootstrap/style.min.css">
+  <link rel="stylesheet" type="text/css" href="https://www.psikologanda.com/templates/qbs/bootstrap/homev2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css" integrity="sha256-8g4waLJVanZaKB04tvyhKu2CZges6pA5SUelZAux/1U=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://www.psikologanda.com/assets/css/login.css">
+  <link rel="stylesheet" type="text/css" href="https://www.psikologanda.com/assets/css/style.css">
+  <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
 </head>
 
-<body background="{{ asset('assets/images/background/applicant.jpg') }}">
-
-  <div class="wrapper h-100">
-    <div class="d-flex justify-content-center h-100">
-      <div class="card my-auto">
-        <div class="card-body">
-          <div class="col px-sm-5 px-4 mb-5">
-            <a href="https://psikologanda.com">
-              <img class="img-fluid" src="{{ asset('assets/images/logo-2.png') }}">
-            </a>
-          </div>
-          <!--<div class="text-center">-->
-          <!--  <h1 class="h4 text-white mb-5">Welcome Back!</h1>-->
-          <!--</div>-->
-          @if(isset($message))
-          <div class="alert alert-danger">
-            {{ $message }}
-          </div>
-          @endif
-          <form class="user" method="post" action="/login">
-            {{ csrf_field() }}
-            <div class="form-group">
-              <input type="text" class="form-control form-control-user {{ $errors->has('username') ? 'border-danger' : '' }}" name="username" placeholder="Masukkan Email atau Username..." value="{{ old('username') }}">
-              @if($errors->has('username'))
-                <small class="text-danger">{{ $errors->first('username') }}</small>
-              @endif
-            </div>
-            <div class="form-group">
-              <div class="input-group">
-                <input type="password" class="form-control form-control-user {{ $errors->has('password') ? 'border-danger' : '' }}" name="password" placeholder="Password">
-                <div class="input-group-append">
-                  <button class="btn btn-toggle-password show {{ $errors->has('password') ? 'border-danger text-danger' : '' }}" type="button"><i class="fa fa-eye"></i></button>
-                </div>
+<body>
+    <div class="main-wrapper">
+      <div class="wrapper">
+        <div id="content">
+          <div id="sidebar-main"></div>
+          <div id="navbar-main"></div>
+          <div class="main-wrapper">
+              <div class="auth-wrapper d-flex no-block justify-content-center align-items-center">
+                  <div class="container">
+                      <div class="row">
+                          <div class="col-lg-6 d-none d-lg-block">
+                              <div class="d-flex align-items-center h-100">
+                                  <img class="img-fluid" src="{{asset('assets/images/ilustrasi/undraw_wall_post_83ul.svg')}}">
+                              </div>
+                          </div>
+                          <div class="col-lg-6">
+                              <div class="wrapper">
+                                  <div class="card border-0 shadow-sm rounded-1">
+                                      <div class="card-header text-center pt-4 bg-transparent mx-4">
+                                          <img width="200" class="mb-3" src="https://www.psikologanda.com/assets/images/logo/1598935898-logo.png">
+                                          <h5 class="h2 mb-0">Selamat Datang</h5>
+                                          <p class="m-0">Untuk tetap terhubung dengan kami, silakan login dengan informasi pribadi Anda melalui Username dan Password 🔔</p>
+                                      </div>
+                                      <div class="card-body">
+                                          <form class="login-form" action="/login" method="post">
+                                              {{ csrf_field() }}
+                                              @if(isset($message))
+                                              <div class="alert alert-danger">
+                                                  {{ $message }}
+                                              </div>
+                                              @endif
+                                              <div class="form-group ">
+                                                  <label class="control-label">Username</label>
+                                                  <div class="input-group input-group-lg">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="basic-addon1"><i class="ti-email"></i></span>
+                                                      </div>
+                                                      <input class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}" name="username" type="text" placeholder="Username" autofocus>
+                                                  </div>
+                                                  @if($errors->has('username'))
+                                                  <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('username')) }}</div>
+                                                  @endif
+                                              </div>
+                                              <div class="form-group">
+                                                  <label class="control-label">Password</label>
+                                                  <div class="input-group input-group-lg">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="basic-addon1"><i class="ti-key"></i></span>
+                                                      </div>
+                                                      <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'border-danger' : '' }}" placeholder="Password">
+                                                      <div class="input-group-append">
+                                                          <a href="#" class="input-group-text text-dark {{ $errors->has('password') ? 'border-danger bg-danger' : '' }}" id="btn-toggle-password"><i class="fa fa-eye"></i></a>
+                                                      </div>
+                                                  </div>
+                                                  @if($errors->has('password'))
+                                                  <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('password')) }}</div>
+                                                  @endif
+                                              </div>
+                                              <div class="form-group btn-container">
+                                                  <button type="submit" class="btn btn-primary btn-lg rounded px-4 shadow-sm btn-block">Masuk</button>
+                                              </div>
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-              @if($errors->has('password'))
-                <small class="text-danger">{{ $errors->first('password') }}</small>
-              @endif
-            </div>
-            <button type="submit" class="btn btn-outline-primary btn-user btn-block">
-              Login
-            </button>
-			<!--
-            <a href="/daftar" class="btn btn-outline-success btn-user btn-block">
-              Daftar
-            </a>
-			-->
-          </form>
-          <hr>
-<!--           <div class="text-center">
-            <a class="small" href="forgot-password.html">Forgot Password?</a>
-          </div> -->
-<!--           <div class="text-center">
-            <a class="small" href="register.html">Create an Account!</a>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+    <div id="footer-main"></div>
   @include('template/applicant/_js')
-  
+  <script src="https://psikologanda.com/templates/matrix-admin/assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="https://psikologanda.com/assets/partials/template.js"></script>
   <script type="text/javascript">
-    // Button toggle password
-    $(document).on("click", ".btn-toggle-password", function(e){
+    $(document).on('click','#sidebarCollapse',function(e){
       e.preventDefault();
-      $(this).hasClass("show") ? $("input[name=password]").attr("type","text") : $("input[name=password]").attr("type","password");
-      $(this).hasClass("show") ? $(this).find(".fa").removeClass("fa-eye").addClass("fa-eye-slash") : $(this).find(".fa").removeClass("fa-eye-slash").addClass("fa-eye");
-      $(this).hasClass("show") ? $(this).removeClass("show").addClass("hide") : $(this).removeClass("hide").addClass("show");
-    });
-  </script>
+      $('#sidebar').hasClass('active') 
+        ? $('#sidebar').removeClass('active') 
+        : $('#sidebar').addClass('active');
+      $(this).find('i').hasClass('ti-menu') 
+        ? $(this).find('i').removeClass('ti-menu').addClass('ti-close') 
+        : $(this).find('i').addClass('ti-menu').removeClass('ti-close');
+    })
 
+    $(document).on("click", "#sidebar > .sidebar-menu > .menu-label.sidebar-dropdown > a", function(e){
+      e.preventDefault();
+      $(this).parent(".menu-label").hasClass("active") 
+        ? $(this).parent(".menu-label").removeClass("active") 
+        : $(this).parent(".menu-label").addClass("active");
+    })
+  </script>
+  <style type="text/css">
+    .btn.btn-primary.btn-lg{background-color: var(--color-1)!important; border-color: var(--color-1)!important}
+    form .alert.alert-danger {margin: 0 0 1em 0}
+  </style>
 </body>
 
 </html>
