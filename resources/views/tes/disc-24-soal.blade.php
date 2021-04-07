@@ -1,6 +1,15 @@
 @extends('template/main')
 
 @section('content')
+<div class="bg-theme-1 bg-header">
+    <h3 class="m-0 text-center text-white">Tes DISC 24 Soal</h3>
+</div>
+<div class="custom-shape-divider-top-1617767620">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z" class="shape-fill"></path>
+    </svg>
+</div>
+<div class="container main-container">
     @if($seleksi != null)
     @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
     <div class="row">
@@ -16,83 +25,77 @@
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
-    		<div class="card shadow bg-light">
-                <div class="card-header bg-warning py-3">
-                    <h5 class="m-0 font-weight-bold text-dark text-center">Tes DISC 24 Soal</h5>
-                </div>
-    			<div class="card-body">
-    			    <form id="form" method="post" action="/tes/{{ $path }}/store">
-    				    <input type="hidden" name="path" value="{{ $path }}">
-    				    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-    				    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
-    			        <input type="hidden" id="D" name="Dm">
-                    	<input type="hidden" id="I" name="Im">
-                    	<input type="hidden" id="S" name="Sm">
-                    	<input type="hidden" id="C" name="Cm">
-                    	<input type="hidden" id="B" name="Bm">
-                    	<input type="hidden" id="K" name="Dl">
-                    	<input type="hidden" id="O" name="Il">
-                    	<input type="hidden" id="L" name="Sl">
-                    	<input type="hidden" id="E" name="Cl">
-                    	<input type="hidden" id="H" name="Bl">
-                		@csrf
-                		<div class="row">
-                			@php
-                				$totalsoal = 0;
-                			@endphp
-                			@foreach($soal as $data)
-                			<div class="col-md-6" style="margin-top: 20px;">
-                				<div class="card">
-                					<div class="card-body">
-                						<table width="100%">
-                							<tr>
-                								<td></td>
-                								<td><i style="color:#56DB28" class="fa fa-thumbs-up"></i></td>
-                								<td><i style="color:#E3451E" class="fa fa-thumbs-down"></i></td>
-                								<td><h6 class="card-title" style="font-weight: bold; color: #9A9797;">Gambaran Diri</h6></td>
-                							</tr>
-                							@php
-                							$huruf = ['A', 'B', 'C' , 'D'];
-                							$num = -1;
-                							$totalsoal = $totalsoal+1;
-                							$json = json_decode($data->soal);
-                							@endphp
-                							@foreach($json as $pilihan)
-                							@php
-                							$num++;
-                							$key = $huruf[$num];
-                							@endphp
-                							<tr>
-                								@if($key == 'A')
-                								<td width="30" rowspan="4" valign="top" data-id="{{ $data->nomor }}" class="num"><h6 class="card-title"  style="font-weight: bold; color: #9A9797;">{{$data->nomor}}</h6></td>
-                								@endif
-                								<td width="30" valign="top">
-                									<label class="cont">
-                										<input type="radio" name="y[{{$data->nomor}}]" id="{{$pilihan->keym}}m" class="{{$data->nomor}}-y" value="{{$key}}">
-                										<span class="checkmark"></span>
-                									</label>
-                								</td>
-                								<td width="30" valign="top">
-                									<label class="cont">
-                										<input type="radio" name="n[{{$data->nomor}}]" id="{{$pilihan->keyl}}l" class="{{$data->nomor}}-n" value="{{$key}}">
-                										<span class="checkmark"></span>
-                									</label>
-                								</td>
-                								<td><p style="color: #9A9797; font-size: 15px;">{{$pilihan->pilihan}}</p></td>
-                							</tr>
-                							@endforeach
-                						</table>
-                					</div>
-                				</div>
-                			</div>
-                			@endforeach
-                		</div>
-                	</form>
-    			</div>
-    		</div>
+		    <form id="form" method="post" action="/tes/{{ $path }}/store">
+			    <input type="hidden" name="path" value="{{ $path }}">
+			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
+			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+		        <input type="hidden" id="D" name="Dm">
+            	<input type="hidden" id="I" name="Im">
+            	<input type="hidden" id="S" name="Sm">
+            	<input type="hidden" id="C" name="Cm">
+            	<input type="hidden" id="B" name="Bm">
+            	<input type="hidden" id="K" name="Dl">
+            	<input type="hidden" id="O" name="Il">
+            	<input type="hidden" id="L" name="Sl">
+            	<input type="hidden" id="E" name="Cl">
+            	<input type="hidden" id="H" name="Bl">
+        		@csrf
+        		<div class="row">
+        			@php
+        				$totalsoal = 0;
+        			@endphp
+        			@foreach($soal as $data)
+        			<div class="col-lg-6" style="margin-top: 20px;">
+        				<div class="card soal rounded-1">
+                            <div class="card-header bg-transparent">
+                                <span class="num font-weight-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+                            </div>
+        					<div class="card-body">
+        						<table width="100%">
+        							<tr>
+        								<td><i style="color:#56DB28" class="fa fa-thumbs-up"></i></td>
+        								<td><i style="color:#E3451E" class="fa fa-thumbs-down"></i></td>
+        								<td><h6 class="card-title" style="font-weight: bold;">Gambaran Diri</h6></td>
+        							</tr>
+        							@php
+        							$huruf = ['A', 'B', 'C' , 'D'];
+        							$num = -1;
+        							$totalsoal = $totalsoal+1;
+        							$json = json_decode($data->soal);
+        							@endphp
+        							@foreach($json as $pilihan)
+        							@php
+        							$num++;
+        							$key = $huruf[$num];
+        							@endphp
+        							<tr>
+        								@if($key == 'A')
+        								@endif
+        								<td width="30" valign="top">
+        									<label class="cont">
+        										<input type="radio" name="y[{{$data->nomor}}]" id="{{$pilihan->keym}}m" class="{{$data->nomor}}-y" value="{{$key}}">
+        										<span class="checkmark"></span>
+        									</label>
+        								</td>
+        								<td width="30" valign="top">
+        									<label class="cont">
+        										<input type="radio" name="n[{{$data->nomor}}]" id="{{$pilihan->keyl}}l" class="{{$data->nomor}}-n" value="{{$key}}">
+        										<span class="checkmark"></span>
+        									</label>
+        								</td>
+        								<td><p>{{$pilihan->pilihan}}</p></td>
+        							</tr>
+        							@endforeach
+        						</table>
+        					</div>
+        				</div>
+        			</div>
+        			@endforeach
+        		</div>
+        	</form>
     	</div>
 	</div>
-	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-light border-top">
+	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
 		<ul class="navbar nav ml-auto">
 			<li class="nav-item">
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
@@ -101,7 +104,7 @@
 				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 			</li>
 			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase rounded-0" id="btn-submit" disabled>Submit</button>
+				<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
 			</li>
 		</ul>
 	</nav>
@@ -109,7 +112,10 @@
 		<div class="modal-dialog" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
-	        		<h5 class="modal-title" id="exampleModalLabel">Tutorial Tes</h5>
+	        		<h5 class="modal-title" id="exampleModalLabel">
+                        <span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+                        Tutorial Tes
+                    </h5>
 	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          			<span aria-hidden="true">&times;</span>
 	        		</button>
@@ -146,12 +152,13 @@
     				</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase rounded-0" data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">Mengerti</button>
 	      		</div>
 	    	</div>
 	  	</div>
 	</div>
     @endif
+</div>
 @endsection
 
 @section('js-extra')

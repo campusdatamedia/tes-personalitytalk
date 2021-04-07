@@ -1,6 +1,19 @@
 @extends('template/main')
 
 @section('content')
+<div class="bg-theme-1 bg-header">
+    <div class="container text-center text-white">
+        <h3>Tes Strong Deployment Inventory (SDI)</h3>
+        <hr class="rounded-2" style="border-top: 5px solid rgba(255,255,255,.3)">
+        <p class="m-0"><b>ITEM 11-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman, tetapi selalu berpikir tentang situasi……</br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
+    </div>
+</div>
+<div class="custom-shape-divider-top-1617767620">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z" class="shape-fill"></path>
+    </svg>
+</div>
+<div class="container main-container">
     @if($seleksi != null)
     @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
     <div class="row">
@@ -16,35 +29,27 @@
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
-    		<div class="card shadow bg-light">
-                <div class="card-header bg-warning py-3">
-                    <h5 class="m-0 font-weight-bold text-dark text-center">Tes Strong Deployment Inventory (SDI)</h5>
-                </div>
-    			<div class="card-body">
-                    <div class="container" id="konten">
-                        <div class="jumbotron" style="background-color:transparent; margin-top:30px;">
-                        <p class="lead"><b>ITEM 1-10</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan
-                            di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman,
-                            tetapi selalu berpikir tentang situasi……
-                            </br><b>di mana segala sesuatu berjalan lancar dan anda merasa sangat baik terhadap diri anda.</b></p>
-                        <form id="form" method="post" action="/tes/{{ $path }}/store">
-                            <input type="hidden" name="_token" value="<?php echo csrf_token() ?>">
-        				    <input type="hidden" name="path" value="{{ $path }}">
-        				    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-        				    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
-                            @csrf
-                            @php $nomor = 0; @endphp
-                            @foreach ($soal1 as $value)
-                            @php $nomor++; @endphp
-                            <hr class="my-4">
-                            <p class="font-weight-light font-italic num">{{$nomor}}. {{$value['header']}}</p>
+            <form id="form" method="post" action="/tes/{{ $path }}/store">
+                <input type="hidden" name="_token" value="<?php echo csrf_token() ?>">
+			    <input type="hidden" name="path" value="{{ $path }}">
+			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
+			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+                @csrf
+                @php $nomor = 0; @endphp
+                @foreach ($soal1 as $value)
+                @php $nomor++; @endphp
+                <div class="card soal rounded-1 mb-3">
+                    <div class="card-header bg-transparent">
+                        <span class="font-weight-bold font-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-sm-4">
                                 <table>
                                     <tr>
                                         <td valign="top"><input type="text" name="{{$value['val1']}}" class="ket-{{$nomor}}"></td>
                                         <td valign="top">
-                                            <p class="font-weight-light"> {{$value['soal1']}} </p>
+                                            <p class=""> {{$value['soal1']}} </p>
                                         </td>
                                     </tr>
                                 </table>
@@ -54,7 +59,7 @@
                                     <tr>
                                         <td valign="top"><input type="text" name="{{$value['val2']}}" class="ket-{{$nomor}}"></td>
                                         <td valign="top">
-                                            <p class="font-weight-light">{{$value['soal2']}}</p>
+                                            <p class="">{{$value['soal2']}}</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -64,65 +69,62 @@
                                     <tr>
                                         <td valign="top"><input type="text" name="{{$value['val3']}}" class="ket-{{$nomor}}"></td>
                                         <td valign="top">
-                                            <p class="font-weight-light">{{$value['soal3']}}</p>
+                                            <p class="">{{$value['soal3']}}</p>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
-                        </div>
-                        @endforeach
-                    
-                        <hr class="my-4">
-                        <p class="lead"><b>ITEM 11-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh
-                            pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama
-                            teman-teman, tetapi selalu berpikir tentang situasi……
-                            </br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
-                    
-                        @foreach ($soal2 as $value)
-                        @php $nomor++; @endphp
-                        <hr class="my-4">
-                        <p class="font-weight-light font-italic">{{$nomor}}. {{$value['header']}}</p>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <table>
-                                    <tr>
-                                        <td valign="top"><input type="text" name="{{$value['val1']}}" class="ket-{{$nomor}}"></td>
-                                        <td valign="top">
-                                            <p class="font-weight-light"> {{$value['soal1']}} </p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-sm-4">
-                                <table>
-                                    <tr>
-                                        <td valign="top"><input type="text" name="{{$value['val2']}}" class="ket-{{$nomor}}"></td>
-                                        <td valign="top">
-                                            <p class="font-weight-light">{{$value['soal2']}}</p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-sm-4">
-                                <table>
-                                    <tr>
-                                        <td valign="top"><input type="text" name="{{$value['val3']}}" class="ket-{{$nomor}}"></td>
-                                        <td valign="top">
-                                            <p class="font-weight-light">{{$value['soal3']}}</p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        @endforeach
-                        </form>
                         </div>
                     </div>
-            	</div>
-            </div>
+                </div>
+                @endforeach                        
+                    
+                @foreach ($soal2 as $value)
+                @php $nomor++; @endphp
+                <div class="card soal rounded-1 mb-3">
+                    <div class="card-header bg-transparent">
+                        <span class="font-weight-bold font-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <table>
+                                    <tr>
+                                        <td valign="top"><input type="text" name="{{$value['val1']}}" class="ket-{{$nomor}}"></td>
+                                        <td valign="top">
+                                            <p class=""> {{$value['soal1']}} </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-sm-4">
+                                <table>
+                                    <tr>
+                                        <td valign="top"><input type="text" name="{{$value['val2']}}" class="ket-{{$nomor}}"></td>
+                                        <td valign="top">
+                                            <p class="">{{$value['soal2']}}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-sm-4">
+                                <table>
+                                    <tr>
+                                        <td valign="top"><input type="text" name="{{$value['val3']}}" class="ket-{{$nomor}}"></td>
+                                        <td valign="top">
+                                            <p class="">{{$value['soal3']}}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </form>
         </div>
     </div>
-	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-light border-top">
+    <nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
         <div class="alert fade show text-center mb-0 ml-md-3 col-md" role="alert" id="ket" style="display:none;">
         </div>
 		<ul class="navbar nav ml-auto mr-auto mr-md-0">
@@ -135,7 +137,7 @@
 		</ul>
 	</nav>
     @endif
-
+</div>
 @endsection
 
 @section('js-extra')

@@ -1,6 +1,17 @@
 @extends('template/main')
 
 @section('content')
+<div class="bg-theme-1 bg-header">
+    <div class="container text-center text-white">
+        <h3>Tes Management Style Diagnostic Test (MSDT)</h3>
+    </div>
+</div>
+<div class="custom-shape-divider-top-1617767620">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z" class="shape-fill"></path>
+    </svg>
+</div>
+<div class="container main-container">
     @if($seleksi != null)
     @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
     <div class="row">
@@ -16,65 +27,58 @@
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
-    		<div class="card shadow bg-light">
-                <div class="card-header bg-warning py-3">
-                    <h5 class="m-0 font-weight-bold text-dark text-center">Tes Management Style Diagnostic Test (MSDT)</h5>
-                </div>
-    			<div class="card-body">
-    				<form id="form" method="post" action="/tes/{{ $path }}/store">
-    				    {{ csrf_field() }}
-    				    <input type="hidden" name="path" value="{{ $path }}">
-    				    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-    				    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
-    					<div class="container-fluid">
-    						<div class="row">
-    						    @foreach($soal->soal as $data)
-    						    <div class="col-12 mt-3">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <table class="table table-borderless">
-                                                <tr>
-                                                    <td width="50">
-                                                        <h5 class="num">{{$data['id']}}</h5>
-                                                    </td>
-                                                    <td>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input radio{{$data['id']}}"
-                                                                id="customRadio{{$data['id']}}a" name="p[{{$data['id']}}]"
-                                                                value="A">
-                                                            <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}a">
-                                                                <span>
-                                                                    {{$data['pilihan1']}}
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                    
-                                                        <div class="custom-control custom-radio mt-3">
-                                                            <input type="radio" class="custom-control-input radio{{$data['id']}}"
-                                                                id="customRadio{{$data['id']}}b" name="p[{{$data['id']}}]"
-                                                                value="B">
-                                                            <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}b">
-                                                                <span>
-                                                                    {{$data['pilihan2']}}
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                    
-                                        </div>
-                                    </div>
+			<form id="form" method="post" action="/tes/{{ $path }}/store">
+			    {{ csrf_field() }}
+			    <input type="hidden" name="path" value="{{ $path }}">
+			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
+			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+				<div class="">
+					<div class="row">
+					    @foreach($soal->soal as $data)
+					    <div class="col-12">
+                            <div class="card soal rounded-1 mb-3">
+                      			<div class="card-header bg-transparent">
+					    			<span class="num font-weight-bold"><i class="fa fa-edit"></i> Soal {{$data['id']}}</span>
+					    		</div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td>
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input radio{{$data['id']}}"
+                                                        id="customRadio{{$data['id']}}a" name="p[{{$data['id']}}]"
+                                                        value="A">
+                                                    <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}a">
+                                                        <span>
+                                                            {{$data['pilihan1']}}
+                                                        </span>
+                                                    </label>
+                                                </div>
+            
+                                                <div class="custom-control custom-radio mt-3">
+                                                    <input type="radio" class="custom-control-input radio{{$data['id']}}"
+                                                        id="customRadio{{$data['id']}}b" name="p[{{$data['id']}}]"
+                                                        value="B">
+                                                    <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}b">
+                                                        <span>
+                                                            {{$data['pilihan2']}}
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+            
                                 </div>
-    							@endforeach
-    						</div>
-    					</div>
-    				</form>
-    			</div>
-    		</div>
+                            </div>
+                        </div>
+						@endforeach
+					</div>
+				</div>
+			</form>
     	</div>
 	</div>
-	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-light border-top">
+	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
 		<ul class="navbar nav ml-auto">
 			<li class="nav-item">
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
@@ -83,7 +87,7 @@
 				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 			</li>
 			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase rounded-0" id="btn-submit" disabled>Submit</button>
+				<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
 			</li>
 		</ul>
 	</nav>
@@ -91,7 +95,10 @@
 		<div class="modal-dialog" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
-	        		<h5 class="modal-title" id="exampleModalLabel">Tutorial Tes</h5>
+	        		<h5 class="modal-title" id="exampleModalLabel">
+	        			<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+	        			Tutorial Tes
+	        		</h5>
 	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          			<span aria-hidden="true">&times;</span>
 	        		</button>
@@ -110,13 +117,13 @@
 		      	    <p>Ini bukan suatu tes. Disini tidak ada jawaban “benar” atau “salah”. Apapun yang Anda pilih , hendaknya sungguh-sungguh menggambarkan diri Anda.</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase rounded-0" data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">Mengerti</button>
 	      		</div>
 	    	</div>
 	  	</div>
 	</div>
     @endif
-
+</div>
 @endsection
 
 @section('js-extra')

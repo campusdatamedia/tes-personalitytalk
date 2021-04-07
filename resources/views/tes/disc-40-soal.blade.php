@@ -1,6 +1,15 @@
 @extends('template/main')
 
 @section('content')
+<div class="bg-theme-1 bg-header">
+	<h3 class="m-0 text-center text-white">Tes DISC 40 Soal</h3>
+</div>
+<div class="custom-shape-divider-top-1617767620">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z" class="shape-fill"></path>
+    </svg>
+</div>
+<div class="container main-container">
     @if($seleksi != null)
 		@if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
 		<div class="row">
@@ -36,63 +45,55 @@
     @endif
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
-    		<div class="card shadow bg-light">
-                <div class="card-header bg-warning py-3">
-                    <h5 class="m-0 font-weight-bold text-dark text-center">Tes DISC 40 Soal</h5>
-                </div>
-    			<div class="card-body">
-    				<form id="form" method="post" action="/tes/{{ $path }}/store">
-    				    {{ csrf_field() }}
-    				    <input type="hidden" name="path" value="{{ $path }}">
-    				    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-    				    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
-    					<div class="container-fluid">
-    						<div class="row">
-    						    @foreach($soal as $data)
-    							<div class="col-lg-6 mb-3">
-    								<table class="table table-borderless bg-white border border-warning">
-    									<thead>
-    										<tr>
-    											<th width="50"></th>
-    											<th width="50"><i class="fa fa-thumbs-up text-success"></i></th>
-    											<th width="50"><i class="fa fa-thumbs-down text-danger"></i></th>
-    											<th>Karakteristik</th>
-    										</tr>
-    									</thead>
-    									<tbody>
-    										<tr>
-    											<td rowspan="4" class="font-weight-bold num" data-id="{{ $data->nomor }}">{{ $data->nomor }}</td>
-    											<td><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['A'] }}"></td>
-    											<td><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['A'] }}"></td>
-    											<td>{{ $data->soal[0]['pilihan']['A'] }}</td>
-    										</tr>
-    										<tr>
-    											<td><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['B'] }}"></td>
-    											<td><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['B'] }}"></td>
-    											<td>{{ $data->soal[0]['pilihan']['B'] }}</td>
-    										</tr>
-    										<tr>
-    											<td><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['C'] }}"></td>
-    											<td><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['C'] }}"></td>
-    											<td>{{ $data->soal[0]['pilihan']['C'] }}</td>
-    										</tr>
-    										<tr>
-    											<td><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['D'] }}"></td>
-    											<td><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['D'] }}"></td>
-    											<td>{{ $data->soal[0]['pilihan']['D'] }}</td>
-    										</tr>
-    									</tbody>
-    								</table>
+			<form id="form" method="post" action="/tes/{{ $path }}/store">
+			    {{ csrf_field() }}
+			    <input type="hidden" name="path" value="{{ $path }}">
+			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
+			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+				<div class="container-fluid">
+					<div class="row">
+					    @foreach($soal as $data)
+					    <div class="col-lg-6 mb-3">
+					    	<div class="card soal rounded-1">
+					    		<div class="card-header bg-transparent">
+					    			<span class="num font-weight-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+					    		</div>
+    							<div class="card-body">
+    								<div class="row">
+    									<div class="col-2"><i class="fa fa-thumbs-up text-success"></i></div>
+	    								<div class="col-2"><i class="fa fa-thumbs-down text-danger"></i></div>
+	    								<div class="col-8"><span class="font-weight-bold">Karakteristik</span></div>
+	    							</div>
+	    							<div class="row">
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['A'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['A'] }}"></div>
+	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['A'] }}</span></div>
+	    							</div>
+	    							<div class="row">
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['B'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['B'] }}"></div>
+	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['B'] }}</span></div>
+	    							</div>
+	    							<div class="row">
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['C'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['C'] }}"></div>
+	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['C'] }}</span></div>
+	    							</div>
+	    							<div class="row">
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['D'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['D'] }}"></div>
+	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['D'] }}</span></div>
+	    							</div>
     							</div>
-    							@endforeach
     						</div>
     					</div>
-    				</form>
-    			</div>
-    		</div>
+						@endforeach
+					</div>
+				</div>
+			</form>
     	</div>
 	</div>
-	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-light border-top">
+	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
 		<ul class="navbar nav ml-auto">
 			<li class="nav-item">
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
@@ -101,7 +102,7 @@
 				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 			</li>
 			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase rounded-0" id="btn-submit" disabled>Submit</button>
+				<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
 			</li>
 		</ul>
 	</nav>
@@ -109,7 +110,10 @@
 		<div class="modal-dialog" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
-	        		<h5 class="modal-title" id="exampleModalLabel">Tutorial Tes</h5>
+	        		<h5 class="modal-title" id="exampleModalLabel">
+	        			<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+	        			Tutorial Tes
+	        		</h5>
 	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          			<span aria-hidden="true">&times;</span>
 	        		</button>
@@ -126,11 +130,12 @@
 		        	<p>Maka pikirkan baik-baik.</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase rounded-0" data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary" data-dismiss="modal">Mengerti</button>
 	      		</div>
 	    	</div>
 	  	</div>
 	</div>
+</div>
 @endsection
 
 @section('js-extra')
@@ -207,11 +212,4 @@
 		$("#form")[0].submit();
 	});
 </script>
-@endsection
-
-@section('css-extra')
-<style type="text/css">
-	.modal .modal-body {font-size: 14px;}
-	.table {margin-bottom: 0;}
-</style>
 @endsection
