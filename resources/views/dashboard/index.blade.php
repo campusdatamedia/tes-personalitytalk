@@ -20,6 +20,21 @@
     </svg>
 </div>
 <section class="container py-2">
+    @if($seleksi != null)
+    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    <div class="row">
+        <!-- Alert -->
+        <div class="col-12 mb-2">
+            <div class="alert alert-danger fade show text-center" role="alert">
+                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+            </div>
+        </div>
+    </div>
+    @endif
+    @endif
+    @if($seleksi != null)
+    @if(strtotime('now') >= strtotime($seleksi->waktu_wawancara))
+
     <div class="content">
         @if(Session::get('message'))
         <div class="row">
@@ -54,6 +69,86 @@
             @endif
         </div>
     </div>
+
+    @endif
+    @endif
+    @if(Auth::user()->role == 1 || Auth::user()->role == 2 || Auth::user()->role == 3 || Auth::user()->role == 5)
+    <div class="content">
+        @if(Session::get('message'))
+        <div class="row">
+            <!-- Alert -->
+            <div class="col-12 mb-2">
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                    {{ Session::get('message') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
+        <div class="row justify-content-center">
+            @if(count($tes)>0)
+                @php $gambar=['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg']; @endphp
+                @foreach($tes as $key=>$data)
+                <div class="col">
+                    <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                        <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
+                        <p class="m-0">{{ $data->nama_tes }}</p>
+                    </a>
+                </div>
+                @endforeach
+            @else
+                <div class="col-12 mb-0">
+                    <div class="alert alert-danger fade show text-center mb-0" role="alert">
+                        Tidak ada tes yang akan dilakukan.
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    @endif
+    @if(Auth::user()->role == 6)
+        @if($check != null)
+        <div class="row">
+            <!-- Alert -->
+            <div class="col-12 mb-2">
+                <div class="alert alert-danger fade show text-center" role="alert">
+                    Anda sudah melakukan tes.
+                </div>
+            </div>
+        </div>
+        @else
+        <div class="content">
+            @if(Session::get('message'))
+            <div class="row">
+                <!-- Alert -->
+                <div class="col-12 mb-2">
+                    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                        {{ Session::get('message') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @endif
+            <div class="row justify-content-center">
+                    <div class="col">
+                        <a href="/tes/disc-40-soal" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                            <img width="100" src="{{asset('assets/images/icon/lightning-bolts.svg')}}">
+                            <p class="m-0">DISC 40 Soal</p>
+                        </a>
+                    </div>
+<!--                     <div class="col-12 mb-0">
+                        <div class="alert alert-danger fade show text-center mb-0" role="alert">
+                            Tidak ada tes yang akan dilakukan.
+                        </div>
+                    </div> -->
+            </div>
+        </div>
+        @endif
+    @endif
 </section>
 <script>
 function myFunction() {
