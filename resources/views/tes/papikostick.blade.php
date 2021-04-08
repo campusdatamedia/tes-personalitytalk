@@ -41,7 +41,6 @@
                                     <div class="card-body">
                                         <table class="table table-borderless">
                                             <tr>
-                                                <td width="50"></td>
                                                 <td>
                                                     <div class="custom-control custom-radio">
                                                         <input type="radio" class="custom-control-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}a" name="jawaban[{{ $key+1 }}]"

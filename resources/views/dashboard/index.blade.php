@@ -7,9 +7,8 @@
         @include('template/_welcome')
         </div>
         <main class="container text-center text-white">
-            <h3 class="text-capitalize">Selamat Datang {{Auth::user()->nama_user}}</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore<br> Et dolore magna aliqua. Ut enim ad minim veniam</p>
+            <h3 class="text-capitalize"><span id="demo"></span></h3>
+            <p>Selamat datang <span class="font-weight-bold">{{Auth::user()->nama_user}}</span> di Tes Online Personality Talk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada dibawah.</p>
         </main>
     </div>
 </section>
@@ -20,44 +19,55 @@
         <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
     </svg>
 </div>
-<section class="py-2">
-    <div>
-        <div class="content">
-            <div class="card-body">
-                @if(Session::get('message'))
-                <div class="row">
-                    <!-- Alert -->
-                    <div class="col-12 mb-2">
-                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-                            {{ Session::get('message') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                <div class="row justify-content-center">
-                    @if(count($tes)>0)
-                        @php $gambar=['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg']; @endphp
-                        @foreach($tes as $key=>$data)
-                        <div class="col">
-                            <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
-                                <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
-                                <p class="m-0">{{ $data->nama_tes }}</p>
-                            </a>
-                        </div>
-                        @endforeach
-                    @else
-                        <div class="col-12 mb-0">
-                            <div class="alert alert-danger fade show text-center mb-0" role="alert">
-                                Tidak ada tes yang akan dilakukan.
-                            </div>
-                        </div>
-                    @endif
+<section class="container py-2">
+    <div class="content">
+        @if(Session::get('message'))
+        <div class="row">
+            <!-- Alert -->
+            <div class="col-12 mb-2">
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                    {{ Session::get('message') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             </div>
         </div>
+        @endif
+        <div class="row justify-content-center">
+            @if(count($tes)>0)
+                @php $gambar=['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg']; @endphp
+                @foreach($tes as $key=>$data)
+                <div class="col">
+                    <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                        <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
+                        <p class="m-0">{{ $data->nama_tes }}</p>
+                    </a>
+                </div>
+                @endforeach
+            @else
+                <div class="col-12 mb-0">
+                    <div class="alert alert-danger fade show text-center mb-0" role="alert">
+                        Tidak ada tes yang akan dilakukan.
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
 </section>
+<script>
+function myFunction() {
+  var greeting;
+  var time = new Date().getHours();
+  if (time < 10) {
+    greeting = "Selamat Pagi";
+  } else if (time < 20) {
+    greeting = "Selamat Siang";
+  } else {
+    greeting = "Selamat Malam";
+  }
+  document.getElementById("demo").innerHTML = greeting;
+}
+myFunction();
+</script>
 @endsection

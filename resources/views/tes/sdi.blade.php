@@ -5,7 +5,7 @@
     <div class="container text-center text-white">
         <h3>Tes Strong Deployment Inventory (SDI)</h3>
         <hr class="rounded-2" style="border-top: 5px solid rgba(255,255,255,.3)">
-        <p class="m-0"><b>ITEM 11-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman, tetapi selalu berpikir tentang situasi……</br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
+        <p class="m-0"><b>ITEM 1-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman, tetapi selalu berpikir tentang situasi……</br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
     </div>
 </div>
 <div class="custom-shape-divider-top-1617767620">
@@ -132,7 +132,7 @@
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
 			</li>
 			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase rounded-0" id="btn-submit" disabled>Submit</button>
+				<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
 			</li>
 		</ul>
 	</nav>
