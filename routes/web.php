@@ -33,12 +33,11 @@ Route::group(['middleware' => ['guest']], function(){
 
 // Applicant Capabilities...
 Route::group(['middleware' => ['user']], function(){
-
 	// Logout
 	Route::post('/logout', 'UserLoginController@logout');
 
 	// Dashboard
-	Route::get('/dashboard', 'TesController@dashboard');
+	Route::get('/dashboard', 'DashboardController@index');
 
 	// Tes
 	Route::get('/tes/{path}', 'TesController@tes');

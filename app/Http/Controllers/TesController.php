@@ -21,116 +21,15 @@ class TesController extends Controller
     public $message;
     
     /**
-     * Menampilkan dashboard pelamar
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function dashboard()
-    {
-        // Jika role pelamar
-        if(Auth::user()->role == 4){
-        	// Get akun
-        	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first();
-            
-            // Seleksi
-            $seleksi = Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first();
-            
-            // Hasil
-            $ids = array();
-            $hasil = Hasil::where('id_user','=',Auth::user()->id_user)->get();
-            if(count($hasil) > 0){
-                foreach($hasil as $h){
-                    if(!in_array($h->id_tes, $ids)){
-                        array_push($ids, $h->id_tes);
-                    }
-                }
-            }
-            
-            // Tes
-            $lowongan = Lowongan::find($akun->posisi);
-            $posisi = Posisi::find($lowongan->posisi);
-            $posisi->tes = $posisi->tes != '' ? explode(",", $posisi->tes) : array();
-            //$tes = !empty($posisi->tes) ? Tes::whereIn('id_tes', $posisi->tes)->whereNotIn('id_tes', $ids)->where('id_tes','!=',3)->get() : array();
-            $tes = !empty($posisi->tes) ? Tes::whereIn('id_tes', $posisi->tes)->whereNotIn('id_tes', $ids)->get() : array();
-			
-			// Check
-			$check = null;
-
-        	// View
-        	return view('dashboard/index', [
-        		'akun' => $akun,
-                'check' => $check,
-                'seleksi' => $seleksi,
-                'tes' => $tes,
-        	]);
-        }
-        // Jika role karyawan
-        elseif(Auth::user()->role == 3){
-        	// Get akun
-        	$akun = Karyawan::where('id_user','=',Auth::user()->id_user)->first();
-            
-            // Seleksi
-            $seleksi = false;
-			
-            // Tes
-            $posisi = Posisi::find($akun->posisi);
-            $posisi->tes = $posisi->tes != '' ? explode(",", $posisi->tes) : array();
-            $tes = !empty($posisi->tes) ? Tes::whereIn('id_tes', $posisi->tes)->get() : array();
-			
-			// Check
-			$check = null;
-
-        	// View
-        	return view('dashboard/index', [
-        		'akun' => $akun,
-                'check' => $check,
-                'seleksi' => $seleksi,
-                'tes' => $tes,
-        	]);
-		}
-        // Jika role bukan pelamar
-        else{
-        	// Get akun
-        	$akun = User::find(Auth::user()->id_user);
-            
-            // Seleksi
-            $seleksi = false;
-            
-            // Tes
-            $tes = Tes::all();
-			
-			// Check
-			if(Auth::user()->role == 6){
-				$check = Hasil::where('id_user','=',Auth::user()->id_user)->first();
-			}
-			else{
-				$check = null;
-			}
-
-        	// View
-        	return view('dashboard/index', [
-        		'akun' => $akun,
-                'check' => $check,
-                'seleksi' => $seleksi,
-                'tes' => $tes,
-        	]);
-        }
-    }
-    
-    /**
      * Menampilkan halaman tes
      * 
+     * @return \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function tes($path)
+    public function tes(Request $request, $path)
     {
         // Get tes
-        $tes = Tes::where('path','=',$path)->first();
-        
-        // Jika tidak ada
-        if(!$tes){
-            abort(404);
-        }
+        $tes = Tes::where('path','=',$path)->firstOrFail();
         
         // Jika role pelamar
         if(Auth::user()->role == 4){
@@ -138,7 +37,7 @@ class TesController extends Controller
         	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first();
             
             // Seleksi
-            $seleksi = Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first();
+            $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false;
         }
         // Jika role bukan pelamar
         else{
@@ -147,12 +46,7 @@ class TesController extends Controller
         }
 			
 		// Check
-		if(Auth::user()->role == 6){
-			$check = Hasil::where('id_user','=',Auth::user()->id_user)->first();
-		}
-		else{
-			$check = null;
-		}
+		$check = Auth::user()->role == 6 ? Hasil::where('id_user','=',Auth::user()->id_user)->first() : null;
             
         // Tes DISC 40
         if($path == 'disc-40-soal'){
@@ -199,6 +93,14 @@ class TesController extends Controller
             $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->first();
             $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('paket_soal.id_tes','=',$tes->id_tes)->where('status','=',1)->first();
             $soal->soal = json_decode($soal->soal, true);
+        }
+        // Tes IST
+        elseif($path == 'ist'){
+            $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->first();
+            $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('id_tes','=',$tes->id_tes)->where('status','=',1)->get();
+            foreach($soal as $data){
+                $data->soal = json_decode($data->soal, true);
+            }
         }
         else{
             abort(404);
