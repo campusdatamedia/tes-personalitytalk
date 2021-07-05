@@ -85,8 +85,11 @@
 			<li class="nav-item">
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
 			</li>
+			<!-- <li class="nav-item ml-3">
+				<button class="btn btn-md btn-primary text-uppercase" disabled>Sebelumnya</button>
+			</li> -->
 			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
+				<button class="btn btn-md btn-primary text-uppercase" id="btn-next" disabled>Selanjutnya</button>
 			</li>
 		</ul>
 	</nav>
@@ -96,33 +99,41 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	var time = 0;
+	var time = 15; // Time in seconds
+	var runTime = window.setInterval(timer, 1000);
 
 	$(document).ready(function(){
 	    totalQuestion();
-	    window.setInterval(timer, 1000);
+		$("#timer").text(timeToString(time));
 	});
 
-	// Timer
-	function timer(){
-		time++;
+	function timeToString(time){
 		var h = Math.floor(time / 3600) < 10 ? '0' + Math.floor(time / 3600) : Math.floor(time / 3600);
 		var m = Math.floor(time / 60) % 60 < 10 ? '0' + Math.floor(time / 60) % 60 : Math.floor(time / 60) % 60;
 		var s = (time % 60) < 10 ? '0' + (time % 60) : (time % 60);
-		$("#timer").text(h + ' : ' + m + ' : ' + s);
+		return h + ' : ' + m + ' : ' + s;
+	}
+
+	// Timer
+	function timer(){
+		time--;
+		$("#timer").text(timeToString(time));
+		if(time <= 10) $("#timer").addClass("text-danger"); // Colorize timer text to be red
+		// If time is over
+		if(time == 0){
+			$("#btn-next").removeAttr("disabled");
+			window.clearInterval(runTime); // Stop interval
+		}
 	}
 
 	// Change value
 	$(document).on("change", "input[type=radio]", function(){
 		// Count answered question
 		countAnswered();
-
-		// Enable submit button
-		countAnswered() >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
 	});
 
 	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
+	$(document).on("click", "#btn-next", function(e){
 		e.preventDefault();
 		$("#form")[0].submit();
 	});
