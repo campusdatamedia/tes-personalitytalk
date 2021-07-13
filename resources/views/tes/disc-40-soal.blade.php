@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-	<h3 class="m-0 text-center text-white">Tes DISC 40 Soal</h3>
+	<h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -107,7 +107,7 @@
 		</ul>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
@@ -130,7 +130,7 @@
 		        	<p>Maka pikirkan baik-baik.</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary" data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary" data-dismiss="modal">MENGERTI</button>
 	      		</div>
 	    	</div>
 	  	</div>
@@ -140,25 +140,8 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	// vertical align modal
 	$(document).ready(function(){
-		// Show modal when the page is loaded
 		$("#tutorialModal").modal("toggle");
-
-	    function alignModal(){
-	        var modalDialog = $(this).find(".modal-dialog");
-	        
-	        // Applying the top margin on modal dialog to align it vertically center
-	        modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 2));
-	    }
-	    // Align modal when it is displayed
-	    $(".modal").on("shown.bs.modal", alignModal);
-	    
-	    // Align modal when user resize the window
-	    $(window).on("resize", function(){
-	        $(".modal:visible").each(alignModal);
-	    });
-
 	    totalQuestion();
 	});
 
@@ -205,11 +188,12 @@
 		$("#total").text(total);
 		return total;
 	}
-
-	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
-		e.preventDefault();
-		$("#form")[0].submit();
-	});
 </script>
+@endsection
+
+@section('css-extra')
+<style type="text/css">
+	.modal .modal-body {font-size: 14px;}
+	.table {margin-bottom: 0;}
+</style>
 @endsection

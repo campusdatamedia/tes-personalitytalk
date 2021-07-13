@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
-        <h3>Tes Strong Deployment Inventory (SDI)</h3>
+        <h3>{{ $paket->nama_paket }}</h3>
         <hr class="rounded-2" style="border-top: 5px solid rgba(255,255,255,.3)">
         <p class="m-0"><b>ITEM 1-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman, tetapi selalu berpikir tentang situasi……</br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
     </div>
@@ -15,16 +15,16 @@
 </div>
 <div class="container main-container">
     @if($seleksi != null)
-    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
-    <div class="row">
-        <!-- Alert -->
-        <div class="col-12 mb-2">
-            <div class="alert alert-danger fade show text-center" role="alert">
-                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+        @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+        <div class="row">
+            <!-- Alert -->
+            <div class="col-12 mb-2">
+                <div class="alert alert-danger fade show text-center" role="alert">
+                    Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+                </div>
             </div>
         </div>
-    </div>
-    @endif
+        @endif
     @endif
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
@@ -145,12 +145,6 @@
 	// vertical align modal
 	$(document).ready(function(){
 	    totalQuestion();
-	});
-
-	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
-		e.preventDefault();
-		$("#form")[0].submit();
 	});
 
 	// Total question

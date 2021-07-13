@@ -3,9 +3,11 @@
 @section('content')
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
-        <h3>Tes Inyong Set Tah (IST)</h3>
+        <h3>{{ $paket->nama_paket }}</h3>
+        @if($paket->deskripsi_paket != '')
         <hr class="rounded-2" style="border-top: 5px solid rgba(255,255,255,.3)">
-        <p class="m-0"><b>SOAL 1-20</b> : Soal ini terdiri atas kalimat-kalimat. Pada setiap kalimat dihilangkan satu kata dan disediakan 5 (lima) kata pilihan.<br>Pilihlah kata yang tepat yang dapat melengkapkan kalimat itu!</p>
+        <p class="m-0"><b>SOAL {{ $range_soal }}</b> : <a href="#" class="text-white" data-toggle="modal" data-target="#tutorialModal"><u>Lihat Petunjuk Pengerjaan Disini</u></a></p>
+        @endif
     </div>
 </div>
 <div class="custom-shape-divider-top-1617767620">
@@ -15,16 +17,16 @@
 </div>
 <div class="container main-container">
     @if($seleksi != null)
-    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
-    <div class="row">
-        <!-- Alert -->
-        <div class="col-12 mb-2">
-            <div class="alert alert-danger fade show text-center" role="alert">
-                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
-            </div>
-        </div>
-    </div>
-    @endif
+	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+	    <div class="row">
+	        <!-- Alert -->
+	        <div class="col-12 mb-2">
+	            <div class="alert alert-danger fade show text-center" role="alert">
+	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	            </div>
+	        </div>
+	    </div>
+	    @endif
     @endif
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
@@ -32,41 +34,55 @@
 			<form id="form" method="post" action="/tes/{{ $path }}/store">
 			    {{ csrf_field() }}
 			    <input type="hidden" name="path" value="{{ $path }}">
+			    <input type="hidden" name="part" value="{{ $part }}">
 			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
 			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
 				<div class="">
 					<div class="row">
-						@foreach($soal as $num=>$data)
-						@php $detail = $data->soal[0]; @endphp
-					    <div class="col-md-6">
-                            <div class="card soal rounded-1 mb-3">
-                      			<div class="card-header bg-transparent">
-					    			<span class="num font-weight-bold"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
-					    		</div>
-                                <div class="card-body">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td>
-                                            	<p>{{ $detail['soal'] }}</p>
-                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }}"
-                                                        id="choice-{{ $data->nomor }}-{{ $opt }}" name="c[{{ $data->nomor }}]"
-                                                        value="{{ $opt }}">
-                                                    <label class="custom-control-label text-justify" for="choice-{{ $data->nomor }}-{{ $opt }}">
-                                                        <span>
-                                                            {{ $pilihan }}
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                                @endforeach
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
+						@if(count($soal)>0)
+							@foreach($soal as $num=>$data)
+							@php $detail = $data->soal[0]; @endphp
+						    <div class="{{ in_array($paket->tipe_soal, ['choice', 'essay']) ? 'col-md-6' : 'col-md-12' }}">
+	                            <div class="card soal rounded-1 mb-3">
+	                      			<div class="card-header bg-transparent">
+						    			<span class="num font-weight-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+						    		</div>
+	                                <div class="card-body">
+	                                    <table class="table table-sm table-borderless">
+	                                        <tr>
+	                                            <td>
+	                                            	<p>{{ $detail['soal'] }}</p>
+	                                				@if($paket->tipe_soal == 'choice')
+		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
+		                                                <div class="custom-control custom-radio">
+		                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }}"
+		                                                        id="choice-{{ $data->nomor }}-{{ $opt }}" name="c[{{ $data->nomor }}]"
+		                                                        value="{{ $opt }}">
+		                                                    <label class="custom-control-label text-justify" for="choice-{{ $data->nomor }}-{{ $opt }}">
+		                                                        <span>
+		                                                            {{ $pilihan }}
+		                                                        </span>
+		                                                    </label>
+		                                                </div>
+		                                                @endforeach
+	                                				@elseif($paket->tipe_soal == 'essay')
+	                                					<textarea class="form-control form-control-sm textarea-{{ $data->nomor }}" name="c[{{ $data->nomor }}]" rows="1" placeholder="Jawaban Anda..."></textarea>
+	                                				@elseif($paket->tipe_soal == 'number')
+	                                					@for($i=0; $i<10; $i++)
+	                                					<div class="form-check form-check-inline">
+															<input class="form-check-input checkbox-number-{{ $data->nomor }}" type="checkbox" name="c[{{ $data->nomor }}]" id="number-{{ $data->nomor }}-{{ $i }}" value="{{ $i }}">
+															<label class="form-check-label" for="number-{{ $data->nomor }}-{{ $i }}">{{ $i }}</label>
+														</div>
+														@endfor
+	                                    			@endif
+	                                            </td>
+	                                        </tr>
+	                                    </table>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        @endforeach
+	                    @endif
 					</div>
 				</div>
 			</form>
@@ -85,6 +101,9 @@
 			<li class="nav-item">
 				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
 			</li>
+			<li class="nav-item ml-3">
+				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
+			</li>
 			<!-- <li class="nav-item ml-3">
 				<button class="btn btn-md btn-primary text-uppercase" disabled>Sebelumnya</button>
 			</li> -->
@@ -93,18 +112,48 @@
 			</li>
 		</ul>
 	</nav>
+	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h5 class="modal-title" id="exampleModalLabel">
+                        <span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+                        Tutorial Tes
+                    </h5>
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	      		</div>
+		      	<div class="modal-body">
+		      		{!! $paket->deskripsi_paket !!}
+		      	</div>
+	      		<div class="modal-footer">
+	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">MENGERTI</button>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>
     @endif
 </div>
 @endsection
 
 @section('js-extra')
 <script type="text/javascript">
-	var time = 15; // Time in seconds
-	var runTime = window.setInterval(timer, 1000);
+	var time = "{{ $paket->waktu_pengerjaan }}"; // Time in seconds
+	var timeIsAlreadyRun = false;
+	var runTime;
 
 	$(document).ready(function(){
+		$("#tutorialModal").modal("toggle");
 	    totalQuestion();
 		$("#timer").text(timeToString(time));
+	});
+
+	$("#tutorialModal").on("hidden.bs.modal", function(e){
+		if(timeIsAlreadyRun == false){
+			runTime = window.setInterval(timer, 1000);
+			timeIsAlreadyRun = true;
+		}
 	});
 
 	function timeToString(time){
@@ -127,7 +176,7 @@
 	}
 
 	// Change value
-	$(document).on("change", "input[type=radio]", function(){
+	$(document).on("change", "input[type=radio], textarea.form-control, input[type=checkbox]", function(){
 		// Count answered question
 		countAnswered();
 	});
@@ -135,15 +184,31 @@
 	// Submit form
 	$(document).on("click", "#btn-next", function(e){
 		e.preventDefault();
-		$("#form")[0].submit();
+		var ask = confirm("Anda ingin melanjutkan ke bagian selanjutnya?");
+		if(ask){
+			$(window).off("beforeunload");
+			$("#form")[0].submit();
+		}
 	});
 
 	// Count answered question
 	function countAnswered(){
 		var total = 0;
 		$(".num").each(function(key, elem){
-			var value = $(".radio-" + (key+1) + ":checked").val();
-			value != undefined ? total++ : "";
+			var id = $(this).data("id");
+			if($("input[type=radio]").length > 0){
+				var value = $(".radio-" + id + ":checked").val();
+				value != undefined ? total++ : "";
+			}
+			else if($("textarea.form-control").length > 0){
+				var value = $(".textarea-" + id).val();
+				if($.trim(value) != "")	total++;
+				else $(".textarea-" + id).val(null);
+			}
+			else if($("input[type=checkbox]").length > 0){
+				var value = $(".checkbox-number-" + id + ":checked").val();
+				value != undefined ? total++ : "";
+			}
 		});
 		$("#answered").text(total);
 		return total;
@@ -151,9 +216,20 @@
 
 	// Total question
 	function totalQuestion(){
-		var totalRadio = $("input[type=radio]").length;
-		var pointPerQuestion = 5;
-		var total = totalRadio / pointPerQuestion;
+		if($("input[type=radio]").length > 0){
+			var question = $("input[type=radio]").length;
+			var pointPerQuestion = 5;
+			var total = question / pointPerQuestion;
+		}
+		else if($("textarea.form-control").length > 0){
+			var question = $("textarea.form-control").length;
+			var total = question;
+		}
+		else if($("input[type=checkbox]").length > 0){
+			var question = $("input[type=checkbox]").length;
+			var pointPerQuestion = 10;
+			var total = question / pointPerQuestion;
+		}
 		$("#total").text(total);
 		return total;
 	}
