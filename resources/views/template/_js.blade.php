@@ -4,17 +4,27 @@
 <script type="text/javascript">
 	// Before Unload
 	$(window).on("beforeunload", function(){
-		var c = confirm();
-		if(c) return true;
+		var ask = confirm();
+		if(ask) return true;
 		else return false;
 	});
 </script>
 @endif
 <script type="text/javascript">
+	// Log out
+	$(document).on("click", "#btn-logout", function(e){
+		e.preventDefault();
+		var ask = confirm("Anda yakin ingin keluar?");
+		if(ask){
+			$(window).off("beforeunload");
+			$("#form-logout")[0].submit();
+		}
+	});
+
 	// Submit form
 	$(document).on("click", "#btn-submit", function(e){
 		e.preventDefault();
-		var ask = confirm("Anda ingin mengumpulkan tes yang telah dikerjakan?");
+		var ask = confirm("Anda yakin ingin mengumpulkan tes yang telah dikerjakan?");
 		if(ask){
 			$(window).off("beforeunload");
 			$("#form")[0].submit();

@@ -36,7 +36,8 @@ class ISTController extends Controller
                 if($key == count($soal)-1) $last_soal = $data->nomor;
             }
         }
-        $range_soal = count($soal) > 1 ? $first_soal.'-'.$last_soal : $first_soal;
+        $range_soal = count($soal) > 1 ? $first_soal.'-'.$last_soal : $first_soal; // Range soal
+        $last_part = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->latest('part')->first(); // Part paket soal terakhir
 
         // View
         return view('tes/'.$path, [
@@ -48,6 +49,7 @@ class ISTController extends Controller
             'seleksi' => $seleksi,
             'soal' => $soal,
             'tes' => $tes,
+            'last_part' => $last_part,
         ]);
     }
 }

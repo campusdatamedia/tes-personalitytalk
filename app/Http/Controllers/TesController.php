@@ -83,6 +83,7 @@ class TesController extends Controller
             return \App\Http\Controllers\Test\MSDTController::store($request);
         // Tes IST
         elseif($request->path == 'ist')
+            // var_dump($request->is_submitted);
             return redirect('/tes/ist?part='.($request->part+1));
     }
 }

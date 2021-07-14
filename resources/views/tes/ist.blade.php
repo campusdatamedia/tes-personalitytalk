@@ -37,6 +37,7 @@
 			    <input type="hidden" name="part" value="{{ $part }}">
 			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
 			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="is_submitted" value="1">
 				<div class="">
 					<div class="row">
 						@if(count($soal)>0)
@@ -51,8 +52,8 @@
 	                                    <table class="table table-sm table-borderless">
 	                                        <tr>
 	                                            <td>
-	                                            	<p>{{ $detail['soal'] }}</p>
 	                                				@if($paket->tipe_soal == 'choice')
+	                                            		<p>{{ $detail['soal'] }}</p>
 		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
 		                                                <div class="custom-control custom-radio">
 		                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }}"
@@ -66,14 +67,29 @@
 		                                                </div>
 		                                                @endforeach
 	                                				@elseif($paket->tipe_soal == 'essay')
+	                                            		<p>{{ $detail['soal'] }}</p>
 	                                					<textarea class="form-control form-control-sm textarea-{{ $data->nomor }}" name="c[{{ $data->nomor }}]" rows="1" placeholder="Jawaban Anda..."></textarea>
 	                                				@elseif($paket->tipe_soal == 'number')
+	                                            		<p>{{ $detail['soal'] }}</p>
 	                                					@for($i=0; $i<10; $i++)
 	                                					<div class="form-check form-check-inline">
 															<input class="form-check-input checkbox-number-{{ $data->nomor }}" type="checkbox" name="c[{{ $data->nomor }}]" id="number-{{ $data->nomor }}-{{ $i }}" value="{{ $i }}">
 															<label class="form-check-label" for="number-{{ $data->nomor }}-{{ $i }}">{{ $i }}</label>
 														</div>
 														@endfor
+	                                				@elseif($paket->tipe_soal == 'image')
+	                                					<p><img width="125" src="{{ asset('assets/images/tes/ist/'.$detail['soal']) }}"></p>
+	                                					<p>Pilih Jawaban:</p>
+		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
+		                                                <div class="radio-image d-md-inline mr-md-3">
+		                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }} d-none"
+		                                                        id="choice-{{ $data->nomor }}-{{ $opt }}" name="c[{{ $data->nomor }}]"
+		                                                        value="{{ $opt }}">
+		                                                    <label for="choice-{{ $data->nomor }}-{{ $opt }}" class="border">
+		                                                    	<img width="100" src="{{ asset('assets/images/tes/ist/'.$pilihan) }}">
+		                                                    </label>
+		                                                </div>
+		                                                @endforeach
 	                                    			@endif
 	                                            </td>
 	                                        </tr>
@@ -104,11 +120,13 @@
 			<li class="nav-item ml-3">
 				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 			</li>
-			<!-- <li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase" disabled>Sebelumnya</button>
-			</li> -->
+			@if($paket->id_paket < $last_part->id_paket)
 			<li class="nav-item ml-3">
 				<button class="btn btn-md btn-primary text-uppercase" id="btn-next" disabled>Selanjutnya</button>
+			</li>
+			@endif
+			<li class="nav-item ml-3">
+				<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
 			</li>
 		</ul>
 	</nav>
@@ -171,6 +189,7 @@
 		// If time is over
 		if(time == 0){
 			$("#btn-next").removeAttr("disabled");
+			$("#btn-submit").removeAttr("disabled");
 			window.clearInterval(runTime); // Stop interval
 		}
 	}
@@ -179,6 +198,14 @@
 	$(document).on("change", "input[type=radio], textarea.form-control, input[type=checkbox]", function(){
 		// Count answered question
 		countAnswered();
+		// Check if type is image
+		if($(this).parents(".radio-image").length > 0){
+			var id = $(this).attr("id");
+			$(".radio-image").each(function(key,elem){
+				$(elem).find("label").removeClass("border-primary");
+				$(elem).find("label[for="+id+"]").addClass("border-primary");
+			});
+		}
 	});
 
 	// Submit form
@@ -187,6 +214,7 @@
 		var ask = confirm("Anda ingin melanjutkan ke bagian selanjutnya?");
 		if(ask){
 			$(window).off("beforeunload");
+			$("input[name=is_submitted]").val(0);
 			$("#form")[0].submit();
 		}
 	});
@@ -240,5 +268,7 @@
 <style type="text/css">
 	.modal .modal-body {font-size: 14px;}
 	.table {margin-bottom: 0;}
+	.radio-image label {cursor: pointer;}
+	.radio-image label.border-primary {border-color: var(--color-1)!important;}
 </style>
 @endsection
