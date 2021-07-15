@@ -3,10 +3,15 @@
 @if(is_int(strpos(Request::path(), 'tes')))
 <script type="text/javascript">
 	// Before Unload
-	$(window).on("beforeunload", function(){
-		var ask = confirm();
-		if(ask) return true;
-		else return false;
+	window.addEventListener("beforeunload", j);
+	function j(e){
+	    e.preventDefault();
+	    e.returnValue = '';
+	}
+
+	// Unload
+	window.addEventListener("unload", function(e){
+		console.log("Sayonara...");
 	});
 </script>
 @endif
@@ -16,8 +21,19 @@
 		e.preventDefault();
 		var ask = confirm("Anda yakin ingin keluar?");
 		if(ask){
-			$(window).off("beforeunload");
+			window.removeEventListener("beforeunload", j);
 			$("#form-logout")[0].submit();
+		}
+	});
+
+	// Next form
+	$(document).on("click", "#btn-next", function(e){
+		e.preventDefault();
+		var ask = confirm("Anda ingin melanjutkan ke bagian selanjutnya?");
+		if(ask){
+			window.removeEventListener("beforeunload", j);
+			$("input[name=is_submitted]").val(0);
+			$("#form")[0].submit();
 		}
 	});
 
@@ -26,7 +42,7 @@
 		e.preventDefault();
 		var ask = confirm("Anda yakin ingin mengumpulkan tes yang telah dikerjakan?");
 		if(ask){
-			$(window).off("beforeunload");
+			window.removeEventListener("beforeunload", j);
 			$("#form")[0].submit();
 		}
 	});

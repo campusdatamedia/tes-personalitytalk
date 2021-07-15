@@ -53,7 +53,7 @@
 	                                        <tr>
 	                                            <td>
 	                                				@if($paket->tipe_soal == 'choice')
-	                                            		<p>{{ $detail['soal'] }}</p>
+	                                					@if($detail['soal'] != '') <p>{{ $detail['soal'] }}</p> @endif
 		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
 		                                                <div class="custom-control custom-radio">
 		                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }}"
@@ -73,7 +73,7 @@
 	                                            		<p>{{ $detail['soal'] }}</p>
 	                                					@for($i=0; $i<10; $i++)
 	                                					<div class="form-check form-check-inline">
-															<input class="form-check-input checkbox-number-{{ $data->nomor }}" type="checkbox" name="c[{{ $data->nomor }}]" id="number-{{ $data->nomor }}-{{ $i }}" value="{{ $i }}">
+															<input class="form-check-input checkbox-number-{{ $data->nomor }}" type="checkbox" name="c[{{ $data->nomor }}][]" id="number-{{ $data->nomor }}-{{ $i }}" value="{{ $i }}">
 															<label class="form-check-label" for="number-{{ $data->nomor }}-{{ $i }}">{{ $i }}</label>
 														</div>
 														@endfor
@@ -81,9 +81,9 @@
 	                                					<p><img width="125" src="{{ asset('assets/images/tes/ist/'.$detail['soal']) }}"></p>
 	                                					<p>Pilih Jawaban:</p>
 		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
-		                                                <div class="radio-image d-md-inline mr-md-3">
+		                                                <div class="radio-image d-md-inline mr-md-3" data-num="{{ $data->nomor }}">
 		                                                    <input type="radio" class="custom-control-input radio-{{ $data->nomor }} d-none"
-		                                                        id="choice-{{ $data->nomor }}-{{ $opt }}" name="c[{{ $data->nomor }}]"
+		                                                        id="choice-{{ $data->nomor }}-{{ $opt }}" data-num="{{ $data->nomor }}" name="c[{{ $data->nomor }}]"
 		                                                        value="{{ $opt }}">
 		                                                    <label for="choice-{{ $data->nomor }}-{{ $opt }}" class="border">
 		                                                    	<img width="100" src="{{ asset('assets/images/tes/ist/'.$pilihan) }}">
@@ -201,28 +201,18 @@
 		// Check if type is image
 		if($(this).parents(".radio-image").length > 0){
 			var id = $(this).attr("id");
-			$(".radio-image").each(function(key,elem){
+			var num = $(this).data("num");
+			$(".radio-image[data-num="+num+"]").each(function(key,elem){
 				$(elem).find("label").removeClass("border-primary");
 				$(elem).find("label[for="+id+"]").addClass("border-primary");
 			});
 		}
 	});
 
-	// Submit form
-	$(document).on("click", "#btn-next", function(e){
-		e.preventDefault();
-		var ask = confirm("Anda ingin melanjutkan ke bagian selanjutnya?");
-		if(ask){
-			$(window).off("beforeunload");
-			$("input[name=is_submitted]").val(0);
-			$("#form")[0].submit();
-		}
-	});
-
 	// Count answered question
 	function countAnswered(){
 		var total = 0;
-		$(".num").each(function(key, elem){
+		$(".num").each(function(key,elem){
 			var id = $(this).data("id");
 			if($("input[type=radio]").length > 0){
 				var value = $(".radio-" + id + ":checked").val();

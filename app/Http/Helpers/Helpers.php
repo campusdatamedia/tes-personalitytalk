@@ -115,3 +115,51 @@ if(!function_exists('shuffleString')){
         return $shuffle;
     }
 }
+
+/*
+ *
+ * IST Helpers
+ *
+ */
+
+// Konversi nilai GE
+if(!function_exists('convert_GE')){
+    function convert_GE($score){
+        $array = [
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            6 => 5,
+            7 => 6,
+            8 => 6,
+            9 => 7,
+            10 => 7,
+            11 => 8,
+            12 => 8,
+            13 => 9,
+            14 => 9,
+            15 => 10,
+            16 => 10,
+            17 => 11,
+            18 => 11,
+            19 => 12,
+            20 => 12,
+            21 => 13,
+            22 => 13,
+            23 => 14,
+            24 => 14,
+            25 => 15,
+            26 => 15,
+            27 => 16,
+            28 => 17,
+            29 => 18,
+            30 => 19,
+            31 => 20,
+            32 => 20,
+        ];
+        return array_key_exists($score, $array) ? $array[$score] : 0;
+    }
+}
