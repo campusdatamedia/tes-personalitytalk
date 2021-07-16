@@ -87,4 +87,18 @@ class TesController extends Controller
             return \App\Http\Controllers\Test\ISTController::store($request);
         }
     }
+
+    /**
+     * Menghapus temp tes (jika ada)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(Request $request)
+    {
+        // Tes IST
+        if($request->path == 'ist'){
+            return \App\Http\Controllers\Test\ISTController::delete($request);
+        }
+    }
 }

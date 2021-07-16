@@ -42,6 +42,7 @@ Route::group(['middleware' => ['user']], function(){
 	// Tes
 	Route::get('/tes/{path}', 'TesController@tes');
 	Route::post('/tes/{path}/store', 'TesController@store');
+	Route::post('/tes/{path}/delete', 'TesController@delete');
 	
 // 	Route::get('/tes/papi/data', 'TesController@dataAnalisisPapikostick');
 });

@@ -38,6 +38,7 @@
 			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
 			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
 			    <input type="hidden" name="is_submitted" value="1">
+			    <input type="hidden" name="is_testing" value="1">
 				<div class="">
 					<div class="row">
 						@if(count($soal)>0)
@@ -191,6 +192,15 @@
 			$("#btn-next").removeAttr("disabled");
 			$("#btn-submit").removeAttr("disabled");
 			window.clearInterval(runTime); // Stop interval
+			// Auto submit to next part
+			if($("#btn-next").length == 1){
+				window.setTimeout(function(){
+					alert("Akan berpindah ke bagian soal selanjutnya secara otomatis...");
+					window.removeEventListener("beforeunload", j);
+					$("input[name=is_submitted]").val(0);
+					$("#form")[0].submit();
+				}, 1000);
+			}
 		}
 	}
 
