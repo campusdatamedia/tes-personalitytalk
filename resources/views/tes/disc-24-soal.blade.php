@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-    <h3 class="m-0 text-center text-white">Tes DISC 24 Soal</h3>
+    <h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -11,16 +11,16 @@
 </div>
 <div class="container main-container">
     @if($seleksi != null)
-    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
-    <div class="row">
-        <!-- Alert -->
-        <div class="col-12 mb-2">
-            <div class="alert alert-danger fade show text-center" role="alert">
-                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
-            </div>
-        </div>
-    </div>
-    @endif
+	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+	    <div class="row">
+	        <!-- Alert -->
+	        <div class="col-12 mb-2">
+	            <div class="alert alert-danger fade show text-center" role="alert">
+	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	            </div>
+	        </div>
+	    </div>
+	    @endif
     @endif
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
@@ -109,7 +109,7 @@
 		</ul>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
@@ -121,7 +121,7 @@
 	        		</button>
 	      		</div>
 		      	<div class="modal-body">
-    				<p>"Tes ini terdiri dari 24 Soal dan 2 jawaban setiap soal. Jawab secara jujur dan spontan. Estimasi waktu pengerjaan adalah 5-10 menit"</p>
+    				<p>Tes ini terdiri dari 24 Soal dan 2 jawaban setiap soal. Jawab secara jujur dan spontan. Estimasi waktu pengerjaan adalah 5-10 menit</p>
     				<ul>
     					<li>Pelajari semua jawaban pada setiap pilihan</li>
     					<li>
@@ -152,7 +152,7 @@
     				</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">MENGERTI</button>
 	      		</div>
 	    	</div>
 	  	</div>
@@ -163,25 +163,8 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	// vertical align modal
 	$(document).ready(function(){
-		// Show modal when the page is loaded
 		$("#tutorialModal").modal("toggle");
-
-	    function alignModal(){
-	        var modalDialog = $(this).find(".modal-dialog");
-	        
-	        // Applying the top margin on modal dialog to align it vertically center
-	        modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 2));
-	    }
-	    // Align modal when it is displayed
-	    $(".modal").on("shown.bs.modal", alignModal);
-	    
-	    // Align modal when user resize the window
-	    $(window).on("resize", function(){
-	        $(".modal:visible").each(alignModal);
-	    });
-
 	    totalQuestion();
 	});
 
@@ -251,12 +234,6 @@
 		$("#total").text(total);
 		return total;
 	}
-
-	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
-		e.preventDefault();
-		$("#form")[0].submit();
-	});
 </script>
 @endsection
 

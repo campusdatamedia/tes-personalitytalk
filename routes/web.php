@@ -33,16 +33,16 @@ Route::group(['middleware' => ['guest']], function(){
 
 // Applicant Capabilities...
 Route::group(['middleware' => ['user']], function(){
-
 	// Logout
 	Route::post('/logout', 'UserLoginController@logout');
 
 	// Dashboard
-	Route::get('/dashboard', 'TesController@dashboard');
+	Route::get('/dashboard', 'DashboardController@index');
 
 	// Tes
 	Route::get('/tes/{path}', 'TesController@tes');
 	Route::post('/tes/{path}/store', 'TesController@store');
+	Route::post('/tes/{path}/delete', 'TesController@delete');
 	
 // 	Route::get('/tes/papi/data', 'TesController@dataAnalisisPapikostick');
 });
