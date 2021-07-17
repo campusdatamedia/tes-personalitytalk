@@ -13,7 +13,6 @@
 
 // Guest Capabilities...
 Route::group(['middleware' => ['guest']], function(){
-
 	// Home
 	Route::get('/', function () {
 	   return redirect('login');
@@ -31,7 +30,7 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::get('/verification/token/{token}', 'Auth\RegisterController@verification');
 });
 
-// Applicant Capabilities...
+// User Capabilities...
 Route::group(['middleware' => ['user']], function(){
 	// Logout
 	Route::post('/logout', 'UserLoginController@logout');
@@ -43,6 +42,17 @@ Route::group(['middleware' => ['user']], function(){
 	Route::get('/tes/{path}', 'TesController@tes');
 	Route::post('/tes/{path}/store', 'TesController@store');
 	Route::post('/tes/{path}/delete', 'TesController@delete');
-	
-// 	Route::get('/tes/papi/data', 'TesController@dataAnalisisPapikostick');
+});
+
+// Admin Capabilities...
+Route::group(['middleware' => ['admin']], function(){
+	// Ringkasan
+	Route::get('/admin', 'Admin\RingkasanController@index');
+
+	// Tes
+	Route::get('/admin/tes', 'Admin\TesController@index');
+
+	// Paket Soal
+	Route::get('/admin/paket-soal', 'Admin\PaketSoalController@index');
+	Route::get('/admin/paket-soal/detail/{id}', 'Admin\PaketSoalController@detail');
 });

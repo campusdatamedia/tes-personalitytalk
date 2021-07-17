@@ -9,7 +9,7 @@
         </div>
         <main class="container text-center text-white">
             <h3 class="text-capitalize"><span id="demo"></span></h3>
-            <p>Selamat datang <span class="font-weight-bold">{{Auth::user()->nama_user}}</span> di Tes Online Personality Talk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada dibawah.</p>
+            <p>Selamat datang <span class="font-weight-bold">{{Auth::user()->nama_user}}</span> di Tes Online PersonalityTalk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada di bawah ini.</p>
         </main>
     </div>
 </section>
