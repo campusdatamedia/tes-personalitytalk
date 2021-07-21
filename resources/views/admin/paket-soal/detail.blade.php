@@ -21,7 +21,7 @@
 				</ol>
 			</nav>
 		</div>
-		<div class="col-md-auto">
+		<div class="col-md-auto mb-3">
 			@include('template/admin/_sidebar')
 		</div>
 		<div class="col-md">

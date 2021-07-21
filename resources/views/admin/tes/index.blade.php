@@ -21,7 +21,7 @@
 				</ol>
 			</nav>
 		</div>
-		<div class="col-md-auto">
+		<div class="col-md-auto mb-3">
 			@include('template/admin/_sidebar')
 		</div>
 		<div class="col-md">
@@ -61,7 +61,9 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#datatable").DataTable();
+		$("#datatable").DataTable({
+			"language": datatableLang,
+		});
 	});
 </script>
 @endsection

@@ -55,4 +55,5 @@ Route::group(['middleware' => ['admin']], function(){
 	// Paket Soal
 	Route::get('/admin/paket-soal', 'Admin\PaketSoalController@index');
 	Route::get('/admin/paket-soal/detail/{id}', 'Admin\PaketSoalController@detail');
+	Route::get('/admin/paket-soal/soal/{id}', 'Admin\PaketSoalController@questions');
 });

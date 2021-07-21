@@ -46,4 +46,23 @@ class PaketSoalController extends Controller
             'paket' => $paket
         ]);
     }
+
+    /**
+     * Menampilkan data soal
+     * 
+     * int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function questions($id)
+    {
+        // Data paket soal
+        $paket = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->findOrFail($id);
+        $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
+
+        // View
+        return view('admin/paket-soal/questions', [
+            'paket' => $paket,
+            'soal' => $soal,
+        ]);
+    }
 }
