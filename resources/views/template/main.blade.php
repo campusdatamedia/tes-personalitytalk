@@ -12,6 +12,7 @@
     @include('template/_navbar')
     @yield('content')
     @include('template/_js')
+    @include('template/admin/_js')
     @yield('js-extra')
 </body>
 </html>

@@ -21,7 +21,7 @@
 				</ol>
 			</nav>
 		</div>
-		<div class="col-md-auto">
+		<div class="col-md-auto mb-3">
 			@include('template/admin/_sidebar')
 		</div>
 		<div class="col-md">
@@ -38,7 +38,7 @@
 									<th>Tes</th>
 									<th width="60">Jumlah</th>
 									<th width="60">Status</th>
-									<th width="60">Opsi</th>
+									<th width="80">Opsi</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -58,6 +58,7 @@
 									<td class="options">
 										<div class="btn-group">
 											<a href="/admin/paket-soal/detail/{{ $data->id_paket }}" class="btn btn-sm btn-info" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+											<a href="/admin/paket-soal/soal/{{ $data->id_paket }}" class="btn btn-sm btn-secondary" data-toggle="tooltip" title="Lihat Soal"><i class="fa fa-list"></i></a>
 											<a href="#" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
 										</div>
 									</td>
@@ -78,7 +79,12 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#datatable").DataTable();
+		$("#datatable").DataTable({
+			"language": datatableLang,
+			columnDefs: [
+                {orderable: false, targets: -1},
+            ]
+        });
 	});
 </script>
 @endsection
