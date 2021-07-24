@@ -132,19 +132,19 @@
 		</ul>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
                         <span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
-                        Tutorial Tes
+                        Petunjuk Tes
                     </h5>
 	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          			<span aria-hidden="true">&times;</span>
 	        		</button>
 	      		</div>
 		      	<div class="modal-body">
-		      		{!! $paket->deskripsi_paket !!}
+		      		{!! html_entity_decode($paket->deskripsi_paket) !!}
 		      	</div>
 	      		<div class="modal-footer">
 	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">MENGERTI</button>
@@ -158,7 +158,7 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	var time = "{{ $paket->waktu_pengerjaan }}"; // Time in seconds
+	var time = 0; // Time in seconds
 	var timeIsAlreadyRun = false;
 	var runTime;
 
@@ -169,6 +169,7 @@
 	});
 
 	$("#tutorialModal").on("hidden.bs.modal", function(e){
+		$("#form").css("filter","none");
 		if(timeIsAlreadyRun == false){
 			runTime = window.setInterval(timer, 1000);
 			timeIsAlreadyRun = true;
@@ -184,18 +185,18 @@
 
 	// Timer
 	function timer(){
-		time--;
+		time++;
+		if("{{ $paket->waktu_pengerjaan }}" - time < 5) $("#timer").addClass("text-danger"); // Colorize red
 		$("#timer").text(timeToString(time));
-		if(time <= 10) $("#timer").addClass("text-danger"); // Colorize timer text to be red
 		// If time is over
-		if(time == 0){
+		if(time == "{{ $paket->waktu_pengerjaan }}"){
 			$("#btn-next").removeAttr("disabled");
 			$("#btn-submit").removeAttr("disabled");
 			window.clearInterval(runTime); // Stop interval
 			// Auto submit to next part
 			if($("#btn-next").length == 1){
 				window.setTimeout(function(){
-					alert("Akan berpindah ke bagian soal selanjutnya secara otomatis...");
+					alert("Waktu habis! Akan berpindah ke bagian soal selanjutnya secara otomatis...");
 					window.removeEventListener("beforeunload", j);
 					$("input[name=is_submitted]").val(0);
 					$("#form")[0].submit();
@@ -270,5 +271,6 @@
 	.table {margin-bottom: 0;}
 	.radio-image label {cursor: pointer;}
 	.radio-image label.border-primary {border-color: var(--color-1)!important;}
+	#form {filter: blur(3px);}
 </style>
 @endsection
