@@ -225,16 +225,16 @@
 		var total = 0;
 		$(".num").each(function(key,elem){
 			var id = $(this).data("id");
-			if($("input[type=radio]").length > 0){
+			if($("#form input[type=radio]").length > 0){
 				var value = $(".radio-" + id + ":checked").val();
 				value != undefined ? total++ : "";
 			}
-			else if($("textarea.form-control").length > 0){
+			else if($("#form textarea.form-control").length > 0){
 				var value = $(".textarea-" + id).val();
 				if($.trim(value) != "")	total++;
 				else $(".textarea-" + id).val(null);
 			}
-			else if($("input[type=checkbox]").length > 0){
+			else if($("#form input[type=checkbox]").length > 0){
 				var value = $(".checkbox-number-" + id + ":checked").val();
 				value != undefined ? total++ : "";
 			}
@@ -245,17 +245,17 @@
 
 	// Total question
 	function totalQuestion(){
-		if($("input[type=radio]").length > 0){
-			var question = $("input[type=radio]").length;
+		if($("#form input[type=radio]").length > 0){
+			var question = $("#form input[type=radio]").length;
 			var pointPerQuestion = 5;
 			var total = question / pointPerQuestion;
 		}
-		else if($("textarea.form-control").length > 0){
-			var question = $("textarea.form-control").length;
+		else if($("#form textarea.form-control").length > 0){
+			var question = $("#form textarea.form-control").length;
 			var total = question;
 		}
-		else if($("input[type=checkbox]").length > 0){
-			var question = $("input[type=checkbox]").length;
+		else if($("#form input[type=checkbox]").length > 0){
+			var question = $("#form input[type=checkbox]").length;
 			var pointPerQuestion = 10;
 			var total = question / pointPerQuestion;
 		}
