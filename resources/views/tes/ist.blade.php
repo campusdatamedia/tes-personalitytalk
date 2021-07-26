@@ -44,7 +44,7 @@
 						@if(count($soal)>0)
 							@foreach($soal as $num=>$data)
 							@php $detail = $data->soal[0]; @endphp
-						    <div class="{{ in_array($paket->tipe_soal, ['choice', 'essay']) ? 'col-md-6' : 'col-md-12' }}">
+						    <div class="{{ in_array($paket->tipe_soal, ['choice', 'choice-memorizing', 'essay']) ? 'col-md-6' : 'col-md-12' }}">
 	                            <div class="card soal rounded-1 mb-3">
 	                      			<div class="card-header bg-transparent">
 						    			<span class="num font-weight-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
@@ -53,7 +53,7 @@
 	                                    <table class="table table-sm table-borderless">
 	                                        <tr>
 	                                            <td>
-	                                				@if($paket->tipe_soal == 'choice')
+	                                				@if($paket->tipe_soal == 'choice' || $paket->tipe_soal == 'choice-memorizing')
 	                                					@if($detail['soal'] != '') <p>{{ $detail['soal'] }}</p> @endif
 		                                            	@foreach($detail['pilihan'] as $opt=>$pilihan)
 		                                                <div class="custom-control custom-radio">
@@ -122,7 +122,7 @@
 				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 			</li>
 			@if($paket->id_paket < $last_part->id_paket)
-			<li class="nav-item ml-3">
+			<li class="nav-item ml-3 d-none">
 				<button class="btn btn-md btn-primary text-uppercase" id="btn-next" disabled>Selanjutnya</button>
 			</li>
 			@endif
@@ -154,6 +154,26 @@
 	</div>
     @endif
 </div>
+
+<div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">
+					<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-clipboard text-dark" aria-hidden="true"></i></span> 
+					Bacaan
+				</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p><b>Hafalkan dalam waktu <span class="memorizing-time"></span> detik:</b></p>
+			</div>
+		</div>
+	</div>
+</div>
+
 @endsection
 
 @section('js-extra')
@@ -161,6 +181,8 @@
 	var time = 0; // Time in seconds
 	var timeIsAlreadyRun = false;
 	var runTime;
+	var configText = "{{ $paket->konfigurasi_paket }}";
+	var config = configText.split("*");
 
 	$(document).ready(function(){
 		$("#tutorialModal").modal("toggle");
@@ -168,12 +190,27 @@
 		$("#timer").text(timeToString(time));
 	});
 
+	// Show tutorial modal
 	$("#tutorialModal").on("hidden.bs.modal", function(e){
-		$("#form").css("filter","none");
-		if(timeIsAlreadyRun == false){
-			runTime = window.setInterval(timer, 1000);
-			timeIsAlreadyRun = true;
+		if("{{ $paket->tipe_soal }}" == 'choice-memorizing'){
+			if($("#textModal").length == 1){
+				$("#textModal .modal-body").append('<img class="img-fluid img-thumbnail" src="' + config[0] + '">');
+				$("#textModal .memorizing-time").text(config[1]);
+				$("#textModal").modal("show");
+				setTimeout(function(){
+					$("#textModal").modal("hide");
+				}, config[1] * 1000);
+			}
 		}
+		else{
+			start();
+		}
+	});
+
+	// Show text modal
+	$("#textModal").on("hidden.bs.modal", function(e){
+		$("#textModal").remove();
+		start();
 	});
 
 	function timeToString(time){
@@ -183,10 +220,18 @@
 		return h + ' : ' + m + ' : ' + s;
 	}
 
+	function start(){
+		$("#form").css("filter","none");
+		if(timeIsAlreadyRun == false){
+			runTime = window.setInterval(timer, 1000);
+			timeIsAlreadyRun = true;
+		}
+	}
+
 	// Timer
 	function timer(){
 		time++;
-		if("{{ $paket->waktu_pengerjaan }}" - time < 5) $("#timer").addClass("text-danger"); // Colorize red
+		if("{{ $paket->waktu_pengerjaan }}" - time < 10) $("#timer").addClass("text-danger"); // Colorize red
 		$("#timer").text(timeToString(time));
 		// If time is over
 		if(time == "{{ $paket->waktu_pengerjaan }}"){
@@ -267,7 +312,7 @@
 
 @section('css-extra')
 <style type="text/css">
-	.modal .modal-body {font-size: 14px;}
+	.modal .modal-body {font-size: 14px; overflow-y: auto; max-height: calc(100vh - 200px);}
 	.table {margin-bottom: 0;}
 	.radio-image label {cursor: pointer;}
 	.radio-image label.border-primary {border-color: var(--color-1)!important;}

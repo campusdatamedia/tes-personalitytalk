@@ -78,7 +78,7 @@
 											</table>
 										@elseif($paket->path == 'ist')
 											@php $detail_soal = json_decode($data->soal, true); $detail_soal = $detail_soal[0]; @endphp
-											@if($paket->tipe_soal == 'choice')
+											@if($paket->tipe_soal == 'choice' || $paket->tipe_soal == 'choice-memorizing')
 												<p><strong>Soal:</strong><br> {{ $detail_soal['soal'] }}</p>
 												<table class="table table-sm table-bordered mb-0">
 													<thead>
