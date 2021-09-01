@@ -7,8 +7,8 @@
 	--shadow-sm-hover: 0 .225rem .45rem rgba(0,0,0,.1)!important;
 	--transition: .25s ease;
 }
-.btn-theme-1, .btn-primary, .btn-primary.disabled, .btn-primary:disabled{background-color: var(--color-1); color: var(--white); transition: var(--transition); border-color: var(--color-1) }
-.btn-theme-1:hover, .btn-primary:hover, .btn-primary:focus{background-color: var(--color-1-dark); color: var(--white); border-color: var(--color-1-dark)}
+.btn-theme-1, .btn-primary, .btn-primary.disabled, .btn-primary:disabled{background-color: var(--color-1); color: var(--bs-white); transition: var(--transition); border-color: var(--color-1) }
+.btn-theme-1:hover, .btn-primary:hover, .btn-primary:focus{background-color: var(--color-1-dark); color: var(--bs-white); border-color: var(--color-1-dark)}
 .bg-theme-1{background-color: var(--color-1)}
 .bg-theme-2{background-color: var(--color-1-light)}
 .transition{transition: var(--transition)}
@@ -33,7 +33,7 @@ body {background-color: var(--light)}
 .custom-shape-divider-top-1617767620 .shape-fill {fill: var(--color-1)}
 .modal-content, .card{border: unset;}
 .card{box-shadow: var(--shadow-sm)!important}
-.card.bg-light{background-color: var(--white)!important}
+.card.bg-light{background-color: var(--bs-white)!important}
 .card .bg-warning{background-color: transparent!important}
 .main-container{margin-top: -9em;}
 .col-2 {-ms-flex: 0 0 8.666667%; flex: 0 0 8.666667%; max-width: 8.666667%;}
@@ -52,5 +52,3 @@ body {background-color: var(--light)}
 	.bg-header{padding-top: 5em; padding-bottom: 5em}
 	.main-container{margin-top: -7em}
 }
-
-@media (max-width: 1199.98px) { ... }

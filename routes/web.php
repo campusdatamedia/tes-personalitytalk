@@ -12,7 +12,7 @@
 */
 
 // Guest Capabilities...
-Route::group(['middleware' => ['guest']], function(){
+Route::group(['middleware' => ['guest']], function() {
 	// Home
 	Route::get('/', function () {
 	   return redirect('login');
@@ -25,13 +25,13 @@ Route::group(['middleware' => ['guest']], function(){
 	// Register
 	Route::get('/daftar', 'Auth\RegisterController@showRegistrationForm');
 	Route::post('/daftar', 'Auth\RegisterController@register');
-	
+
 	// Verification
 	Route::get('/verification/token/{token}', 'Auth\RegisterController@verification');
 });
 
 // User Capabilities...
-Route::group(['middleware' => ['user']], function(){
+Route::group(['middleware' => ['user']], function() {
 	// Logout
 	Route::post('/logout', 'UserLoginController@logout');
 
@@ -42,10 +42,11 @@ Route::group(['middleware' => ['user']], function(){
 	Route::get('/tes/{path}', 'TesController@tes');
 	Route::post('/tes/{path}/store', 'TesController@store');
 	Route::post('/tes/{path}/delete', 'TesController@delete');
+	Route::get('/tes/ist/try', 'TesController@try');
 });
 
 // Admin Capabilities...
-Route::group(['middleware' => ['admin']], function(){
+Route::group(['middleware' => ['admin']], function() {
 	// Ringkasan
 	Route::get('/admin', 'Admin\RingkasanController@index');
 
