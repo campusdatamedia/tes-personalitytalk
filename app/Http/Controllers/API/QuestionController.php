@@ -22,18 +22,23 @@ class QuestionController extends Controller
         $packet = $request->query('packet');
 
         // Get the questions
-        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('part','=',$part)->where('soal.id_paket','=',$packet)->where('status','=',1)->get();
+        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('part','=',$part)->where('soal.id_paket','=',$packet)->where('status','=',1)->orderBy('nomor','asc')->get();
         if(count($questions) > 0){
             foreach($questions as $question){
                 $soal = json_decode($question->soal, true);
                 unset($soal[0]['jawaban']);
                 $question->soal = $soal;
             }
+
+            $first_question = $questions[0];
+            $last_question = $questions[count($questions)-1];
         }
 
         // Response
         return response()->json([
-            'questions' => $questions
+            'questions' => $questions,
+            'first_question' => $first_question,
+            'last_question' => $last_question,
         ], 200);
     }
 

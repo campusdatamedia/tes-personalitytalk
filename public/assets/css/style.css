@@ -7,6 +7,10 @@
 	--shadow-sm-hover: 0 .225rem .45rem rgba(0,0,0,.1)!important;
 	--transition: .25s ease;
 }
+.btn-outline-primary {color: var(--color-1); border-color: var(--color-1); transition: var(--transition);}
+.btn-outline-primary:hover {background-color: var(--color-1); color: var(--bs-white); border-color: var(--color-1);}
+
+
 .btn-theme-1, .btn-primary, .btn-primary.disabled, .btn-primary:disabled{background-color: var(--color-1); color: var(--bs-white); transition: var(--transition); border-color: var(--color-1) }
 .btn-theme-1:hover, .btn-primary:hover, .btn-primary:focus{background-color: var(--color-1-dark); color: var(--bs-white); border-color: var(--color-1-dark)}
 .bg-theme-1{background-color: var(--color-1)}

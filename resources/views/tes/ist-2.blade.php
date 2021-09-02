@@ -31,13 +31,12 @@
 	    @endif
     @endif
 
-	<div class="row" style="margin-bottom: 100px;">
+	<div id="question" class="row" style="margin-bottom: 100px;">
 		<!-- Button Navigation -->
 		<div class="col-md-3 mb-3 mb-md-0">
 			<div class="card">
 				<div class="card-header fw-bold text-center">Navigasi Soal</div>
 				<div class="card-body">
-					<div id="nav-button"></div>
 				</div>
 			</div>
 		</div>
@@ -46,16 +45,13 @@
 		<div class="col-md-9">
 			<div class="card card-question">
 				<div class="card-header">
-					<span class="fw-bold"><i class="fa fa-edit"></i> <span class="question-title"></span></span>
+					<span class="fw-bold"><i class="fa fa-edit"></i> <span class="question-title">Soal</span></span>
 				</div>
 				<div class="card-body">
 					<p class="question-text"></p>
 					<div class="question-choices"></div>
 				</div>
 				<div class="card-footer bg-white text-center">
-					<button class="btn btn-sm btn-primary"><i class="fa fa-chevron-left"></i> Sebelumnya</button>
-					<button class="btn btn-sm btn-warning"><i class="fa fa-lightbulb-o"></i> Ragu</button>
-					<button class="btn btn-sm btn-primary">Selanjutnya <i class="fa fa-chevron-right"></i></button>
 				</div>
 			</div>
 		</div>
@@ -72,108 +68,366 @@
 <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
 <script type="text/babel">
-	class ButtonNav extends React.Component {
-		// Constructor
+	class App extends React.Component {
 		constructor(props) {
 			super(props);
 			this.state = {
 				part: 1,
 				packet: 14,
 				items: [],
-				activeItem: 0
+				firstItem: '',
+				lastItem: '',
+				activeItem: '',
+				activeNumber: 0,
+				answers: [],
+				doubts: []
 			};
-			this.handleClick = this.handleClick.bind(this);
+			this.handleButtonNavCallback = this.handleButtonNavCallback.bind(this);
+			this.handleCardCallback = this.handleCardCallback.bind(this);
 		}
 
 		componentDidMount = () => {
-			const {part, packet} = this.state;
-
 			// Fetch data
-			fetch('/api/question/all?part=' + part + '&packet=' + packet)
+			fetch('/api/question/all?part=' + this.state.part + '&packet=' + this.state.packet)
 				.then(response => response.json())
-				.then(data =>
-					this.setState({
-						items: data.questions,
-						activeItem: data.questions[0].nomor
-					})
+				.then(data => {
+						this.setState({
+							items: data.questions,
+							firstItem: data.first_question,
+							lastItem: data.last_question,
+							activeItem: data.questions[0],
+							activeNumber: data.questions[0].nomor
+						});
+					}
 				);
 		}
 
-		handleClick = (e) => {
-			// Update state
+		handleButtonNavCallback = (data) => {
 			this.setState({
-				// activeItem: parseInt(e.target.dataset.number)
-				activeItem: e
+				activeItem: this.getItemByNumber(data.activeNumber),
+				activeNumber: data.activeNumber,
 			});
 		}
 
+		handleCardCallback = (data) => {
+			this.setState({
+				answers: data.answers,
+				doubts: data.doubts,
+			});
+
+			if(data.activeNumber !== undefined) {
+				this.setState({
+					activeItem: this.getItemByNumber(data.activeNumber),
+					activeNumber: data.activeNumber
+				});
+			}
+		}
+
+		getItemByNumber = (number) => {
+			const {items} = this.state;
+			let item;
+
+			if(items.length > 0) {
+				for(let i = 0; i < items.length; i++) {
+					if(number === items[i].nomor) {
+						item = items[i];
+					}
+				}
+			}
+
+			return item;
+		}
+
+		getPreviousItem = () => {
+			const {items, activeNumber} = this.state;
+			let item;
+
+			if(items.length > 0) {
+				for(let i = 0; i < items.length; i++) {
+					if((activeNumber - 1) === items[i].nomor) {
+						item = items[i];
+					}
+				}
+			}
+
+			return item;
+		}
+
+		getNextItem = () => {
+			const {items, activeNumber} = this.state;
+			let item;
+
+			if(items.length > 0) {
+				for(let i = 0; i < items.length; i++) {
+					if((activeNumber + 1) === items[i].nomor) {
+						item = items[i];
+					}
+				}
+			}
+
+			return item;
+		}
+
 		render = () => {
-			const {part, packet, items, activeItem} = this.state;
+			const {items, firstItem, activeItem, activeNumber, answers, doubts} = this.state;
 
 			return (
-				items.map((item, index) => {
-					return (
-						<button
-							key={index}
-							className={`btn btn-sm ${item.nomor === activeItem ? 'btn-primary' : 'btn-outline-dark'} btn-question`}
-							onClick={() => this.handleClick(item.nomor)}
-							data-part={part}
-							data-packet={packet}
-							// data-number={item.nomor}
-						>
-							{item.nomor}
-						</button>
-					);
-				})
+				<React.Fragment>
+					<div class="col-md-3 mb-3 mb-md-0" id="nav-button">
+						<ButtonNav
+							parentCallback={this.handleButtonNavCallback}
+							items={items}
+							activeNumber={activeNumber}
+							answers={answers}
+							doubts={doubts}
+						/>
+					</div>
+					<div class="col-md-9">
+						<Card
+							parentCallback={this.handleCardCallback}
+							item={activeItem}
+							previousItem={this.getPreviousItem()}
+							nextItem={this.getNextItem()}
+						/>
+					</div>
+				</React.Fragment>
 			);
 		}
 	}
 
-	// Render
-	ReactDOM.render(<ButtonNav/>, document.getElementById('nav-button'));
-</script>
+	class ButtonNav extends React.Component {
+		constructor(props) {
+			super(props);
+			this.handleClick = this.handleClick.bind(this);
+		}
 
-<script type="text/javascript">
-	$(document).on("click", ".btn-question", function(e){
-		e.preventDefault();
+		handleClick = (number) => {
+			// Callback to parent component
+			this.props.parentCallback({
+				activeNumber: number
+			});
+		}
 
-		// Retrieve data-id attributes
-		var part = $(this).data("part");
-		var packet = $(this).data("packet");
-		var number = $(this).data("number");
+		render = () => {
+			const items = this.props.items;
+			const activeNumber = this.props.activeNumber;
+			const answers = this.props.answers;
+			const doubts = this.props.doubts;
 
-		// AJAX request
-		$.ajax({
-			type: 'get',
-			url: '/api/question',
-			data: {path: 'ist', part: part, packet: packet, number: number},
-			success: function(response){
-				// console.log(response);
-				var choices = Object.entries(response.question.soal[0].pilihan);
-				var choiceHTML = '';
-				$(".card-question").find(".question-title").text("Soal " + response.question.nomor);
-				$(".card-question").find(".question-text").text(response.question.soal[0].soal);
-				$(choices).each(function(key,choice){
-					choiceHTML += '<div class="form-check">';
-					choiceHTML += '<input class="form-check-input" type="radio" name="c[' + response.question.nomor + ']" id="choice-' + response.question.nomor + '-' + choice[0] + '" value="' + choice[0] + '">';
-					choiceHTML += '<label class="form-check-label" for="choice-' + response.question.nomor + '-' + choice[0] + '">' + choice[1] + '</label>';
-	 				choiceHTML += '</div>';
-				});
-				$(".card-question").find(".question-choices").html(choiceHTML);
-			}
-		});
+			return (
+				<div class="card">
+					<div class="card-header fw-bold text-center">Navigasi Soal</div>
+					<div class="card-body">
+						{
+							items.map((item, index) => {
+								// Set button color
+								let buttonColor;
+								if(doubts[item.nomor] === true) buttonColor = 'btn-warning';
+								else if(answers[item.nomor] !== undefined) buttonColor = 'btn-primary';
+								else if(item.nomor === activeNumber && answers[item.nomor] === undefined) buttonColor = 'btn-info';
+								else buttonColor = 'btn-outline-dark';
 
-		// Change button class
-		removeButtonClass(".btn-question", "btn-primary", "btn-outline-dark");
-		$(this).addClass("btn-primary").removeClass("btn-outline-dark");
-	});
-
-	function removeButtonClass(selector, classToRemove, classToAdd){
-		$(selector).each(function(key,elem){
-			$(elem).removeClass(classToRemove);
-			$(elem).addClass(classToAdd);
-		});
+								return (
+									<button
+										className={`btn btn-sm ${buttonColor}`}
+										onClick={() => this.handleClick(item.nomor)}
+									>
+										{item.nomor} ({answers[item.nomor] !== undefined ? answers[item.nomor] : '-' })
+									</button>
+								);
+							})
+						}
+					</div>
+				</div>
+			);
+		}
 	}
+
+	class Card extends React.Component {
+		constructor(props) {
+			super(props);
+			this.state = {
+				answers: [],
+				doubts: []
+			}
+			this.handleChoiceCallback = this.handleChoiceCallback.bind(this);
+			this.handleButtonDoubtCallback = this.handleButtonDoubtCallback.bind(this);
+		}
+
+		handleChoiceCallback = (data) => {
+			let {answers, doubts} = this.state;
+			answers[data.number] = data.answer;
+
+			// Update state
+			this.setState({
+				answers: answers
+			});
+
+			// Callback to parent component
+			this.props.parentCallback({
+				answers: answers,
+				doubts: doubts
+			})
+		}
+
+		handleButtonDoubtCallback = (data) => {
+			let {answers, doubts} = this.state;
+			doubts[data.number] = data.doubt;
+
+			// Update state
+			this.setState({
+				doubts: doubts
+			});
+
+			// Callback to parent component
+			this.props.parentCallback({
+				answers: answers,
+				doubts: doubts
+			});
+		}
+
+		handleButtonPreviousCallback = (data) => {
+			let {answers, doubts} = this.state;
+
+			// Callback to parent component
+			this.props.parentCallback({
+				answers: answers,
+				doubts: doubts,
+				activeNumber: data.number
+			});
+		}
+
+		render = () => {
+			const {answers, doubts} = this.state;
+			const item = this.props.item;
+			const question = this.props.item.soal;
+			const choices = question !== undefined ? Object.entries(question[0].pilihan) : [];
+
+			return (
+				<div class="card card-question">
+					<div class="card-header">
+						<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.nomor}</span>
+					</div>
+					<div class="card-body">
+						<p class="question-text">{question !== undefined ? question[0].soal : ''}</p>
+						<div class="question-choices">
+							{
+								choices.map((choice) => {
+									return (
+										<Choice
+											parentCallback={this.handleChoiceCallback}
+											number={item.nomor}
+											option={choice[0]}
+											description={choice[1]}
+											isChecked={answers[item.nomor] === choice[0] ? true : false}
+										/>
+									)
+								})
+							}
+						</div>
+					</div>
+					<div class="card-footer bg-white text-center">
+						<ButtonPrevious
+							parentCallback={this.handleButtonPreviousCallback}
+							number={this.props.previousItem !== undefined ? this.props.previousItem.nomor : 0}
+						/>
+						<ButtonDoubt
+							parentCallback={this.handleButtonDoubtCallback}
+							number={item.nomor}
+							isDoubt={doubts[item.nomor] ? true : false}
+						/>
+						<button class="btn btn-sm btn-primary mx-1">Selanjutnya <i class="fa fa-chevron-right"></i></button>
+					</div>
+				</div>
+			);
+		}
+	}
+
+	class Choice extends React.Component {
+		constructor(props) {
+			super(props);
+			this.handleChange = this.handleChange.bind(this);
+		}
+
+		handleChange = (number, answer) => {
+			// Callback to parent component
+			this.props.parentCallback({
+				number: number,
+				answer: answer,
+			});
+		}
+
+		render = () => {
+			return (
+				<div class="form-check">
+					<input
+						class="form-check-input"
+						type="radio"
+						name={`choice[${this.props.number}]`}
+						id={`choice-${this.props.option}`}
+						value={this.props.option}
+						checked={this.props.isChecked}
+						onChange={() => this.handleChange(this.props.number, this.props.option)}
+					/>
+					<label class="form-check-label" for={`choice-${this.props.option}`}>{this.props.description}</label>
+				</div>
+			);
+		}
+	}
+
+	class ButtonDoubt extends React.Component {
+		constructor(props) {
+			super(props);
+			this.handleClick = this.handleClick.bind(this);
+		}
+
+		handleClick = (number) => {
+			// Callback to parent component
+			this.props.parentCallback({
+				number: number,
+				doubt: !this.props.isDoubt,
+			});
+		}
+
+		render = () => {
+			return (
+				<button
+					class="btn btn-sm btn-warning mx-1"
+					onClick={() => this.handleClick(this.props.number)}
+				>
+					<i class="fa fa-lightbulb-o me-1"></i>
+					{this.props.isDoubt ? 'Yakin' : 'Ragu'}
+				</button>
+			);
+		}
+	}
+
+	class ButtonPrevious extends React.Component {
+		constructor(props) {
+			super(props);
+		}
+
+		handleClick = (number) => {
+			// Callback to parent component
+			this.props.parentCallback({
+				number: number
+			});
+		}
+
+		render = () => {
+			return (
+				<button
+					class="btn btn-sm btn-primary mx-1"
+					onClick={() => this.handleClick(this.props.number)}
+				>
+					<i class="fa fa-chevron-left"></i> Sebelumnya
+				</button>
+			);
+		}
+	}
+
+	// Render DOM
+	ReactDOM.render(<App/>, document.getElementById('question'));
 </script>
 
 @endsection
@@ -188,5 +442,6 @@
 
 	#nav-button {text-align: center;}
 	#nav-button .btn {width: 3.75rem; margin: .25rem;}
+	#nav-button .btn:focus {box-shadow: none;}
 </style>
 @endsection
