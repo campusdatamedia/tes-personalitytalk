@@ -65,7 +65,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 5,
+			part: 7,
 			parts: [],
 			items: [],
 			activeItem: '',
@@ -240,16 +240,24 @@ class ButtonNav extends React.Component {
 							// Set button color
 							let buttonColor;
 							if(doubts[item.nomor] === true) buttonColor = 'btn-warning';
-							else if(answers[item.nomor] !== undefined && answers[item.nomor] !== '') buttonColor = 'btn-primary';
-							else if(item.nomor === activeNumber && (answers[item.nomor] === undefined || answers[item.nomor] === '')) buttonColor = 'btn-info';
+							else if(answers[item.nomor] !== undefined && ((item.tipe_soal === 'choice' && answers[item.nomor] !== null) || (item.tipe_soal === 'essay' && answers[item.nomor] !== '') || (item.tipe_soal === 'number' && answers[item.nomor].length > 0))) buttonColor = 'btn-primary';
+							else if(item.nomor === activeNumber && (answers[item.nomor] === undefined || answers[item.nomor] === null || answers[item.nomor] === '' || answers[item.nomor].length === 0)) buttonColor = 'btn-info';
 							else buttonColor = 'btn-outline-dark';
+
+							// Set button note
+							let buttonNote = '-';
+							if(answers[item.nomor] !== undefined) {
+								if(item.tipe_soal === 'choice' && answers[item.nomor] !== null) buttonNote = answers[item.nomor];
+								else if(item.tipe_soal === 'essay' && answers[item.nomor] !== '') buttonNote = 'Y';
+								else if(item.tipe_soal === 'number' && answers[item.nomor].length > 0) buttonNote = 'Y';
+							}
 
 							return (
 								<button
 									class={`btn btn-sm ${buttonColor}`}
 									onClick={() => this.handleClick(item.nomor)}
 								>
-									{item.nomor} ({answers[item.nomor] !== undefined && answers[item.nomor] !== '' ? item.tipe_soal === 'choice' || item.tipe_soal === 'image' ? answers[item.nomor] : 'Y' : '-' })
+									{item.nomor} ({buttonNote})
 								</button>
 							);
 						})
@@ -268,6 +276,7 @@ class Card extends React.Component {
 			doubts: []
 		};
 		this.handleChoiceCallback = this.handleChoiceCallback.bind(this);
+		this.handleCheckboxNumberCallback = this.handleCheckboxNumberCallback.bind(this);
 		this.handleButtonDoubtCallback = this.handleButtonDoubtCallback.bind(this);
 		this.handleButtonPreviousCallback = this.handleButtonPreviousCallback.bind(this);
 		this.handleButtonNextCallback = this.handleButtonNextCallback.bind(this);
@@ -294,25 +303,38 @@ class Card extends React.Component {
 		let {answers, doubts} = this.state;
 		let answerTemp = answers[data.number];
 
+		// Define answer to array
 		if(answerTemp === undefined) {
 			answerTemp = [];
 		}
 
+		// If checkbox is checked
 		if(data.isChecked) {
-			answerTemp.push(data.value);
-			answers[data.number] = answerTemp;
+			// If value is not in answer array
+			if(answerTemp.indexOf(data.value) < 0) {
+				answerTemp.push(data.value);
+				answers[data.number] = answerTemp;
+			}
+		}
+		// If checkbox is not checked
+		else {
+			// If value is in answer array
+			if(answerTemp.indexOf(data.value) >= 0) {
+				answerTemp.splice(answerTemp.indexOf(data.value), 1);
+				answers[data.number] = answerTemp;
+			}
 		}
 
-		// // Update state
+		// Update state
 		this.setState({
 			answers: answers
 		});
 
-		// // Callback to parent component
-		// this.props.parentCallback({
-		// 	answers: answers,
-		// 	doubts: doubts
-		// });
+		// Callback to parent component
+		this.props.parentCallback({
+			answers: answers,
+			doubts: doubts
+		});
 	}
 
 	handleButtonDoubtCallback = (data) => {
@@ -399,8 +421,23 @@ class Card extends React.Component {
 				<CheckboxNumber
 					parentCallback={this.handleCheckboxNumberCallback}
 					number={item.nomor}
-					// isChecked={answers[item.nomor] === 1 ? true : false}
+					checkeds={answers[item.nomor] !== undefined ? answers[item.nomor] : []}
 				/>
+			);
+		}
+		else if(item.tipe_soal === 'image') {
+			return (
+				choices.map((choice) => {
+					return (
+						<ImageChoice
+							parentCallback={this.handleChoiceCallback}
+							number={item.nomor}
+							option={choice[0]}
+							description={choice[1]}
+							isChecked={answers[item.nomor] === choice[0] ? true : false}
+						/>
+					)
+				})
 			);
 		}
 		else return null;
@@ -636,7 +673,7 @@ class CheckboxNumber extends React.Component {
 						name={`checkbox[${this.props.number}]`}
 						value={i}
 						id={`checkbox-${i}`}
-						checked={this.props.isChecked}
+						checked={this.props.checkeds.indexOf(i.toString()) >= 0 ? true : false}
 						onChange={this.handleChange}
 					/>
 					<label class="form-check-label" for={`checkbox-${i}`}>{i}</label>
@@ -644,6 +681,40 @@ class CheckboxNumber extends React.Component {
 			);
 		}
 		return <React.Fragment>{elements}</React.Fragment>;
+	}
+}
+
+class ImageChoice extends React.Component {
+	constructor(props) {
+		super(props);
+		this.handleChange = this.handleChange.bind(this);
+	}
+
+	handleChange = (number, answer) => {
+		// Callback to parent component
+		this.props.parentCallback({
+			number: number,
+			answer: answer,
+		});
+	}
+
+	render = () => {
+		return (
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name={`choice[${this.props.number}]`}
+					id={`choice-${this.props.option}`}
+					value={this.props.option}
+					checked={this.props.isChecked}
+					onChange={() => this.handleChange(this.props.number, this.props.option)}
+				/>
+				<label class="form-check-label" for={`choice-${this.props.option}`}>
+					<img width="100" src={`/assets/images/tes/ist/${this.props.description}`}/>
+				</label>
+			</div>
+		);
 	}
 }
 
