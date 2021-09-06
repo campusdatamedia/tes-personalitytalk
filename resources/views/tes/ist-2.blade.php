@@ -65,7 +65,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 7,
+			part: 1,
 			parts: [],
 			items: [],
 			activeItem: '',
@@ -89,8 +89,8 @@ class App extends React.Component {
 					this.setState({
 						parts: data.parts,
 						items: data.questions,
-						activeItem: data.questions[0],
-						activeNumber: data.questions[0].nomor
+						activeItem: data.questions.length > 0 ? data.questions[0] : {},
+						activeNumber: data.questions.length > 0 ? data.questions[0].nomor : null
 					});
 				}
 			);
@@ -240,7 +240,7 @@ class ButtonNav extends React.Component {
 							// Set button color
 							let buttonColor;
 							if(doubts[item.nomor] === true) buttonColor = 'btn-warning';
-							else if(answers[item.nomor] !== undefined && ((item.tipe_soal === 'choice' && answers[item.nomor] !== null) || (item.tipe_soal === 'essay' && answers[item.nomor] !== '') || (item.tipe_soal === 'number' && answers[item.nomor].length > 0))) buttonColor = 'btn-primary';
+							else if(answers[item.nomor] !== undefined && (((item.tipe_soal === 'choice' || item.tipe_soal === 'image') && answers[item.nomor] !== null) || (item.tipe_soal === 'essay' && answers[item.nomor] !== '') || (item.tipe_soal === 'number' && answers[item.nomor].length > 0))) buttonColor = 'btn-primary';
 							else if(item.nomor === activeNumber && (answers[item.nomor] === undefined || answers[item.nomor] === null || answers[item.nomor] === '' || answers[item.nomor].length === 0)) buttonColor = 'btn-info';
 							else buttonColor = 'btn-outline-dark';
 
@@ -250,6 +250,7 @@ class ButtonNav extends React.Component {
 								if(item.tipe_soal === 'choice' && answers[item.nomor] !== null) buttonNote = answers[item.nomor];
 								else if(item.tipe_soal === 'essay' && answers[item.nomor] !== '') buttonNote = 'Y';
 								else if(item.tipe_soal === 'number' && answers[item.nomor].length > 0) buttonNote = 'Y';
+								else if(item.tipe_soal === 'image' && answers[item.nomor] !== null) buttonNote = answers[item.nomor];
 							}
 
 							return (
@@ -273,14 +274,22 @@ class Card extends React.Component {
 		super(props);
 		this.state = {
 			answers: [],
-			doubts: []
+			doubts: [],
+			timeIsRunning: false
 		};
+		this.handleTimerCallback = this.handleTimerCallback.bind(this);
 		this.handleChoiceCallback = this.handleChoiceCallback.bind(this);
 		this.handleCheckboxNumberCallback = this.handleCheckboxNumberCallback.bind(this);
 		this.handleButtonDoubtCallback = this.handleButtonDoubtCallback.bind(this);
 		this.handleButtonPreviousCallback = this.handleButtonPreviousCallback.bind(this);
 		this.handleButtonNextCallback = this.handleButtonNextCallback.bind(this);
 		this.handleButtonSubmitCallback = this.handleButtonSubmitCallback.bind(this);
+	}
+
+	handleTimerCallback = (data) => {
+		this.setState({
+			timeIsRunning: data.timeIsRunning
+		});
 	}
 
 	handleChoiceCallback = (data) => {
@@ -378,6 +387,11 @@ class Card extends React.Component {
 	handleButtonSubmitCallback = (data) => {
 		let {answers, doubts} = this.state;
 
+		// Update state
+		this.setState({
+			timeIsRunning: true
+		});
+
 		// Callback to parent component
 		this.props.parentCallback({
 			answers: answers,
@@ -394,89 +408,179 @@ class Card extends React.Component {
 
 		if(item.tipe_soal === 'choice') {
 			return (
-				choices.map((choice) => {
-					return (
-						<Choice
-							parentCallback={this.handleChoiceCallback}
-							number={item.nomor}
-							option={choice[0]}
-							description={choice[1]}
-							isChecked={answers[item.nomor] === choice[0] ? true : false}
-						/>
-					)
-				})
+				<React.Fragment>
+					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					{
+						choices.map((choice) => {
+							return (
+								<Choice
+									parentCallback={this.handleChoiceCallback}
+									number={item.nomor}
+									option={choice[0]}
+									description={choice[1]}
+									isChecked={answers[item.nomor] === choice[0] ? true : false}
+								/>
+							)
+						})
+					}
+				</React.Fragment>
 			);
 		}
 		else if(item.tipe_soal === 'essay') {
 			return (
-				<TextField
-					parentCallback={this.handleChoiceCallback}
-					number={item.nomor}
-					value={answers[item.nomor] !== undefined ? answers[item.nomor] : ''}
-				/>
+				<React.Fragment>
+					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					<TextField
+						parentCallback={this.handleChoiceCallback}
+						number={item.nomor}
+						value={answers[item.nomor] !== undefined ? answers[item.nomor] : ''}
+					/>
+				</React.Fragment>
 			);
 		}
 		else if(item.tipe_soal === 'number') {
 			return (
-				<CheckboxNumber
-					parentCallback={this.handleCheckboxNumberCallback}
-					number={item.nomor}
-					checkeds={answers[item.nomor] !== undefined ? answers[item.nomor] : []}
-				/>
+				<React.Fragment>
+					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					<CheckboxNumber
+						parentCallback={this.handleCheckboxNumberCallback}
+						number={item.nomor}
+						checkeds={answers[item.nomor] !== undefined ? answers[item.nomor] : []}
+					/>
+				</React.Fragment>
 			);
 		}
 		else if(item.tipe_soal === 'image') {
 			return (
-				choices.map((choice) => {
-					return (
-						<ImageChoice
-							parentCallback={this.handleChoiceCallback}
-							number={item.nomor}
-							option={choice[0]}
-							description={choice[1]}
-							isChecked={answers[item.nomor] === choice[0] ? true : false}
-						/>
-					)
-				})
+				<React.Fragment>
+					<p><img width="125" src={`/assets/images/tes/ist/${item.soal !== undefined ? item.soal[0].soal : ''}`}/></p>
+					<p>Pilih Jawaban:</p>
+					{
+						choices.map((choice) => {
+							return (
+								<ImageChoice
+									parentCallback={this.handleChoiceCallback}
+									number={item.nomor}
+									option={choice[0]}
+									description={choice[1]}
+									isChecked={answers[item.nomor] === choice[0] ? true : false}
+								/>
+							)
+						})
+					}
+				</React.Fragment>
 			);
 		}
 		else return null;
 	}
 
 	render = () => {
-		const {answers, doubts} = this.state;
+		const {answers, doubts, timeIsRunning} = this.state;
 		const item = this.props.item;
 
 		return (
 			<div class="card card-question">
-				<div class="card-header">
+				<div class="card-header d-flex justify-content-between">
 					<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.nomor}</span>
+					<span><Timer time={timeIsRunning ? item.waktu_pengerjaan : 0} parentCallback={this.handleTimerCallback}/></span>
 				</div>
 				<div class="card-body">
-					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
 					{this.renderForm()}
 				</div>
-				<div class="card-footer bg-white text-center">
-					<ButtonPrevious
-						parentCallback={this.handleButtonPreviousCallback}
-						number={this.props.previousItem !== undefined ? this.props.previousItem.nomor : 0}
-					/>
+				<div class="card-footer bg-white d-md-flex justify-content-between text-center">
 					<ButtonDoubt
 						parentCallback={this.handleButtonDoubtCallback}
 						number={item.nomor}
 						isDoubt={doubts[item.nomor] ? true : false}
 					/>
+					<div>
+						<ButtonPrevious
+							parentCallback={this.handleButtonPreviousCallback}
+							number={this.props.previousItem !== undefined ? this.props.previousItem.nomor : 0}
+						/>
+						<ButtonNext
+							parentCallback={this.handleButtonNextCallback}
+							number={this.props.nextItem !== undefined ? this.props.nextItem.nomor : 0}
+						/>
+					</div>
 					<ButtonSubmit
 						parentCallback={this.handleButtonSubmitCallback}
 						part={this.props.nextPart !== undefined ? this.props.nextPart.part : 0}
 					/>
-					<ButtonNext
-						parentCallback={this.handleButtonNextCallback}
-						number={this.props.nextItem !== undefined ? this.props.nextItem.nomor : 0}
-					/>
 				</div>
 			</div>
 		);
+	}
+}
+
+class Timer extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			time: 0,
+			defaultTime: 0
+		}
+	}
+
+	static getDerivedStateFromProps = (props, state) => {
+		if(state.defaultTime !== props.time) {
+			return {
+				time: props.time,
+				defaultTime: props.time
+			};
+		}
+	}
+
+	componentDidMount = () => {
+		window.setTimeout(() => {
+			// Callback to parent component
+			this.props.parentCallback({
+				timeIsRunning: true
+			});
+
+			// Tick
+			this.timer = window.setInterval(() => this.tick(), 1000);
+		}, 1000);
+	}
+
+	componentDidUpdate = (e, w) => {
+		// TBC
+		console.log(e);
+		console.log(w);
+	}
+
+	tick = () => {
+		let {time} = this.state;
+		if(time > 0) {
+			this.setState({
+				time: time - 1
+			});
+		}
+		else {
+			// Callback to parent component
+			this.props.parentCallback({
+				timeIsRunning: false
+			});
+
+			clearInterval(this.timer);
+		}
+	}
+
+	timeToString = () => {
+		let {time} = this.state;
+		time = time !== undefined ? time : 0;
+		let h = Math.floor(time / 3600) < 10 ? '0' + Math.floor(time / 3600) : Math.floor(time / 3600);
+		let m = Math.floor(time / 60) % 60 < 10 ? '0' + Math.floor(time / 60) % 60 : Math.floor(time / 60) % 60;
+		let s = (time % 60) < 10 ? '0' + (time % 60) : (time % 60);
+		return h + ' : ' + m + ' : ' + s;
+	}
+
+	render = () => {
+		return (
+			<React.Fragment>
+				<span class={this.state.time <= 5 ? 'text-danger' : ''}><i class="fa fa-clock-o me-1"></i> {this.timeToString()}</span>
+			</React.Fragment>
+		)
 	}
 }
 
@@ -568,11 +672,20 @@ class ButtonSubmit extends React.Component {
 	}
 
 	handleClick = () => {
-		let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
-		if(ask) {
-			this.props.parentCallback({
-				part: this.props.part
-			});
+		if(this.props.part !== 0) {
+			let ask = confirm("Anda yakin ingin melanjutkan ke tes tahap berikutnya?");
+			if(ask) {
+				this.props.parentCallback({
+					part: this.props.part
+				});
+			}
+		}
+		else {
+			let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
+			if(ask) {
+				window.removeEventListener("beforeunload", j);
+				window.location.href = '/dashboard';
+			}
 		}
 	}
 
@@ -700,9 +813,9 @@ class ImageChoice extends React.Component {
 
 	render = () => {
 		return (
-			<div class="form-check">
+			<div class="form-check form-check-inline radio-image">
 				<input
-					class="form-check-input"
+					class="form-check-input d-none"
 					type="radio"
 					name={`choice[${this.props.number}]`}
 					id={`choice-${this.props.option}`}
@@ -710,7 +823,7 @@ class ImageChoice extends React.Component {
 					checked={this.props.isChecked}
 					onChange={() => this.handleChange(this.props.number, this.props.option)}
 				/>
-				<label class="form-check-label" for={`choice-${this.props.option}`}>
+				<label class={`form-check-label border ${this.props.isChecked ? 'border-primary' : ''}`} for={`choice-${this.props.option}`}>
 					<img width="100" src={`/assets/images/tes/ist/${this.props.description}`}/>
 				</label>
 			</div>
@@ -728,8 +841,9 @@ ReactDOM.render(<App/>, document.getElementById('question'));
 <style type="text/css">
 	.modal .modal-body {font-size: 14px; overflow-y: auto; max-height: calc(100vh - 200px);}
 	.table {margin-bottom: 0;}
+	.radio-image {margin-bottom: 1rem; padding-left: 0;}
 	.radio-image label {cursor: pointer;}
-	.radio-image label.border-primary {border-color: var(--color-1)!important;}
+	.radio-image label.border-primary {border-color: var(--color-1)!important; border-width: 2px!important;}
 	/* #form {filter: blur(3px);} */
 
 	#nav-button {text-align: center;}
