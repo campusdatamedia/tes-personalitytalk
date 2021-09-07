@@ -275,7 +275,7 @@ class Card extends React.Component {
 		this.state = {
 			answers: [],
 			doubts: [],
-			timeIsRunning: false
+			timeIsRunning: true
 		};
 		this.handleTimerCallback = this.handleTimerCallback.bind(this);
 		this.handleChoiceCallback = this.handleChoiceCallback.bind(this);
@@ -482,7 +482,13 @@ class Card extends React.Component {
 			<div class="card card-question">
 				<div class="card-header d-flex justify-content-between">
 					<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.nomor}</span>
-					<span><Timer time={timeIsRunning ? item.waktu_pengerjaan : 0} parentCallback={this.handleTimerCallback}/></span>
+					<span>
+						<Timer
+							part={item.part}
+							time={timeIsRunning ? item.waktu_pengerjaan : 0}
+							parentCallback={this.handleTimerCallback}
+						/>
+					</span>
 				</div>
 				<div class="card-body">
 					{this.renderForm()}
@@ -517,36 +523,40 @@ class Timer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			part: 0,
 			time: 0,
-			defaultTime: 0
+			defaultTime: 0,
+			isBeginning: false,
+			isEnded: false
 		}
 	}
 
-	static getDerivedStateFromProps = (props, state) => {
+	componentDidUpdate = (props, state) => {
+		if(props.time > 0 && props.part !== state.part) {
+			clearInterval(this.timer);
+			this.timer = window.setInterval(() => this.tick(), 1000);
+		}
+
 		if(state.defaultTime !== props.time) {
-			return {
+			this.setState({
+				part: props.part,
 				time: props.time,
-				defaultTime: props.time
-			};
-		}
-	}
-
-	componentDidMount = () => {
-		window.setTimeout(() => {
-			// Callback to parent component
-			this.props.parentCallback({
-				timeIsRunning: true
+				defaultTime: props.time,
+				isBeginning: true
 			});
 
-			// Tick
-			this.timer = window.setInterval(() => this.tick(), 1000);
-		}, 1000);
-	}
+			if(state.isEnded === true) {
+				this.setState({
+					isBeginning: false
+				});
+			}
 
-	componentDidUpdate = (e, w) => {
-		// TBC
-		console.log(e);
-		console.log(w);
+			if(props.time > 0) {
+				this.setState({
+					isEnded: false
+				});
+			}
+		}
 	}
 
 	tick = () => {
@@ -562,13 +572,19 @@ class Timer extends React.Component {
 				timeIsRunning: false
 			});
 
+			// Update state
+			this.setState({
+				isBeginning: false,
+				isEnded: true
+			});
+
+			// Clear interval
 			clearInterval(this.timer);
 		}
 	}
 
 	timeToString = () => {
 		let {time} = this.state;
-		time = time !== undefined ? time : 0;
 		let h = Math.floor(time / 3600) < 10 ? '0' + Math.floor(time / 3600) : Math.floor(time / 3600);
 		let m = Math.floor(time / 60) % 60 < 10 ? '0' + Math.floor(time / 60) % 60 : Math.floor(time / 60) % 60;
 		let s = (time % 60) < 10 ? '0' + (time % 60) : (time % 60);
@@ -576,11 +592,21 @@ class Timer extends React.Component {
 	}
 
 	render = () => {
-		return (
-			<React.Fragment>
-				<span class={this.state.time <= 5 ? 'text-danger' : ''}><i class="fa fa-clock-o me-1"></i> {this.timeToString()}</span>
-			</React.Fragment>
-		)
+		const {time, defaultTime, isEnded} = this.state;
+
+		if(defaultTime === 0 && isEnded === false) {
+			return <span><i class="fa fa-clock-o me-1"></i> Memulai...</span>
+		}
+		else if(!isEnded && defaultTime !== 0) {
+			return (
+				<span class={time <= 10 ? 'text-danger' : ''}>
+					<i class="fa fa-clock-o me-1"></i> {this.timeToString()}
+				</span>
+			)
+		}
+		else if(isEnded) {
+			return <span class="text-danger"><i class="fa fa-clock-o me-1"></i> Waktu Habis!</span>
+		}
 	}
 }
 
