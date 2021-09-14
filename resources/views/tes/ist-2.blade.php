@@ -5,6 +5,7 @@
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
         <h3>{{ $paket->nama_paket }}</h3>
+		<p class="m-0"><a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#tutorialModal"><u>Lihat Petunjuk Pengerjaan Disini</u></a></p>
     </div>
 </div>
 
@@ -32,12 +33,11 @@
 		<div class="col-md-3 mb-3 mb-md-0">
 			<div class="card">
 				<div class="card-header fw-bold text-center">Navigasi Soal</div>
-				<div class="card-body">
-				</div>
+				<div class="card-body"></div>
 			</div>
 		</div>
 
-		<!-- Question -->
+		<!-- Card Question -->
 		<div class="col-md-9">
 			<div class="card card-question">
 				<div class="card-header">
@@ -71,10 +71,9 @@ class App extends React.Component {
 			activeItem: '',
 			activeNumber: 0,
 			answers: [],
-			doubts: []
+			doubts: [],
+			timeIsRunning: false
 		};
-		this.handleButtonNavCallback = this.handleButtonNavCallback.bind(this);
-		this.handleCardCallback = this.handleCardCallback.bind(this);
 	}
 
 	componentDidMount = () => {
@@ -121,6 +120,22 @@ class App extends React.Component {
 			this.setState({
 				part: data.part
 			});
+		}
+
+		if(data.timeIsRunning !== undefined) {
+			this.setState({
+				timeIsRunning: data.timeIsRunning
+			});
+		}
+	}
+
+	handleModalCallback = (data) => {
+		const {timeIsRunning} = this.state;
+
+		if(timeIsRunning === false) {
+			this.setState({
+				timeIsRunning: data.timeIsRunning
+			})
 		}
 	}
 
@@ -185,10 +200,16 @@ class App extends React.Component {
 	}
 
 	render = () => {
-		const {items, activeItem, activeNumber, answers, doubts} = this.state;
+		const {items, activeItem, activeNumber, answers, doubts, timeIsRunning} = this.state;
 
 		return (
 			<React.Fragment>
+				<ModalAuth/>
+				<ModalTutorial
+					parentCallback={this.handleModalCallback}
+					part={activeItem.part}
+					item={activeItem}
+				/>
 				<div class="col-md-3 mb-3 mb-md-0" id="nav-button">
 					<ButtonNav
 						parentCallback={this.handleButtonNavCallback}
@@ -205,6 +226,7 @@ class App extends React.Component {
 						previousItem={this.getPreviousItem()}
 						nextItem={this.getNextItem()}
 						nextPart={this.getNextPart()}
+						timeIsRunning={timeIsRunning}
 					/>
 				</div>
 			</React.Fragment>
@@ -212,10 +234,62 @@ class App extends React.Component {
 	}
 }
 
+class ModalAuth extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidMount = () => {
+		// Get elements
+		let myModal = document.getElementById("modalAuth");
+		let myInput = document.getElementById("inputToken");
+
+		// Show modal
+		let modal = new bootstrap.Modal(myModal);
+		modal.show();
+
+		// Add event when modal shows
+		myModal.addEventListener('shown.bs.modal', () => {
+			document.body.classList.add("modal-auth");
+			myInput.focus();
+		});
+	}
+
+	handleSubmit = (event) => {
+		event.preventDefault();
+		window.removeEventListener("beforeunload", j);
+		let token = document.getElementById("inputToken").value;
+	}
+
+	render = () => {
+		return (
+			<div class="modal fade" id="modalAuth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<form id="formAuth" onSubmit={this.handleSubmit}>
+							<div class="modal-header bg-info">
+								<h5 class="modal-title" id="exampleModalLabel">Autentikasi</h5>
+							</div>
+							<div class="modal-body">
+								<div class="m-0">
+									<label class="form-label">Masukkan Kode:</label>
+									<input type="text" name="token" class="form-control" id="inputToken" required/>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		);
+	}
+}
+
 class ButtonNav extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleClick = this.handleClick.bind(this);
 	}
 
 	handleClick = (number) => {
@@ -274,21 +348,19 @@ class Card extends React.Component {
 		super(props);
 		this.state = {
 			answers: [],
-			doubts: [],
-			timeIsRunning: true
+			doubts: []
 		};
-		this.handleTimerCallback = this.handleTimerCallback.bind(this);
-		this.handleChoiceCallback = this.handleChoiceCallback.bind(this);
-		this.handleCheckboxNumberCallback = this.handleCheckboxNumberCallback.bind(this);
-		this.handleButtonDoubtCallback = this.handleButtonDoubtCallback.bind(this);
-		this.handleButtonPreviousCallback = this.handleButtonPreviousCallback.bind(this);
-		this.handleButtonNextCallback = this.handleButtonNextCallback.bind(this);
-		this.handleButtonSubmitCallback = this.handleButtonSubmitCallback.bind(this);
 	}
 
 	handleTimerCallback = (data) => {
-		this.setState({
-			timeIsRunning: data.timeIsRunning
+		let {answers, doubts} = this.state;
+
+		// Callback to parent component
+		this.props.parentCallback({
+			answers: answers,
+			doubts: doubts,
+			part: data.part,
+			timeIsRunning: false
 		});
 	}
 
@@ -387,16 +459,12 @@ class Card extends React.Component {
 	handleButtonSubmitCallback = (data) => {
 		let {answers, doubts} = this.state;
 
-		// Update state
-		this.setState({
-			timeIsRunning: true
-		});
-
 		// Callback to parent component
 		this.props.parentCallback({
 			answers: answers,
 			doubts: doubts,
-			part: data.part
+			part: data.part,
+			timeIsRunning: false
 		});
 	}
 
@@ -475,7 +543,7 @@ class Card extends React.Component {
 	}
 
 	render = () => {
-		const {answers, doubts, timeIsRunning} = this.state;
+		const {answers, doubts} = this.state;
 		const item = this.props.item;
 
 		return (
@@ -484,9 +552,11 @@ class Card extends React.Component {
 					<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.nomor}</span>
 					<span>
 						<Timer
-							part={item.part}
-							time={timeIsRunning ? item.waktu_pengerjaan : 0}
 							parentCallback={this.handleTimerCallback}
+							part={item.part}
+							time={item.waktu_pengerjaan}
+							timeIsRunning={this.props.timeIsRunning}
+							nextPart={this.props.nextPart !== undefined ? this.props.nextPart.part : 0}
 						/>
 					</span>
 				</div>
@@ -524,62 +594,55 @@ class Timer extends React.Component {
 		super(props);
 		this.state = {
 			part: 0,
-			time: 0,
-			defaultTime: 0,
-			isBeginning: false,
-			isEnded: false
+			time: null
 		}
 	}
 
-	componentDidUpdate = (props, state) => {
-		if(props.time > 0 && props.part !== state.part) {
-			clearInterval(this.timer);
-			this.timer = window.setInterval(() => this.tick(), 1000);
-		}
-
-		if(state.defaultTime !== props.time) {
+	componentDidUpdate = (props) => {
+		// Compare props when first load
+		if(this.props.part !== props.part || this.props.timeIsRunning !== props.timeIsRunning) {
+			// Update state
 			this.setState({
-				part: props.part,
-				time: props.time,
-				defaultTime: props.time,
-				isBeginning: true
+				part: this.props.part,
+				time: this.props.time
 			});
 
-			if(state.isEnded === true) {
-				this.setState({
-					isBeginning: false
-				});
-			}
-
-			if(props.time > 0) {
-				this.setState({
-					isEnded: false
-				});
+			// Start timer if the time is running
+			clearInterval(this.timer);
+			if(this.props.timeIsRunning) {
+				window.setTimeout(() => {
+					this.timer = window.setInterval(() => this.tick(), 1000);
+				}, 500);
 			}
 		}
 	}
 
 	tick = () => {
-		let {time} = this.state;
+		let {part, time} = this.state;
+
 		if(time > 0) {
+			// Decrement time
 			this.setState({
 				time: time - 1
 			});
 		}
 		else {
-			// Callback to parent component
-			this.props.parentCallback({
-				timeIsRunning: false
-			});
-
-			// Update state
-			this.setState({
-				isBeginning: false,
-				isEnded: true
-			});
-
 			// Clear interval
 			clearInterval(this.timer);
+
+			// Move to next part
+			if(this.props.nextPart !== 0) {
+				alert("Akan berpindah ke bagian soal selanjutnya secara otomatis...");
+				window.removeEventListener("beforeunload", j);
+				this.props.parentCallback({
+					part: this.props.nextPart
+				});
+			}
+			else {
+				alert("Tes akan dikumpulkan secara otomatis...");
+				window.removeEventListener("beforeunload", j);
+				window.location.href = '/dashboard';
+			}
 		}
 	}
 
@@ -592,19 +655,19 @@ class Timer extends React.Component {
 	}
 
 	render = () => {
-		const {time, defaultTime, isEnded} = this.state;
+		const {time} = this.state;
 
-		if(defaultTime === 0 && isEnded === false) {
+		if(time === null) {
 			return <span><i class="fa fa-clock-o me-1"></i> Memulai...</span>
 		}
-		else if(!isEnded && defaultTime !== 0) {
+		else if(time > 0) {
 			return (
 				<span class={time <= 10 ? 'text-danger' : ''}>
 					<i class="fa fa-clock-o me-1"></i> {this.timeToString()}
 				</span>
 			)
 		}
-		else if(isEnded) {
+		else if(time == 0) {
 			return <span class="text-danger"><i class="fa fa-clock-o me-1"></i> Waktu Habis!</span>
 		}
 	}
@@ -613,7 +676,6 @@ class Timer extends React.Component {
 class ButtonDoubt extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleClick = this.handleClick.bind(this);
 	}
 
 	handleClick = (number) => {
@@ -630,7 +692,7 @@ class ButtonDoubt extends React.Component {
 				class="btn btn-sm btn-warning m-1"
 				onClick={() => this.handleClick(this.props.number)}
 			>
-				<i class="fa fa-lightbulb-o me-1"></i>
+				<i class={`fa ${this.props.isDoubt ? 'fa-thumbs-o-up' : 'fa-lightbulb-o'} me-1`}></i>
 				{this.props.isDoubt ? 'Yakin' : 'Ragu'}
 			</button>
 		);
@@ -694,7 +756,6 @@ class ButtonNext extends React.Component {
 class ButtonSubmit extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleClick = this.handleClick.bind(this);
 	}
 
 	handleClick = () => {
@@ -730,7 +791,6 @@ class ButtonSubmit extends React.Component {
 class Choice extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange = (number, answer) => {
@@ -762,7 +822,6 @@ class Choice extends React.Component {
 class TextField extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange = (event) => {
@@ -789,7 +848,6 @@ class TextField extends React.Component {
 class CheckboxNumber extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange = (event) => {
@@ -826,7 +884,6 @@ class CheckboxNumber extends React.Component {
 class ImageChoice extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange = (number, answer) => {
@@ -857,6 +914,51 @@ class ImageChoice extends React.Component {
 	}
 }
 
+class ModalTutorial extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidUpdate = (props) => {
+		// Compare props when first load
+		if(this.props.part !== props.part) {
+			// Show modal if not showed
+			let modal = new bootstrap.Modal(document.getElementById("tutorialModal"));
+			if(!document.body.classList.contains("modal-open")) modal.show();
+		}
+	}
+
+	handleHide = () => {
+		this.props.parentCallback({
+			timeIsRunning: true
+		})
+	}
+
+	render = () => {
+		// HTML entity decode
+		const HTMLEntityDecode = (escapedHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
+		
+		return (
+			<div class="modal fade" id="tutorialModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Petunjuk Tes</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={this.handleHide}></button>
+						</div>
+						<div class="modal-body">
+							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={this.handleHide}><i class="fa fa-thumbs-o-up me-1"></i>Mengerti</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+}
+
 // Render DOM
 ReactDOM.render(<App/>, document.getElementById('question'));
 </script>
@@ -872,8 +974,10 @@ ReactDOM.render(<App/>, document.getElementById('question'));
 	.radio-image label.border-primary {border-color: var(--color-1)!important; border-width: 2px!important;}
 	/* #form {filter: blur(3px);} */
 
+	.modal-auth .card-question, .modal-auth #nav-button {filter: blur(3px);}
+	.modal-open .card-question .card-body {filter: blur(3px);}
+	#question .btn:focus {box-shadow: none;}
 	#nav-button {text-align: center;}
 	#nav-button .btn {font-size: .75rem; width: 3.75rem; margin: .25rem;}
-	#nav-button .btn:focus {box-shadow: none;}
 </style>
 @endsection
