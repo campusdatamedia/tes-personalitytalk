@@ -72,7 +72,9 @@ class App extends React.Component {
 			activeNumber: 0,
 			answers: [],
 			doubts: [],
-			timeIsRunning: false
+			timeIsRunning: false,
+			needAuth: false,
+			isAuth: false
 		};
 	}
 
@@ -89,7 +91,9 @@ class App extends React.Component {
 						parts: data.parts,
 						items: data.questions,
 						activeItem: data.questions.length > 0 ? data.questions[0] : {},
-						activeNumber: data.questions.length > 0 ? data.questions[0].nomor : null
+						activeNumber: data.questions.length > 0 ? data.questions[0].nomor : null,
+						needAuth: data.questions.length > 0 && data.questions[0].is_auth === 1 ? true : false,
+						isAuth: data.questions.length > 0 && data.questions[0].is_auth === 1 ? false : true
 					});
 				}
 			);
@@ -129,13 +133,23 @@ class App extends React.Component {
 		}
 	}
 
-	handleModalCallback = (data) => {
+	handleModalAuthCallback = (data) => {
+		const {isAuth} = this.state;
+
+		if(isAuth === false) {
+			this.setState({
+				isAuth: data.isAuth
+			});
+		}
+	}
+
+	handleModalTutorialCallback = (data) => {
 		const {timeIsRunning} = this.state;
 
 		if(timeIsRunning === false) {
 			this.setState({
 				timeIsRunning: data.timeIsRunning
-			})
+			});
 		}
 	}
 
@@ -200,15 +214,21 @@ class App extends React.Component {
 	}
 
 	render = () => {
-		const {items, activeItem, activeNumber, answers, doubts, timeIsRunning} = this.state;
+		const {test, items, activeItem, activeNumber, answers, doubts, timeIsRunning, needAuth, isAuth} = this.state;
 
 		return (
 			<React.Fragment>
-				<ModalAuth/>
+				<ModalAuth
+					parentCallback={this.handleModalAuthCallback}
+					test={test}
+					part={activeItem.part}
+					needAuth={needAuth}
+				/>
 				<ModalTutorial
-					parentCallback={this.handleModalCallback}
+					parentCallback={this.handleModalTutorialCallback}
 					part={activeItem.part}
 					item={activeItem}
+					isAuth={isAuth}
 				/>
 				<div class="col-md-3 mb-3 mb-md-0" id="nav-button">
 					<ButtonNav
@@ -237,31 +257,83 @@ class App extends React.Component {
 class ModalAuth extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			status: null,
+			message: null
+		}
 	}
 
-	componentDidMount = () => {
-		// Get elements
-		let myModal = document.getElementById("modalAuth");
-		let myInput = document.getElementById("inputToken");
+	componentDidUpdate = (props) => {
+		// Compare part props and check auth neccessary
+		if(this.props.part !== props.part && this.props.needAuth) {
+			// Update state
+			this.setState({
+				status: null,
+				message: null
+			})
 
-		// Show modal
-		let modal = new bootstrap.Modal(myModal);
-		modal.show();
+			// Get elements
+			this.myModal = document.getElementById("modalAuth");
 
-		// Add event when modal shows
-		myModal.addEventListener('shown.bs.modal', () => {
-			document.body.classList.add("modal-auth");
-			myInput.focus();
-		});
+			// Show modal
+			this.modal = new bootstrap.Modal(this.myModal);
+			this.modal.show();
+
+			// Add event when modal is shown
+			this.myModal.addEventListener('shown.bs.modal', () => {
+				document.body.classList.add("modal-auth");
+			});
+		}
 	}
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		window.removeEventListener("beforeunload", j);
-		let token = document.getElementById("inputToken").value;
+
+		// Handle authenticate
+		this.handleAuth({
+			test: this.props.test,
+			part: this.props.part,
+			token: document.getElementById("inputToken").value
+		});
+	}
+
+	handleAuth = (params) => {
+		fetch('/api/question/auth', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(params)
+			})
+			.then(response => response.json())
+			.then(data => {
+					this.setState(data);
+
+					// If auth is success, hide modal with delay
+					if(data.status === true) {
+						window.setTimeout(() => {
+							this.modal.hide();
+						}, 1000);
+
+						// Add event when modal is hidden
+						this.myModal.addEventListener('hidden.bs.modal', () => {
+							document.body.classList.remove("modal-auth");
+							document.getElementById("inputToken").value = null;
+						});
+
+						// Parent callback
+						this.props.parentCallback({
+							isAuth: true
+						});
+					}
+				}
+			);
 	}
 
 	render = () => {
+		const {status, message} = this.state;
+
 		return (
 			<div class="modal fade" id="modalAuth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered">
@@ -272,14 +344,65 @@ class ModalAuth extends React.Component {
 							</div>
 							<div class="modal-body">
 								<div class="m-0">
-									<label class="form-label">Masukkan Kode:</label>
-									<input type="text" name="token" class="form-control" id="inputToken" required/>
+									<label class="form-label">Masukkan token yang diberikan petugas untuk bisa mengakses tes:</label>
+									<input type="text" id="inputToken" class={`form-control ${status !== null ? status === true ? 'border-success' : 'border-danger' : ''}`} placeholder="Token" required/>
+									<div class={`small mt-1 ${status === true ? 'text-success' : 'text-danger'}`}>{message}</div>
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="submit" class="btn btn-primary">Submit</button>
+								<button type="submit" class="btn btn-info"><i class="fa fa-save me-1"></i>Submit</button>
 							</div>
 						</form>
+					</div>
+				</div>
+			</div>
+		);
+	}
+}
+
+class ModalTutorial extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidUpdate = (props) => {
+		// Compare props when first load
+		if(this.props.part !== props.part || this.props.isAuth !== props.isAuth) {
+			// Show modal if not showed
+			this.modal = new bootstrap.Modal(document.getElementById("tutorialModal"));
+			if(!document.body.classList.contains("modal-open")) this.modal.show();
+
+			// Show modal if authenticated
+			if(document.body.classList.contains("modal-auth")) {
+				window.setTimeout(() => this.modal.show(), 1500);
+			}
+		}
+	}
+
+	handleHide = () => {
+		this.props.parentCallback({
+			timeIsRunning: true
+		})
+	}
+
+	render = () => {
+		// HTML entity decode
+		const HTMLEntityDecode = (escapedHTML) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
+		
+		return (
+			<div class="modal fade" id="tutorialModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Petunjuk Tes</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={this.handleHide}></button>
+						</div>
+						<div class="modal-body">
+							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={this.handleHide}><i class="fa fa-thumbs-o-up me-1"></i>Mengerti</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -582,6 +705,8 @@ class Card extends React.Component {
 					<ButtonSubmit
 						parentCallback={this.handleButtonSubmitCallback}
 						part={this.props.nextPart !== undefined ? this.props.nextPart.part : 0}
+						answers={answers}
+						doubts={doubts}
 					/>
 				</div>
 			</div>
@@ -633,15 +758,14 @@ class Timer extends React.Component {
 			// Move to next part
 			if(this.props.nextPart !== 0) {
 				alert("Akan berpindah ke bagian soal selanjutnya secara otomatis...");
-				window.removeEventListener("beforeunload", j);
 				this.props.parentCallback({
 					part: this.props.nextPart
 				});
 			}
 			else {
-				alert("Tes akan dikumpulkan secara otomatis...");
-				window.removeEventListener("beforeunload", j);
-				window.location.href = '/dashboard';
+				// alert("Tes akan dikumpulkan secara otomatis...");
+				// window.removeEventListener("beforeunload", j);
+				// window.location.href = '/dashboard';
 			}
 		}
 	}
@@ -759,6 +883,7 @@ class ButtonSubmit extends React.Component {
 	}
 
 	handleClick = () => {
+		// If it is moving to the next part
 		if(this.props.part !== 0) {
 			let ask = confirm("Anda yakin ingin melanjutkan ke tes tahap berikutnya?");
 			if(ask) {
@@ -767,13 +892,36 @@ class ButtonSubmit extends React.Component {
 				});
 			}
 		}
+		// If it is submitting
 		else {
 			let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
 			if(ask) {
-				window.removeEventListener("beforeunload", j);
-				window.location.href = '/dashboard';
+				// window.removeEventListener("beforeunload", j);
+				// window.location.href = '/dashboard';
+				this.handleSubmit();
 			}
 		}
+	}
+
+	handleSubmit = () => {
+		const params = {
+			answers: this.props.answers,
+			doubts: this.props.doubts,
+		};
+
+		fetch('/api/question/submit', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(params)
+			})
+			.then(response => response.json())
+			.then(data => {
+					console.log(data);
+				}
+			);
 	}
 
 	render = () => {
@@ -909,51 +1057,6 @@ class ImageChoice extends React.Component {
 				<label class={`form-check-label border ${this.props.isChecked ? 'border-primary' : ''}`} for={`choice-${this.props.option}`}>
 					<img width="100" src={`/assets/images/tes/ist/${this.props.description}`}/>
 				</label>
-			</div>
-		);
-	}
-}
-
-class ModalTutorial extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-
-	componentDidUpdate = (props) => {
-		// Compare props when first load
-		if(this.props.part !== props.part) {
-			// Show modal if not showed
-			let modal = new bootstrap.Modal(document.getElementById("tutorialModal"));
-			if(!document.body.classList.contains("modal-open")) modal.show();
-		}
-	}
-
-	handleHide = () => {
-		this.props.parentCallback({
-			timeIsRunning: true
-		})
-	}
-
-	render = () => {
-		// HTML entity decode
-		const HTMLEntityDecode = (escapedHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
-		
-		return (
-			<div class="modal fade" id="tutorialModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Petunjuk Tes</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={this.handleHide}></button>
-						</div>
-						<div class="modal-body">
-							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={this.handleHide}><i class="fa fa-thumbs-o-up me-1"></i>Mengerti</button>
-						</div>
-					</div>
-				</div>
 			</div>
 		);
 	}
