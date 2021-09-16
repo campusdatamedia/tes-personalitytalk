@@ -65,7 +65,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 1,
+			part: 8,
 			parts: [],
 			items: [],
 			activeItem: '',
@@ -704,6 +704,7 @@ class Card extends React.Component {
 					</div>
 					<ButtonSubmit
 						parentCallback={this.handleButtonSubmitCallback}
+						test={item.path}
 						part={this.props.nextPart !== undefined ? this.props.nextPart.part : 0}
 						answers={answers}
 						doubts={doubts}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\PaketSoal;
@@ -79,7 +80,8 @@ class QuestionController extends Controller
     {
         return response()->json([
             'status' => true,
-            'data' => $request->all(),
+            // 'data' => $request->all(),
+            'data' => $request->user('api'),
             'message' => 'Submit berhasil!'
         ]);
     }
