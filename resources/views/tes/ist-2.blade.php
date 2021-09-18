@@ -15,6 +15,8 @@
     </svg>
 </div>
 
+<input type="hidden" id="user_id" value="{{ Auth::user()->id_user }}">
+
 <div class="container main-container">
     @if($seleksi != null)
 	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
@@ -65,7 +67,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 8,
+			part: 1,
 			parts: [],
 			items: [],
 			activeItem: '',
@@ -897,9 +899,9 @@ class ButtonSubmit extends React.Component {
 		else {
 			let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
 			if(ask) {
-				// window.removeEventListener("beforeunload", j);
-				// window.location.href = '/dashboard';
 				this.handleSubmit();
+				window.removeEventListener("beforeunload", j);
+				window.location.href = '/dashboard';
 			}
 		}
 	}
@@ -908,6 +910,7 @@ class ButtonSubmit extends React.Component {
 		const params = {
 			answers: this.props.answers,
 			doubts: this.props.doubts,
+			user_id: document.getElementById("user_id").value
 		};
 
 		fetch('/api/question/submit', {
