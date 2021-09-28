@@ -30,9 +30,20 @@ class QuestionController extends Controller
         $parts = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('status','=',1)->orderBy('part','asc')->get();
 
         // Get the questions
-        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('part','=',$part)->where('status','=',1)->orderBy('nomor','asc')->get();
+        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('part','=',$part)->where('status','=',1)->where('is_example','=',0)->orderBy('nomor','asc')->get();
         if(count($questions) > 0){
             foreach($questions as $question){
+                $question->makeHidden('access_token'); // Hide column
+                $soal = json_decode($question->soal, true);
+                unset($soal[0]['jawaban']);
+                $question->soal = $soal;
+            }
+        }
+
+        // Get the examples
+        $examples = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('part','=',$part)->where('status','=',1)->where('is_example','=',1)->orderBy('nomor','asc')->get();
+        if(count($examples) > 0){
+            foreach($examples as $question){
                 $question->makeHidden('access_token'); // Hide column
                 $soal = json_decode($question->soal, true);
                 unset($soal[0]['jawaban']);
@@ -44,6 +55,7 @@ class QuestionController extends Controller
         return response()->json([
             'parts' => $parts,
             'questions' => $questions,
+            'examples' => $examples,
         ], 200);
     }
 
@@ -91,7 +103,7 @@ class QuestionController extends Controller
         if(count(array_filter($request->answers)) > 0) {
             foreach(array_filter($request->answers) as $number=>$answer) {
                 // Get the question by number
-                $question = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=','ist')->where('status','=',1)->where('nomor','=',$number)->first();
+                $question = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=','ist')->where('status','=',1)->where('is_example','=',0)->where('nomor','=',$number)->first();
 
                 if($question) {
                     // Convert question detail from JSON to array
@@ -190,6 +202,78 @@ class QuestionController extends Controller
             'score' => $score,
             'result' => $result,
             'message' => 'Submit berhasil!'
+        ]);
+    }
+
+    /**
+     * Submit the example
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function submitExample(Request $request)
+    {
+        // Check answers
+        $score = [];
+        $checkAnswers = [];
+        $keyAnswers = [];
+
+        if(count(array_filter($request->answers)) > 0) {
+            foreach(array_filter($request->answers) as $number=>$answer) {
+                // Get the question by number
+                $question = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=','ist')->where('paket_soal.part','=',$request->part)->where('status','=',1)->where('is_example','=',1)->where('nomor','=',$number)->first();
+
+                if($question) {
+                    // Convert question detail from JSON to array
+                    $question_detail = json_decode($question->soal, true);
+                    $question_detail = is_array($question_detail) ? $question_detail[0] : [];
+
+                    // Check answer if the type is choice or image
+                    if($question->tipe_soal == 'choice' || $question->tipe_soal == 'image') {
+                        if($answer == $question_detail['jawaban']) $checkAnswers[$number] = true;
+                        else $checkAnswers[$number] = false;
+                        $keyAnswers[$number] = $question_detail['jawaban'];
+                    }
+                    // Check answer if the type is essay
+                    elseif($question->tipe_soal == 'essay'){
+                        // Explode possibly answers
+                        $essay_answer = $question_detail['jawaban'];
+                        foreach($essay_answer as $essay_number=>$essay_string) {
+                            $essay_answer[$essay_number] = explode(",", $essay_string);
+                        }
+
+                        if(in_array(strtolower(trim($answer)), $essay_answer[2]))
+                            $checkAnswers[$number] = true;
+                        elseif(in_array(strtolower(trim($answer)), $essay_answer[1]))
+                            $checkAnswers[$number] = true;
+                        else
+                            $checkAnswers[$number] = false;
+                    }
+                    // Check answer if the type is number
+                    elseif($question->tipe_soal == 'number') {
+                        // Explode possibly answers
+                        $number_answer = str_split($question_detail['jawaban']);
+
+                        // Check if the answer is array
+                        if(is_array($answer) && is_array($number_answer)) {
+                            // Sort answers before checking
+                            sort($answer);
+                            sort($number_answer);
+
+                            if($answer === $number_answer) $checkAnswers[$number] = true;
+                            else $checkAnswers[$number] = false;
+                            $keyAnswers[$number] = implode(', ', $number_answer);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Response
+        return response()->json([
+            'answers' => $request->answers,
+            'checkAnswers' => $checkAnswers,
+            'keyAnswers' => $keyAnswers,
         ]);
     }
 }

@@ -67,9 +67,10 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 1,
+			part: 5,
 			parts: [],
 			items: [],
+			examples: [],
 			activeItem: '',
 			activeNumber: 0,
 			answers: [],
@@ -92,6 +93,7 @@ class App extends React.Component {
 					this.setState({
 						parts: data.parts,
 						items: data.questions,
+						examples: data.examples,
 						activeItem: data.questions.length > 0 ? data.questions[0] : {},
 						activeNumber: data.questions.length > 0 ? data.questions[0].nomor : null,
 						needAuth: data.questions.length > 0 && data.questions[0].is_auth === 1 ? true : false,
@@ -216,7 +218,7 @@ class App extends React.Component {
 	}
 
 	render = () => {
-		const {test, items, activeItem, activeNumber, answers, doubts, timeIsRunning, needAuth, isAuth} = this.state;
+		const {test, items, activeItem, activeNumber, answers, doubts, examples, timeIsRunning, needAuth, isAuth} = this.state;
 
 		return (
 			<React.Fragment>
@@ -230,6 +232,7 @@ class App extends React.Component {
 					parentCallback={this.handleModalTutorialCallback}
 					part={activeItem.part}
 					item={activeItem}
+					examples={examples}
 					isAuth={isAuth}
 				/>
 				<div class="col-md-3 mb-3 mb-md-0" id="nav-button">
@@ -352,7 +355,7 @@ class ModalAuth extends React.Component {
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="submit" class="btn btn-info"><i class="fa fa-save me-1"></i>Submit</button>
+								<button type="submit" class="btn btn-sm btn-info"><i class="fa fa-save me-1"></i>Submit</button>
 							</div>
 						</form>
 					</div>
@@ -365,6 +368,12 @@ class ModalAuth extends React.Component {
 class ModalTutorial extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			isTrying: 0,
+			answers: [],
+			checkAnswers: [],
+			keyAnswers: []
+		}
 	}
 
 	componentDidUpdate = (props) => {
@@ -382,18 +391,198 @@ class ModalTutorial extends React.Component {
 	}
 
 	handleHide = () => {
+		this.setState({
+			isTrying: 0,
+			answers: [],
+			checkAnswers: [],
+			keyAnswers: []
+		});
+
 		this.props.parentCallback({
 			timeIsRunning: true
-		})
+		});
+	}
+
+	handleTry = () => {
+		this.setState({
+			isTrying: 1
+		});
+	}
+
+	handleChoice = (number, answer) => {
+		let {answers} = this.state;
+		answers[number] = answer;
+		this.setState({
+			answers: answers,
+			checkAnswers: [],
+			keyAnswers: []
+		});
+	}
+
+	handleCheckbox = (event) => {
+		// console.log(event);
+		let {answers} = this.state;
+		let number = event.target.dataset.number;
+		let answerTemp = answers[number];
+		let isChecked = event.target.checked;
+		let value = event.target.value;
+
+		// Define answer to array
+		if(answerTemp === undefined) {
+			answerTemp = [];
+		}
+
+		// If checkbox is checked
+		if(isChecked) {
+			// If value is not in answer array
+			if(answerTemp.indexOf(value) < 0) {
+				answerTemp.push(value);
+				answers[number] = answerTemp;
+			}
+		}
+		// If checkbox is not checked
+		else {
+			// If value is in answer array
+			if(answerTemp.indexOf(value) >= 0) {
+				answerTemp.splice(answerTemp.indexOf(value), 1);
+				answers[number] = answerTemp;
+			}
+		}
+
+		this.setState({
+			answers: answers,
+			checkAnswers: [],
+			keyAnswers: []
+		});
+	}
+
+	handleCheck = () => {		
+		let {answers} = this.state;
+
+		const params = {
+			part: this.props.item.part,
+			answers: answers
+		};
+
+		fetch('/api/question/example/submit', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(params)
+			})
+			.then(response => response.json())
+			.then(data => {
+					this.setState({
+						checkAnswers: data.checkAnswers,
+						keyAnswers: data.keyAnswers,
+					});
+				}
+			);
+	}
+
+	renderExamples = () => {
+		const {isTrying, answers, checkAnswers, keyAnswers} = this.state;
+		const item = this.props.item;
+
+		if(isTrying === 1) {
+			if(item.tipe_soal === 'choice') {
+				return (
+					<React.Fragment>
+						<hr/>
+						{
+							this.props.examples.map((example, index) => {
+								const choices = Object.entries(example.soal[0].pilihan);
+								return (
+									<div class="mb-3">
+										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
+										<p class="mb-1">{example.soal !== undefined ? example.soal[0].soal : ''}</p>
+										{
+											choices.map((choice) => {
+												return (
+													<div class="form-check">
+														<input
+															class="form-check-input"
+															type="radio"
+															name={`choicex[${example.nomor}]`}
+															id={`choice-${example.nomor}-${choice[0]}`}
+															value={choice[0]}
+															onChange={() => this.handleChoice(example.nomor, choice[0])}
+														/>
+														<label class="form-check-label" for={`choice-${example.nomor}-${choice[0]}`}>{choice[1]}</label>
+													</div>
+												)
+											})
+										}
+										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+											<br/>
+											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+										</div>
+									</div>
+								)
+							})
+						}
+					</React.Fragment>
+				);
+			}
+			else if(item.tipe_soal === 'number') {
+				return (
+					<React.Fragment>
+						<hr/>
+						{
+							this.props.examples.map((example, index) => {											
+								let elements = [];
+								for(var i = 0; i < 10; i++) {
+									elements.push(
+										<div class="form-check form-check-inline">
+											<input
+												class="form-check-input"
+												type="checkbox"
+												name={`checkboxx[${example.nomor}]`}
+												value={i}
+												id={`checkbox-${example.nomor}-${i}`}
+												data-number={example.nomor}
+												onChange={this.handleCheckbox}
+											/>
+											<label class="form-check-label" for={`checkbox-${example.nomor}-${i}`}>{i}</label>
+										</div>
+									);
+								}
+
+								return (
+									<div class="mb-3">
+										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
+										<p class="mb-1">{example.soal !== undefined ? example.soal[0].soal : ''}</p>
+										{elements}
+										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+											<br/>
+											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+										</div>
+									</div>
+								)
+							})
+						}
+					</React.Fragment>
+				);
+			}
+		}
+		else return null;
 	}
 
 	render = () => {
 		// HTML entity decode
 		const HTMLEntityDecode = (escapedHTML) => React.createElement("div", { dangerouslySetInnerHTML: { __html: escapedHTML } });
 		
+		const {isTrying} = this.state;
+		
 		return (
 			<div class="modal fade" id="tutorialModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-dialog modal-lg modal-dialog-centered">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" id="exampleModalLabel">Petunjuk Tes</h5>
@@ -401,9 +590,18 @@ class ModalTutorial extends React.Component {
 						</div>
 						<div class="modal-body">
 							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
+							<div class="examples">{this.renderExamples()}</div>
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={this.handleHide}><i class="fa fa-thumbs-o-up me-1"></i>Mengerti</button>
+						<div class={`modal-footer ${this.props.examples.length === 0 ? '' : 'justify-content-between'}`}>
+							<button type="button" class={`btn btn-sm btn-warning ${this.props.examples.length === 0 || isTrying === 1 ? 'd-none' : ''}`} onClick={this.handleTry}>
+								<i class="fa fa-pencil me-1"></i>Latihan Soal
+							</button>
+							<button type="button" class={`btn btn-sm btn-info ${isTrying === 1 ? '' : 'd-none'}`} onClick={this.handleCheck}>
+								<i class="fa fa-save me-1"></i>Cek Jawaban
+							</button>
+							<button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal" onClick={this.handleHide}>
+								<i class="fa fa-thumbs-o-up me-1"></i>Mengerti
+							</button>
 						</div>
 					</div>
 				</div>
