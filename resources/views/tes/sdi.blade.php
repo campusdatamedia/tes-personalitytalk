@@ -40,7 +40,7 @@
                 @php $nomor++; @endphp
                 <div class="card soal rounded-1 mb-3">
                     <div class="card-header bg-transparent">
-                        <span class="font-weight-bold font-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
+                        <span class="fw-bold fst-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -83,7 +83,7 @@
                 @php $nomor++; @endphp
                 <div class="card soal rounded-1 mb-3">
                     <div class="card-header bg-transparent">
-                        <span class="font-weight-bold font-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
+                        <span class="fw-bold fst-italic num"><i class="fa fa-edit"></i> Soal {{$nomor}}. {{$value['header']}}</span>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -125,16 +125,18 @@
         </div>
     </div>
     <nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
-        <div class="alert fade show text-center mb-0 ml-md-3 col-md" role="alert" id="ket" style="display:none;">
+        <div class="container">
+            <div class="alert fade show text-center mb-0 ms-md-3 col-md" role="alert" id="ket" style="display:none;">
+            </div>
+            <ul class="navbar nav ms-auto me-auto me-md-0">
+                <li class="nav-item">
+                    <span id="answered">0</span>/<span id="total"></span> Soal Terjawab
+                </li>
+                <li class="nav-item ms-3">
+                    <button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
+                </li>
+            </ul>
         </div>
-		<ul class="navbar nav ml-auto mr-auto mr-md-0">
-			<li class="nav-item">
-				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
-			</li>
-			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
-			</li>
-		</ul>
 	</nav>
     @endif
 </div>
