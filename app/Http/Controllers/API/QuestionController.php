@@ -10,6 +10,8 @@ use App\Karyawan;
 use App\PaketSoal;
 use App\Pelamar;
 use App\Soal;
+use App\Tes;
+use App\TesSettings;
 use App\User;
 
 class QuestionController extends Controller
@@ -23,25 +25,37 @@ class QuestionController extends Controller
     public function index(Request $request)
     {
         // Get query requests
-        $test = $request->query('test');
-        $part = $request->query('part');
+        $test_ = $request->query('test');
+        $part_ = $request->query('part');
+        $user_ = $request->query('user');
+
+        // Get the HRD by employee
+        $employee = Karyawan::where('id_user','=',$user_)->first();
+
+        // Get the test settings
+        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',$employee->id_hrd)->where('part','=',$part_)->first();
 
         // Get the parts
-        $parts = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('status','=',1)->orderBy('part','asc')->get();
+        $parts = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test_)->where('status','=',1)->orderBy('part','asc')->get();
 
         // Get the questions
-        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('part','=',$part)->where('status','=',1)->where('is_example','=',0)->orderBy('nomor','asc')->get();
+        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test_)->where('part','=',$part_)->where('status','=',1)->where('is_example','=',0)->orderBy('nomor','asc')->get();
         if(count($questions) > 0){
-            foreach($questions as $question){
+            foreach($questions as $key=>$question){
                 $question->makeHidden('access_token'); // Hide column
                 $soal = json_decode($question->soal, true);
                 unset($soal[0]['jawaban']);
                 $question->soal = $soal;
+
+                $questions[$key]->waktu_pengerjaan = $test_settings ? $test_settings->waktu_pengerjaan : 0;
+                $questions[$key]->waktu_hafalan = $test_settings ? $test_settings->waktu_hafalan : 0;
+                $questions[$key]->is_auth = $test_settings ? $test_settings->is_auth : 0;
+                $questions[$key]->access_token = $test_settings ? $test_settings->access_token : '';
             }
         }
 
         // Get the examples
-        $examples = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test)->where('part','=',$part)->where('status','=',1)->where('is_example','=',1)->orderBy('nomor','asc')->get();
+        $examples = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test_)->where('part','=',$part_)->where('status','=',1)->where('is_example','=',1)->orderBy('nomor','asc')->get();
         if(count($examples) > 0){
             foreach($examples as $question){
                 $question->makeHidden('access_token'); // Hide column
@@ -56,6 +70,7 @@ class QuestionController extends Controller
             'parts' => $parts,
             'questions' => $questions,
             'examples' => $examples,
+            'test_settings' => $test_settings
         ], 200);
     }
 
@@ -67,11 +82,17 @@ class QuestionController extends Controller
      */
     public function auth(Request $request)
     {
+        // Get the HRD by employee
+        $employee = Karyawan::where('id_user','=',$request->user)->first();
+
+        // Get the test settings
+        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',$employee->id_hrd)->where('part','=',$request->part)->first();
+
         // Get the packet
-        $packet = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$request->test)->where('part','=',$request->part)->where('status','=',1)->first();
+        // $packet = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$request->test)->where('part','=',$request->part)->where('status','=',1)->first();
 
         // Success
-        if($request->token === $packet->access_token) {
+        if($request->token === $test_settings->access_token) {
             return response()->json([
                 'status' => true,
                 'message' => 'Autentikasi berhasil!'
