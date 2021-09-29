@@ -9,7 +9,7 @@
         </div>
         <main class="container text-center text-white">
             <h3 class="text-capitalize"><span id="demo"></span></h3>
-            <p>Selamat datang <span class="font-weight-bold">{{Auth::user()->nama_user}}</span> di Tes Online PersonalityTalk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada di bawah ini.</p>
+            <p>Selamat datang <span class="fw-bold">{{Auth::user()->nama_user}}</span> di Tes Online PersonalityTalk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada di bawah ini.</p>
         </main>
     </div>
 </section>
@@ -43,9 +43,7 @@
             <div class="col-12 mb-2">
                 <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                     {{ Session::get('message') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -54,7 +52,7 @@
             @if(count($tes)>0)
                 @foreach($tes as $key=>$data)
                 <div class="col">
-                    <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                    <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
                         <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
                         <p class="m-0">{{ $data->nama_tes }}</p>
                     </a>
@@ -92,7 +90,7 @@
                     @if(count($tes)>0)
                         @foreach($tes as $key=>$data)
                         <div class="col">
-                            <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                            <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
                                 <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
                                 <p class="m-0">{{ $data->nama_tes }}</p>
                             </a>
@@ -138,7 +136,7 @@
             @endif
             <div class="row justify-content-center">
                 <div class="col">
-                    <a href="/tes/disc-40-soal" class="btn btn-md btn-block btn-outline-dark border-0 font-weight-bold py-3 my-3">
+                    <a href="/tes/disc-40-soal" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
                         <img width="100" src="{{asset('assets/images/icon/lightning-bolts.svg')}}">
                         <p class="m-0">DISC 40 Soal</p>
                     </a>

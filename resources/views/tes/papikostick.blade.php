@@ -36,7 +36,7 @@
                             <div class="w-100 mb-3">
                                 <div class="card soal rounded-1">
                                 	<div class="card-header bg-transparent">
-			    						<span class="num font-weight-bold"><i class="fa fa-edit"></i> Soal {{ $key+1 }}</span>
+			    						<span class="num fw-bold"><i class="fa fa-edit"></i> Soal {{ $key+1 }}</span>
                                 	</div>
                                     <div class="card-body">
                                         <table class="table table-borderless">
@@ -69,29 +69,29 @@
     	</div>
 	</div>
 	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
-		<ul class="navbar nav ml-auto">
-			<li class="nav-item">
-				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
-			</li>
-			<li class="nav-item ml-3">
-				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
-			</li>
-			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
-			</li>
-		</ul>
+		<div class="container">
+			<ul class="navbar nav ms-auto">
+				<li class="nav-item">
+					<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
+				</li>
+				<li class="nav-item ms-3">
+					<a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
+				</li>
+				<li class="nav-item ms-3">
+					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
+				</li>
+			</ul>
+		</div>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
-	        			<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+	        			<span class="bg-warning rounded-1 text-center px-3 py-2 me-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
 	        			Tutorial Tes
 	        		</h5>
-	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          			<span aria-hidden="true">&times;</span>
-	        		</button>
+	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      		</div>
 		      	<div class="modal-body text-justify">
 		      	    <p>Anda diberikan 90 pasangan pernyataan. Pilihlah <b><i>satu pernyataan</i></b> dari pasangan pernyataan itu yang Anda rasakan <b><i>paling mendekati gambaran</i></b> diri Anda, atau yang <b><i>paling menunjukan</i></b> perasaan Anda.<br>
@@ -119,7 +119,7 @@
                     <p>Bekerjalah dengan cepat, tetapi jangan sampai ada nomor pernyataan yang terlewatkan.</p>
                 </div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary text-uppercase " data-bs-dismiss="modal">Mengerti</button>
 	      		</div>
 	    	</div>
 	  	</div>
