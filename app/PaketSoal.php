@@ -36,6 +36,15 @@ class PaketSoal extends Model
 	];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'access_token',
+    ];
+
+    /**
      * Indicates if the model should be timestamped.
      *
      * @var bool

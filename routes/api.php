@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/question', 'API\QuestionController@index');
+Route::post('/question/auth', 'API\QuestionController@auth');
+Route::post('/question/submit', 'API\QuestionController@submit');
+Route::post('/question/example/submit', 'API\QuestionController@submitExample');

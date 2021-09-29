@@ -83,9 +83,8 @@ class TesController extends Controller
         elseif($request->path == 'msdt')
             return \App\Http\Controllers\Test\MSDTController::store($request);
         // Tes IST
-        elseif($request->path == 'ist'){
+        elseif($request->path == 'ist')
             return \App\Http\Controllers\Test\ISTController::store($request);
-        }
     }
 
     /**
@@ -97,8 +96,33 @@ class TesController extends Controller
     public function delete(Request $request)
     {
         // Tes IST
-        if($request->path == 'ist'){
+        if($request->path == 'ist')
             return \App\Http\Controllers\Test\ISTController::delete($request);
+    }
+
+
+
+
+
+
+    public function try(Request $request)
+    {
+        // Variables
+        $path = 'ist';
+        $part = null;
+        $seleksi = false;
+
+        // Get tes
+        $tes = Tes::where('path','=',$path)->firstOrFail(); // Get tes
+        $check = Auth::user()->role == 6 ? Hasil::where('id_user','=',Auth::user()->id_user)->first() : null; // Check
+        
+        // Jika role pelamar
+        if(Auth::user()->role == 4){
+        	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first(); // Get akun
+            $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get seleksi
         }
+
+        // Return
+        return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $seleksi, $check);
     }
 }
