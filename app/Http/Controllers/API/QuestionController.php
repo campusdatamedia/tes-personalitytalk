@@ -152,9 +152,13 @@ class QuestionController extends Controller
 
         // Process the result
         $result = []; // Array result
-        $array_IST = ['SE','WA','AN','GE','ME','RA','ZR','FA','WU']; // Array IST
+        $array_IST = ['SE','WA','AN','GE','RA','ZR','FA','WU','ME']; // Array IST
         $array_SW = \App\Http\Controllers\Test\ISTController::data_SW($user_age); // Array SW
         $array_IQ = \App\Http\Controllers\Test\ISTController::data_IQ(); // Array IQ
+        foreach($array_IST as $letter) {
+            $result['RW'][$letter] = 0;
+            $result['SW'][$letter] = 0;
+        }
         foreach($score as $key=>$score_by_part) {
             // If GE
             if($key == 4){
@@ -171,6 +175,8 @@ class QuestionController extends Controller
         $result['TSW'] = \App\Http\Controllers\Test\ISTController::data_TSW($user_age, $result['TRW']);
         $result['IQ'] = array_key_exists($result['TSW'], $array_IQ) ? $array_IQ[$result['TSW']] : 0;
         $result['age'] = $user_age;
+        $result['answers'] = $request->answers;
+        $result['doubts'] = $request->doubts;
         
         // Get data HRD
         if($user->role == 2){

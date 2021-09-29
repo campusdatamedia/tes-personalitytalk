@@ -42,7 +42,7 @@ Route::group(['middleware' => ['user']], function() {
 	Route::get('/tes/{path}', 'TesController@tes');
 	Route::post('/tes/{path}/store', 'TesController@store');
 	Route::post('/tes/{path}/delete', 'TesController@delete');
-	Route::get('/tes/ist/try', 'TesController@try');
+	Route::get('/tes/ist/beta', 'TesController@try');
 });
 
 // Admin Capabilities...

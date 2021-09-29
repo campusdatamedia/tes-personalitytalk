@@ -67,7 +67,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			test: 'ist',
-			part: 9,
+			part: 1,
 			parts: [],
 			items: [],
 			examples: [],
