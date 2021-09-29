@@ -111,7 +111,7 @@ class QuestionController extends Controller
                     $question_detail = is_array($question_detail) ? $question_detail[0] : [];
 
                     // Check answer if the type is choice or image
-                    if($question->tipe_soal == 'choice' || $question->tipe_soal == 'image') {
+                    if($question->tipe_soal == 'choice' || $question->tipe_soal == 'image' || $question->tipe_soal == 'choice-memo') {
                         // If the answer is true, so the score increments
                         if($answer == $question_detail['jawaban'])
                             $score[$question->part] = array_key_exists($question->part, $score) ? ++$score[$question->part] : 1;
@@ -229,7 +229,7 @@ class QuestionController extends Controller
                     $question_detail = is_array($question_detail) ? $question_detail[0] : [];
 
                     // Check answer if the type is choice or image
-                    if($question->tipe_soal == 'choice' || $question->tipe_soal == 'image') {
+                    if($question->tipe_soal == 'choice' || $question->tipe_soal == 'image' || $question->tipe_soal == 'choice-memo') {
                         if($answer == $question_detail['jawaban']) $checkAnswers[$number] = true;
                         else $checkAnswers[$number] = false;
                         $keyAnswers[$number] = $question_detail['jawaban'];
@@ -248,6 +248,9 @@ class QuestionController extends Controller
                             $checkAnswers[$number] = true;
                         else
                             $checkAnswers[$number] = false;
+
+                        $essay_answers = array_filter(array_merge($essay_answer[1], $essay_answer[2]));
+                        $keyAnswers[$number] = implode(' / ', $essay_answers);
                     }
                     // Check answer if the type is number
                     elseif($question->tipe_soal == 'number') {
