@@ -66,6 +66,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			user: document.getElementById('user_id').value,
 			test: 'ist',
 			part: 1,
 			parts: [],
@@ -82,12 +83,12 @@ class App extends React.Component {
 	}
 
 	componentDidMount = () => {
-		this.getRequest(this.state.test, this.state.part);
+		this.getRequest(this.state.test, this.state.part, this.state.user);
 	}
 
 	getRequest = (test, part) => {
 		// Fetch data
-		fetch('/api/question?test=' + test + '&part=' + part)
+		fetch('/api/question?test=' + test + '&part=' + part + '&user=' + this.state.user)
 			.then(response => response.json())
 			.then(data => {
 					this.setState({
@@ -298,6 +299,7 @@ class ModalAuth extends React.Component {
 		this.handleAuth({
 			test: this.props.test,
 			part: this.props.part,
+			user: document.getElementById("user_id").value,
 			token: document.getElementById("inputToken").value
 		});
 	}
@@ -1231,6 +1233,7 @@ class ButtonSubmit extends React.Component {
 			let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
 			if(ask) {
 				this.handleSubmit();
+				alert("Tes Anda sudah dikumpulkan.");
 				window.removeEventListener("beforeunload", j);
 				window.location.href = '/dashboard';
 			}
