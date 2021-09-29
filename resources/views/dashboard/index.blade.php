@@ -48,7 +48,7 @@
             </div>
         </div>
         @endif
-        <div class="row justify-content-center">
+        <div class="row text-center">
             @if(count($tes)>0)
                 @foreach($tes as $key=>$data)
                 <div class="col">

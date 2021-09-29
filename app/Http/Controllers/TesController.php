@@ -54,7 +54,8 @@ class TesController extends Controller
             return \App\Http\Controllers\Test\MSDTController::index($request, $path, $tes, $seleksi, $check);
         // Tes IST
         elseif($path == 'ist')
-            return \App\Http\Controllers\Test\ISTController::index($request, $path, $tes, $seleksi, $check);
+            // return \App\Http\Controllers\Test\ISTController::index($request, $path, $tes, $seleksi, $check);
+            return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $seleksi, $check);
         else
             abort(404);
     }

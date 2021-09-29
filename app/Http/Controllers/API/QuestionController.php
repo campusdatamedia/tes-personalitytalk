@@ -184,12 +184,12 @@ class QuestionController extends Controller
             // If GE
             if($key == 4){
                 $result['RW'][$array_IST[$key-1]] = convert_GE($score_by_part);
-                $result['SW'][$array_IST[$key-1]] = $array_SW[$array_IST[$key-1]][$result['RW'][$array_IST[$key-1]]];
+                $result['SW'][$array_IST[$key-1]] = array_key_exists($array_IST[$key-1], $array_SW) ? $array_SW[$array_IST[$key-1]][$result['RW'][$array_IST[$key-1]]] : 0;
             }
             // If not GE
             else{
                 $result['RW'][$array_IST[$key-1]] = $score_by_part;
-                $result['SW'][$array_IST[$key-1]] = $array_SW[$array_IST[$key-1]][$result['RW'][$array_IST[$key-1]]];
+                $result['SW'][$array_IST[$key-1]] = array_key_exists($array_IST[$key-1], $array_SW) ? $array_SW[$array_IST[$key-1]][$result['RW'][$array_IST[$key-1]]] : 0;
             }
         }
         $result['TRW'] = array_sum($result['RW']);
