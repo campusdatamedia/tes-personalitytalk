@@ -1231,6 +1231,7 @@ class ButtonSubmit extends React.Component {
 			let ask = confirm("Anda yakin ingin mengumpulkan tes ini?");
 			if(ask) {
 				this.handleSubmit();
+				alert("Tes Anda sudah dikumpulkan.");
 				window.removeEventListener("beforeunload", j);
 				window.location.href = '/dashboard';
 			}
