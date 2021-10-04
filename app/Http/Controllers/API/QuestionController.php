@@ -88,9 +88,6 @@ class QuestionController extends Controller
         // Get the test settings
         $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',$employee->id_hrd)->where('part','=',$request->part)->first();
 
-        // Get the packet
-        // $packet = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$request->test)->where('part','=',$request->part)->where('status','=',1)->first();
-
         // Success
         if($request->token === $test_settings->access_token) {
             return response()->json([
@@ -146,10 +143,17 @@ class QuestionController extends Controller
                         }
 
                         // If the answer is true, so the score increments
-                        if(in_array(strtolower(trim($answer)), $essay_answer[2]))
-                            $score[$question->part] = array_key_exists($question->part, $score) ? ++$score[$question->part] : 2;
+                        if(in_array(strtolower(trim($answer)), $essay_answer[2])){
+							if(array_key_exists($question->part, $score))
+								$score[$question->part] += 2;
+							else
+								$score[$question->part] = 2;
+						}
                         elseif(in_array(strtolower(trim($answer)), $essay_answer[1]))
-                            $score[$question->part] = array_key_exists($question->part, $score) ? ++$score[$question->part] : 1;
+							if(array_key_exists($question->part, $score))
+								$score[$question->part]++;
+							else
+								$score[$question->part] = 1;
                     }
                     // Check answer if the type is number
                     elseif($question->tipe_soal == 'number') {
