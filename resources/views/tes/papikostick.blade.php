@@ -43,15 +43,15 @@
                                             <tr>
                                                 <td>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}a" name="jawaban[{{ $key+1 }}]"
-                                                        value="{{ $data['jawabanA'] }}">
+                                                        <input type="radio" class="form-check-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}a" name="jawaban[{{ $key+1 }}]"
+                                                        value="A">
                                                         <label class="custom-control-label" for="customRadio{{ $key+1 }}a">
                                                             <h5>{!! $data['soalA'] !!}</h5>
                                                         </label>
                                                     </div>
                                                     <div class="custom-control custom-radio mt-2">
-                                                        <input type="radio" class="custom-control-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}b" name="jawaban[{{ $key+1 }}]"
-                                                        value="{{ $data['jawabanB'] }}">
+                                                        <input type="radio" class="form-check-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}b" name="jawaban[{{ $key+1 }}]"
+                                                        value="B">
                                                         <label class="custom-control-label" for="customRadio{{ $key+1 }}b">
                                                             <h5>{!! $data['soalB'] !!}</h5>
                                                         </label>

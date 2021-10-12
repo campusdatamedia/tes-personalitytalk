@@ -77,6 +77,8 @@ class DISC24Controller extends Controller
             'cl' => $request->Cl,
             'bl' => $request->Bl
         );
+        $array['answers']['m'] = $request->y;
+        $array['answers']['l'] = $request->n;
 
         // Menyimpan data
         $hasil = new Hasil;

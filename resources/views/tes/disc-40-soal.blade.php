@@ -65,23 +65,23 @@
 	    								<div class="col-8"><span class="fw-bold">Karakteristik</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['A'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['A'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="A"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="A"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['A'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['B'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['B'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="B"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="B"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['B'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['C'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['C'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="C"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="C"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['C'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['D'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['D'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="D"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="D"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['D'] }}</span></div>
 	    							</div>
     							</div>

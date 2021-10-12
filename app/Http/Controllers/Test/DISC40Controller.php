@@ -76,9 +76,10 @@ class DISC40Controller extends Controller
         $disc_score_m = array();
         $disc_score_l = array();
         $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
-        foreach($soal as $key=>$data){
-            array_push($disc_m, $m[$data->nomor]);
-            array_push($disc_l, $l[$data->nomor]);
+        foreach($soal as $data){
+            $json = json_decode($data->soal, true);
+            array_push($disc_m, $json[0]['disc'][$m[$data->nomor]]);
+            array_push($disc_l, $json[0]['disc'][$l[$data->nomor]]);
         }
 
         // Hitung score MOST dan LEAST
@@ -91,6 +92,8 @@ class DISC40Controller extends Controller
         
         // Convert DISC score to JSON
         $array = array('M' => $disc_score_m, 'L' => $disc_score_l);
+        $array['answers']['m'] = $request->m;
+        $array['answers']['l'] = $request->l;
 
         // Menyimpan data
         $hasil = new Hasil;

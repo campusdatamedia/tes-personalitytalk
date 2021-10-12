@@ -64,13 +64,19 @@ class PapikostickController extends Controller
         }
         
         // Declare variables
+        $soal = self::data();
         $jawaban = $request->get('jawaban');
-        $count_jawaban = array_count_values($jawaban);
+        $konversi_jawaban = array();
+        foreach($soal as $key=>$data) {
+            $konversi_jawaban[$key+1] = $data['jawaban'.$jawaban[$key+1]];
+        }        
+        $count_jawaban = array_count_values($konversi_jawaban);
         $huruf = ["N","G","A","L","P","I","T","V","X","S","B","O","R","D","C","Z","E","K","F","W"];
         $array = array();
         foreach($huruf as $h){
             $array[$h] = array_key_exists($h, $count_jawaban) ? $count_jawaban[$h] : 0;
         }
+        $array['answers'] = $jawaban;
 
         // Menyimpan data
         $hasil = new Hasil;

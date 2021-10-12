@@ -58,33 +58,25 @@
         								<td><h6 class="card-title" style="font-weight: bold;">Gambaran Diri</h6></td>
         							</tr>
         							@php
-        							$huruf = ['A', 'B', 'C' , 'D'];
-        							$num = -1;
-        							$totalsoal = $totalsoal+1;
-        							$json = json_decode($data->soal);
-        							@endphp
-        							@foreach($json as $pilihan)
-        							@php
-        							$num++;
-        							$key = $huruf[$num];
-        							@endphp
-        							<tr>
-        								@if($key == 'A')
-        								@endif
-        								<td width="30" valign="top">
-        									<label class="cont">
-        										<input type="radio" name="y[{{$data->nomor}}]" id="{{$pilihan->keym}}m" class="{{$data->nomor}}-y" value="{{$key}}">
-        										<span class="checkmark"></span>
-        									</label>
-        								</td>
-        								<td width="30" valign="top">
-        									<label class="cont">
-        										<input type="radio" name="n[{{$data->nomor}}]" id="{{$pilihan->keyl}}l" class="{{$data->nomor}}-n" value="{{$key}}">
-        										<span class="checkmark"></span>
-        									</label>
-        								</td>
-        								<td><p>{{$pilihan->pilihan}}</p></td>
-        							</tr>
+										$huruf = ['A', 'B', 'C' , 'D'];
+										$num = -1;
+										$totalsoal = $totalsoal+1;
+										$json = json_decode($data->soal);
+									@endphp
+									@foreach($json as $pilihan)
+										@php
+											$num++;
+											$key = $huruf[$num];
+										@endphp
+										<tr>
+											<td width="30" valign="top">
+												<input type="radio" name="y[{{$data->nomor}}]" id="{{$pilihan->keym}}m" class="form-check-input {{$data->nomor}}-y" value="{{$key}}">
+											</td>
+											<td width="30" valign="top">
+												<input type="radio" name="n[{{$data->nomor}}]" id="{{$pilihan->keyl}}l" class="form-check-input {{$data->nomor}}-n" value="{{$key}}">
+											</td>
+											<td><p>{{$pilihan->pilihan}}</p></td>
+										</tr>
         							@endforeach
         						</table>
         					</div>
@@ -183,27 +175,18 @@
 			oppositeValue = $("." + currentNumber + "-" + oppositeCode + ":checked").val();
 		}
 
-		var Dm = $('#Dm:checked').length
-		var Im = $('#Im:checked').length
-		var Sm = $('#Sm:checked').length
-		var Cm = $('#Cm:checked').length
-		var Bm = $('#Bm:checked').length
-		document.getElementById('D').value = Dm;
-		document.getElementById('I').value = Im;
-		document.getElementById('S').value = Sm;
-		document.getElementById('C').value = Cm;
-		document.getElementById('B').value = Bm;
+		// Count answer
+		document.getElementById('D').value = $('#Dm:checked').length;
+		document.getElementById('I').value = $('#Im:checked').length;
+		document.getElementById('S').value = $('#Sm:checked').length;
+		document.getElementById('C').value = $('#Cm:checked').length;
+		document.getElementById('B').value = $('#Bm:checked').length;
 
-		var Dl = $('#Dl:checked').length
-		var Il = $('#Il:checked').length
-		var Sl = $('#Sl:checked').length
-		var Cl = $('#Cl:checked').length
-		var Bl = $('#Bl:checked').length
-		document.getElementById('K').value = Dl;
-		document.getElementById('O').value = Il;
-		document.getElementById('L').value = Sl;
-		document.getElementById('E').value = Cl;
-		document.getElementById('H').value = Bl;
+		document.getElementById('K').value = $('#Dl:checked').length;
+		document.getElementById('O').value = $('#Il:checked').length;
+		document.getElementById('L').value = $('#Sl:checked').length;
+		document.getElementById('E').value = $('#Cl:checked').length;
+		document.getElementById('H').value = $('#Bl:checked').length;
 
 		// Count answered question
 		countAnswered();
