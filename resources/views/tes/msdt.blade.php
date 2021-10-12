@@ -45,7 +45,7 @@
                                         <tr>
                                             <td>
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input radio{{$data['id']}}"
+                                                    <input type="radio" class="form-check-input radio{{$data['id']}}"
                                                         id="customRadio{{$data['id']}}a" name="p[{{$data['id']}}]"
                                                         value="A">
                                                     <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}a">
@@ -56,7 +56,7 @@
                                                 </div>
             
                                                 <div class="custom-control custom-radio mt-3">
-                                                    <input type="radio" class="custom-control-input radio{{$data['id']}}"
+                                                    <input type="radio" class="form-check-input radio{{$data['id']}}"
                                                         id="customRadio{{$data['id']}}b" name="p[{{$data['id']}}]"
                                                         value="B">
                                                     <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}b">

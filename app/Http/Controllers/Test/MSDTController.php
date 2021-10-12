@@ -111,9 +111,7 @@ class MSDTController extends Controller
             1 , 2 , 1 , 0 , 3 , -1 , 0 , -4 
         ];
 
-        $jumlah = [
-
-        ];
+        $jumlah = [];
 
         for ($i=0 ; $i<8 ; $i++)
         {
@@ -292,6 +290,7 @@ class MSDTController extends Controller
             'E' => round($E, 2),
             'O' => round($O, 2),
             'tipe' => $final,
+            'answers' => $request->p
         );
 
         // Menyimpan data

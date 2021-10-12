@@ -120,6 +120,7 @@ class SDIController extends Controller
             'E' => $E,
             'F' => $F,
         );
+        $array['answers'] = array_merge($data, $data2);
 
         // Menyimpan data
         $hasil = new Hasil;
