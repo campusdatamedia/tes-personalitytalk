@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Lowongan extends Model
+class Verification extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'lowongan';
+    protected $table = 'verification';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_lowongan';
+    protected $primaryKey = 'id_verification';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,12 +29,9 @@ class Lowongan extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'judul_lowongan',
-		'deskripsi_lowongan',
-		'posisi',
-		'url_lowongan',
-		'status',
-		'created_at',
+        'id_user',
+        'token',
+        'status',
 	];
 
     /**

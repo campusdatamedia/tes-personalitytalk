@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Tes;
+use App\Models\Tes;
 
 class TesController extends Controller
 {    

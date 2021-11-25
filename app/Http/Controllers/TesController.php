@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
-use App\Hasil;
-use App\PaketSoal;
-use App\Pelamar;
-use App\Seleksi;
-use App\Soal;
-use App\TempTes;
-use App\Tes;
-use App\User;
+use App\Models\Hasil;
+use App\Models\PaketSoal;
+use App\Models\Pelamar;
+use App\Models\Seleksi;
+use App\Models\Soal;
+use App\Models\TempTes;
+use App\Models\Tes;
+use App\Models\User;
 
 class TesController extends Controller
 {    

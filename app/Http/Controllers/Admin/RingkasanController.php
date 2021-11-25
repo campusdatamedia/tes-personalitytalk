@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Hasil;
-use App\PaketSoal;
-use App\Soal;
-use App\Tes;
+use App\Models\Hasil;
+use App\Models\PaketSoal;
+use App\Models\Soal;
+use App\Models\Tes;
 
 class RingkasanController extends Controller
 {    

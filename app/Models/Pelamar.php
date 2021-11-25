@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HRD extends Model
+class Pelamar extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'hrd';
+    protected $table = 'pelamar';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_hrd';
+    protected $primaryKey = 'id_pelamar';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,14 +29,32 @@ class HRD extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'id_user',
         'nama_lengkap',
+		'tempat_lahir',
 		'tanggal_lahir',
         'jenis_kelamin',
+		'agama',
 		'email',
-		'kode',
-		'perusahaan',
-		'akses_tes',
+        'nomor_hp',
+		'alamat',
+		'pendidikan_terakhir',
+        'umur',
+        'nomor_ktp',
+        'nomor_telepon',
+        'status_hubungan',
+        'kode_pos',
+        'data_darurat',
+        'akun_sosmed',
+        'pendidikan_formal',
+        'pendidikan_non_formal',
+        'pengalaman_kerja',
+        'keahlian',
+        'pertanyaan',
+		'pas_foto',
+		'foto_ijazah',
+        'id_user',
+		'posisi',
+		'created_at',
 	];
 
     /**

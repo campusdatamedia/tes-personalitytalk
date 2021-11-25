@@ -4,15 +4,15 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Hasil;
-use App\HRD;
-use App\Karyawan;
-use App\PaketSoal;
-use App\Pelamar;
-use App\Soal;
-use App\Tes;
-use App\TesSettings;
-use App\User;
+use App\Models\Hasil;
+use App\Models\HRD;
+use App\Models\Karyawan;
+use App\Models\PaketSoal;
+use App\Models\Pelamar;
+use App\Models\Soal;
+use App\Models\Tes;
+use App\Models\TesSettings;
+use App\Models\User;
 
 class QuestionController extends Controller
 {

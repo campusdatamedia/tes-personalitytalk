@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Verification extends Model
+class Tes extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'verification';
+    protected $table = 'tes';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_verification';
+    protected $primaryKey = 'id_tes';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,9 +29,7 @@ class Verification extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'id_user',
-        'token',
-        'status',
+        'nama_tes', 'path', 'waktu_tes'
 	];
 
     /**

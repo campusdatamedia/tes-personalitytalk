@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Posisi extends Model
+class PaketSoal extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'posisi';
+    protected $table = 'paket_soal';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_posisi';
+    protected $primaryKey = 'id_paket';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,10 +29,20 @@ class Posisi extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'nama_posisi',
-        'tes',
-        'keahlian',
+        'id_tes',
+        'nama_paket',
+		'jumlah_soal',
+		'status',
 	];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'access_token',
+    ];
 
     /**
      * Indicates if the model should be timestamped.

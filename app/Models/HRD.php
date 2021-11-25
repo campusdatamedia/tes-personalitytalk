@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Hasil extends Model
+class HRD extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'hasil';
+    protected $table = 'hrd';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_hasil';
+    protected $primaryKey = 'id_hrd';
 
     /**
      * Fill the model with an array of attributes.
@@ -30,10 +30,13 @@ class Hasil extends Model
      */
     protected $fillable = [
         'id_user',
-        'id_tes',
-        'id_paket',
-		'hasil',
-        'test_at',
+        'nama_lengkap',
+		'tanggal_lahir',
+        'jenis_kelamin',
+		'email',
+		'kode',
+		'perusahaan',
+		'akses_tes',
 	];
 
     /**

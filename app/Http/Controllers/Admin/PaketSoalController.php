@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\PaketSoal;
-use App\Soal;
+use App\Models\PaketSoal;
+use App\Models\Soal;
 
 class PaketSoalController extends Controller
 {    
