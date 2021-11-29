@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Providers\RouteServiceProvider;
-use App\User;
-use App\Verification;
+use App\Models\User;
+use App\Models\Verification;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 

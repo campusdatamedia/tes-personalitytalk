@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-	<h3 class="m-0 text-center text-white">Tes Papikostick</h3>
+	<h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -11,16 +11,16 @@
 </div>
 <div class="container main-container">
     @if($seleksi != null)
-    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
-    <div class="row">
-        <!-- Alert -->
-        <div class="col-12 mb-2">
-            <div class="alert alert-danger fade show text-center" role="alert">
-                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
-            </div>
-        </div>
-    </div>
-    @endif
+	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+	    <div class="row">
+	        <!-- Alert -->
+	        <div class="col-12 mb-2">
+	            <div class="alert alert-danger fade show text-center" role="alert">
+	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	            </div>
+	        </div>
+	    </div>
+	    @endif
     @endif
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
@@ -36,22 +36,22 @@
                             <div class="w-100 mb-3">
                                 <div class="card soal rounded-1">
                                 	<div class="card-header bg-transparent">
-			    						<span class="num font-weight-bold"><i class="fa fa-edit"></i> Soal {{ $key+1 }}</span>
+			    						<span class="num fw-bold"><i class="fa fa-edit"></i> Soal {{ $key+1 }}</span>
                                 	</div>
                                     <div class="card-body">
                                         <table class="table table-borderless">
                                             <tr>
                                                 <td>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}a" name="jawaban[{{ $key+1 }}]"
-                                                        value="{{ $data['jawabanA'] }}">
+                                                        <input type="radio" class="form-check-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}a" name="jawaban[{{ $key+1 }}]"
+                                                        value="A">
                                                         <label class="custom-control-label" for="customRadio{{ $key+1 }}a">
                                                             <h5>{!! $data['soalA'] !!}</h5>
                                                         </label>
                                                     </div>
                                                     <div class="custom-control custom-radio mt-2">
-                                                        <input type="radio" class="custom-control-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}b" name="jawaban[{{ $key+1 }}]"
-                                                        value="{{ $data['jawabanB'] }}">
+                                                        <input type="radio" class="form-check-input radio radio{{ $key+1 }}" id="customRadio{{ $key+1 }}b" name="jawaban[{{ $key+1 }}]"
+                                                        value="B">
                                                         <label class="custom-control-label" for="customRadio{{ $key+1 }}b">
                                                             <h5>{!! $data['soalB'] !!}</h5>
                                                         </label>
@@ -69,29 +69,29 @@
     	</div>
 	</div>
 	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
-		<ul class="navbar nav ml-auto">
-			<li class="nav-item">
-				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
-			</li>
-			<li class="nav-item ml-3">
-				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
-			</li>
-			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
-			</li>
-		</ul>
+		<div class="container">
+			<ul class="navbar nav ms-auto">
+				<li class="nav-item">
+					<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
+				</li>
+				<li class="nav-item ms-3">
+					<a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
+				</li>
+				<li class="nav-item ms-3">
+					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
+				</li>
+			</ul>
+		</div>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
-	        			<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+	        			<span class="bg-warning rounded-1 text-center px-3 py-2 me-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
 	        			Tutorial Tes
 	        		</h5>
-	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          			<span aria-hidden="true">&times;</span>
-	        		</button>
+	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      		</div>
 		      	<div class="modal-body text-justify">
 		      	    <p>Anda diberikan 90 pasangan pernyataan. Pilihlah <b><i>satu pernyataan</i></b> dari pasangan pernyataan itu yang Anda rasakan <b><i>paling mendekati gambaran</i></b> diri Anda, atau yang <b><i>paling menunjukan</i></b> perasaan Anda.<br>
@@ -119,7 +119,7 @@
                     <p>Bekerjalah dengan cepat, tetapi jangan sampai ada nomor pernyataan yang terlewatkan.</p>
                 </div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary text-uppercase " data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary text-uppercase " data-bs-dismiss="modal">Mengerti</button>
 	      		</div>
 	    	</div>
 	  	</div>
@@ -130,25 +130,8 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	// vertical align modal
 	$(document).ready(function(){
-		// Show modal when the page is loaded
 		$("#tutorialModal").modal("toggle");
-
-	    function alignModal(){
-	        var modalDialog = $(this).find(".modal-dialog");
-	        
-	        // Applying the top margin on modal dialog to align it vertically center
-	        modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 2));
-	    }
-	    // Align modal when it is displayed
-	    $(".modal").on("shown.bs.modal", alignModal);
-	    
-	    // Align modal when user resize the window
-	    $(window).on("resize", function(){
-	        $(".modal:visible").each(alignModal);
-	    });
-
 	    totalQuestion();
 	});
 
@@ -159,12 +142,6 @@
 
 		// Enable submit button
 		countAnswered() >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
-	});
-
-	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
-		e.preventDefault();
-		$("#form")[0].submit();
 	});
 
 	// Count answered question

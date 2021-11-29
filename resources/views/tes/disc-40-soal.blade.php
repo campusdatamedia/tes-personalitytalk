@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-	<h3 class="m-0 text-center text-white">Tes DISC 40 Soal</h3>
+	<h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -56,32 +56,32 @@
 					    <div class="col-lg-6 mb-3">
 					    	<div class="card soal rounded-1">
 					    		<div class="card-header bg-transparent">
-					    			<span class="num font-weight-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+					    			<span class="num fw-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
 					    		</div>
     							<div class="card-body">
     								<div class="row">
     									<div class="col-2"><i class="fa fa-thumbs-up text-success"></i></div>
 	    								<div class="col-2"><i class="fa fa-thumbs-down text-danger"></i></div>
-	    								<div class="col-8"><span class="font-weight-bold">Karakteristik</span></div>
+	    								<div class="col-8"><span class="fw-bold">Karakteristik</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['A'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['A'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="A"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="A"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['A'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['B'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['B'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="B"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="B"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['B'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['C'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['C'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="C"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="C"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['C'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="{{ $data->nomor }}m" value="{{ $data->soal[0]['disc']['D'] }}"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="{{ $data->nomor }}l" value="{{ $data->soal[0]['disc']['D'] }}"></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="D"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="D"></div>
 	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['D'] }}</span></div>
 	    							</div>
     							</div>
@@ -94,29 +94,29 @@
     	</div>
 	</div>
 	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
-		<ul class="navbar nav ml-auto">
-			<li class="nav-item">
-				<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
-			</li>
-			<li class="nav-item ml-3">
-				<a href="#" class="text-secondary" data-toggle="modal" data-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
-			</li>
-			<li class="nav-item ml-3">
-				<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
-			</li>
-		</ul>
+		<div class="container">
+			<ul class="navbar nav ms-auto">
+				<li class="nav-item">
+					<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
+				</li>
+				<li class="nav-item ms-3">
+					<a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
+				</li>
+				<li class="nav-item ms-3">
+					<button class="btn btn-md btn-primary text-uppercase" id="btn-submit" disabled>Submit</button>
+				</li>
+			</ul>
+		</div>
 	</nav>
 	<div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
 	        		<h5 class="modal-title" id="exampleModalLabel">
-	        			<span class="bg-warning rounded-1 text-center px-3 py-2 mr-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
+	        			<span class="bg-warning rounded-1 text-center px-3 py-2 me-2"><i class="fa fa-lightbulb-o text-dark" aria-hidden="true"></i></span> 
 	        			Tutorial Tes
 	        		</h5>
-	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          			<span aria-hidden="true">&times;</span>
-	        		</button>
+	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      		</div>
 		      	<div class="modal-body">
 		        	<p>Tes ini terdiri dari 40 Soal dan 2 jawaban setiap soal. Jawab secara jujur dan spontan. Estimasi waktu pengerjaan adalah 5-10 menit.</p>
@@ -130,7 +130,7 @@
 		        	<p>Maka pikirkan baik-baik.</p>
 		      	</div>
 	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary" data-dismiss="modal">Mengerti</button>
+	        		<button type="button" class="btn btn-primary" data-bs-dismiss="modal">MENGERTI</button>
 	      		</div>
 	    	</div>
 	  	</div>
@@ -140,25 +140,8 @@
 
 @section('js-extra')
 <script type="text/javascript">
-	// vertical align modal
 	$(document).ready(function(){
-		// Show modal when the page is loaded
 		$("#tutorialModal").modal("toggle");
-
-	    function alignModal(){
-	        var modalDialog = $(this).find(".modal-dialog");
-	        
-	        // Applying the top margin on modal dialog to align it vertically center
-	        modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 2));
-	    }
-	    // Align modal when it is displayed
-	    $(".modal").on("shown.bs.modal", alignModal);
-	    
-	    // Align modal when user resize the window
-	    $(window).on("resize", function(){
-	        $(".modal:visible").each(alignModal);
-	    });
-
 	    totalQuestion();
 	});
 
@@ -205,11 +188,12 @@
 		$("#total").text(total);
 		return total;
 	}
-
-	// Submit form
-	$(document).on("click", "#btn-submit", function(e){
-		e.preventDefault();
-		$("#form")[0].submit();
-	});
 </script>
+@endsection
+
+@section('css-extra')
+<style type="text/css">
+	.modal .modal-body {font-size: 14px;}
+	.table {margin-bottom: 0;}
+</style>
 @endsection

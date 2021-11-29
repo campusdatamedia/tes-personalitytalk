@@ -5,8 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
-use App\Pelamar;
-use App\Tes;
+use App\Models\Pelamar;
+use App\Models\Tes;
 
 class AppServiceProvider extends ServiceProvider
 {
