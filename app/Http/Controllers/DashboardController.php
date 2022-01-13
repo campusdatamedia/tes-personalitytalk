@@ -28,7 +28,7 @@ class DashboardController extends Controller
         // Default
         $seleksi = false;
         $check = null;
-        $gambar = ['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg','lightning-bolts.svg'];
+        $gambar = ['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg','lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg'];
 
         // Jika role karyawan
         if(Auth::user()->role == 3){
