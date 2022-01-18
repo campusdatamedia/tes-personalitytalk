@@ -45,25 +45,26 @@
         						<table class="table table-sm table-bordered">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th colspan="2">{{ $letters[$keysoal] }}</th>
+                                            <th width="200">Laki-Laki</th>
+                                            <th width="100">{{ $letters[$keysoal] }}</th>
+                                            <th width="200">Perempuan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(array_key_exists(Auth::user()->jenis_kelamin, $soal_array))
-                                            @foreach($soal_array[Auth::user()->jenis_kelamin] as $key=>$occupation)
-                                            <tr>
-                                                <td>{{ $soal_array[Auth::user()->jenis_kelamin][$key] }}</td>
-                                                <td width="100">
-                                                    <select name="score[{{ $q->nomor }}][]" class="form-select form-select-sm select-score" data-id="{{ $q->nomor }}" data-key="{{ $key }}">
-                                                        <option value="" disabled selected>--Pilih--</option>
-                                                        @for($i=1; $i<=count($soal_array[Auth::user()->jenis_kelamin]); $i++)
-                                                        <option value="{{ $i }}">{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        @endif
+                                        @foreach($soal_array['L'] as $key=>$occupation)
+                                        <tr>
+                                            <td>{{ $soal_array['L'][$key] }}</td>
+                                            <td>
+                                                <select name="score[{{ $q->nomor }}][]" class="form-select form-select-sm select-score" data-id="{{ $q->nomor }}" data-key="{{ $key }}">
+                                                    <option value="" disabled selected>--Pilih--</option>
+                                                    @for($i=1; $i<=count($soal_array['L']); $i++)
+                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </td>
+                                            <td>{{ $soal_array['P'][$key] }}</td>
+                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -103,9 +104,8 @@
                     <p>Dibawah ini anda akan menemui daftar-daftar berbagai macam pekerjaan yang tersusun dalam berbagai kelompok. Setiap kelompok terdiri dari 12 macam pekerjaan. Setiap pekerjaan merupakan keahlian khusus yang memerlukan latihan atau pendidikan keahlian sendiri. Mungkin hanya beberapa diantaranya yang anda sukai. Disini anda diminta untuk memilih pekerjaan mana yang ingin anda lakukan atau pekerjaan mana yang anda sukai, terlepas dari besarnya upah gaji yang akan anda terima. Juga terlepas apakah anda berhasil atau tidak dalam mengerjakan pekerjaan tersebut.</p>
                     <p>Tugas anda adalah mencantumkan nomor atau angka pada tiap pekerjaan dalam kelompok-kelompok yang tersedia. Berikanlah nomor (angka) 1 untuk pekerjaan yang paling anda sukai diantara ke 12 pekerjaan yang tersedia pada setiap kelompok, dan dilanjutkan dengan pemberian nomor 2, 3, dan seterusnya berurutan berdasarkan besarnya kadar kesukaan/minat anda terhadap pekerjaan itu, dan nomor/angka 12 anda cantumkan untuk pekerjaan yang paling tidak disukai dari daftar pekerjaan yang tersedia pada kelompok-kelompok tersebut.</p>
                     <p>Bekerjalah secepatnya dan tulislah nomor-nomor (angka-angka) sesuai dengan kesan dan keinginan anda yang pertama muncul.</p>
-                    <p>Selamat bekerja!</p>
-                    <!-- <p>Jika anda <strong>Perempuan</strong> gunakanlah daftar pekerjaan yang tersusun di bagian kanan pada setiap kelompok.</p>
-                    <p>Jika anda <strong>Laki-laki</strong>, gunakanlah daftar pekerjaan yang tersusun di bagian kiri pada setiap kelompok. Selamat bekerja !</p> -->
+                    <p>Jika anda <strong>Perempuan</strong> gunakanlah daftar pekerjaan yang tersusun di bagian kanan pada setiap kelompok.</p>
+                    <p>Jika anda <strong>Laki-laki</strong>, gunakanlah daftar pekerjaan yang tersusun di bagian kiri pada setiap kelompok. Selamat bekerja !</p>
 		      	</div>
 	      		<div class="modal-footer">
 	        		<button type="button" class="btn btn-primary text-uppercase " data-bs-dismiss="modal">MENGERTI</button>
