@@ -67,6 +67,7 @@ class RMIBController extends Controller
         // Answers
         $array = [];
         $array['answers'] = $request->score;
+        $array['occupations'] = $request->occupations;
 
         // Menyimpan data
         $hasil = new Hasil;

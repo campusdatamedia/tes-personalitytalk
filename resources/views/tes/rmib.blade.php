@@ -30,7 +30,7 @@
 			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
 			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
         		@csrf
-        		<div class="row">
+        		<div class="row justify-content-center">
                     @php $letters = ['A','B','C','D','E','F','G','H','I']; @endphp
                     @foreach($soal as $keysoal=>$q)
         			<div class="col-lg-6" style="margin-top: 20px;">
@@ -72,6 +72,20 @@
                     </div>
                     @endforeach
         		</div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label">Tulislah dibawah ini tiga (3) macam pekerjaan yang paling ingin anda lakukan atau paling anda sukai (tidak harus pekerjaan yang tercantum di dalam daftar yang ada):</label>
+                            @for($i=1; $i<=3; $i++)
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">({{ $i }})</span>
+                                <input type="text" name="occupations[]" class="form-control">
+                            </div>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
         	</form>
     	</div>
 	</div>
