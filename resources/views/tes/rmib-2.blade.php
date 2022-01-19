@@ -122,6 +122,8 @@
 
 @section('js-extra')
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="{{ asset('assets/js/jquery.mjs.nestedSortable.js') }}"></script>
+<script src="{{ asset('assets/js/touchpunch.min.js') }}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 	    sortable(".sortable");
