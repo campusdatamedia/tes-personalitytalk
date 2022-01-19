@@ -57,7 +57,7 @@ class TesController extends Controller
             // return \App\Http\Controllers\Test\ISTController::index($request, $path, $tes, $seleksi, $check);
             return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $seleksi, $check);
         // Tes RMIB
-        elseif($path == 'rmib')
+        elseif($path == 'rmib' || $path == 'rmib-2')
             return \App\Http\Controllers\Test\RMIBController::index($request, $path, $tes, $seleksi, $check);
         else
             abort(404);
@@ -90,7 +90,7 @@ class TesController extends Controller
         elseif($request->path == 'ist')
             return \App\Http\Controllers\Test\ISTController::store($request);
         // Tes RMIB
-        elseif($request->path == 'rmib')
+        elseif($request->path == 'rmib' || $request->path == 'rmib-2')
             return \App\Http\Controllers\Test\RMIBController::store($request);
     }
 

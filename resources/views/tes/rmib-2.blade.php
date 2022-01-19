@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-    <h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
+    <h3 class="m-0 text-center text-white">{{ $paket->nama_paket }} 2.0</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -25,6 +25,7 @@
     @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
+            @if(in_array(Auth::user()->jenis_kelamin, ['L','P']))
 		    <form id="form" method="post" action="/tes/{{ $path }}/store">
 			    <input type="hidden" name="path" value="{{ $path }}">
 			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
@@ -42,31 +43,15 @@
                                 $soal_array = json_decode($q->soal, true);
                             @endphp
         					<div class="card-body">
-        						<table class="table table-sm table-bordered">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th width="200">Laki-Laki</th>
-                                            <th width="100">{{ $letters[$keysoal] }}</th>
-                                            <th width="200">Perempuan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($soal_array['L'] as $key=>$occupation)
-                                        <tr>
-                                            <td>{{ $soal_array['L'][$key] }}</td>
-                                            <td>
-                                                <select name="score[{{ $q->nomor }}][]" class="form-select form-select-sm select-score" data-id="{{ $q->nomor }}" data-key="{{ $key }}">
-                                                    <option value="" disabled selected>--Pilih--</option>
-                                                    @for($i=1; $i<=count($soal_array['L']); $i++)
-                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                    @endfor
-                                                </select>
-                                            </td>
-                                            <td>{{ $soal_array['P'][$key] }}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                <p class="text-danger">Tekan dan geser pekerjaan di bawah ini untuk mengurutkannya dari atas sampai bawah!</p>
+                                <div class="list-group sortable">
+                                    @foreach($soal_array[Auth::user()->jenis_kelamin] as $key=>$occupation)
+                                    <div class="list-group-item">
+                                        <span class="num-order fw-bold me-2">{{ ($key+1) }}</span> {{ $occupation }}
+                                        <input type="hidden" name="score[{{ $q->nomor }}][]" value="{{ ($key+1) }}">
+                                    </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,19 +72,24 @@
                     </div>
                 </div>
         	</form>
+            @else
+            <div class="alert alert-danger mb-0">
+                Segera hubungi Admin atau panitia tes jika soal tidak muncul.
+            </div>
+            @endif
     	</div>
 	</div>
 	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
 		<div class="container">
 			<ul class="navbar nav ms-auto">
-				<li class="nav-item">
+				<li class="nav-item d-none">
 					<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
 				</li>
 				<li class="nav-item ms-3">
 					<a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 				</li>
 				<li class="nav-item ms-3">
-					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
+					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit">Submit</button>
 				</li>
 			</ul>
 		</div>
@@ -116,10 +106,8 @@
 	      		</div>
 		      	<div class="modal-body">
                     <p>Dibawah ini anda akan menemui daftar-daftar berbagai macam pekerjaan yang tersusun dalam berbagai kelompok. Setiap kelompok terdiri dari 12 macam pekerjaan. Setiap pekerjaan merupakan keahlian khusus yang memerlukan latihan atau pendidikan keahlian sendiri. Mungkin hanya beberapa diantaranya yang anda sukai. Disini anda diminta untuk memilih pekerjaan mana yang ingin anda lakukan atau pekerjaan mana yang anda sukai, terlepas dari besarnya upah gaji yang akan anda terima. Juga terlepas apakah anda berhasil atau tidak dalam mengerjakan pekerjaan tersebut.</p>
-                    <p>Tugas anda adalah mencantumkan nomor atau angka pada tiap pekerjaan dalam kelompok-kelompok yang tersedia. Berikanlah nomor (angka) 1 untuk pekerjaan yang paling anda sukai diantara ke 12 pekerjaan yang tersedia pada setiap kelompok, dan dilanjutkan dengan pemberian nomor 2, 3, dan seterusnya berurutan berdasarkan besarnya kadar kesukaan/minat anda terhadap pekerjaan itu, dan nomor/angka 12 anda cantumkan untuk pekerjaan yang paling tidak disukai dari daftar pekerjaan yang tersedia pada kelompok-kelompok tersebut.</p>
-                    <p>Bekerjalah secepatnya dan tulislah nomor-nomor (angka-angka) sesuai dengan kesan dan keinginan anda yang pertama muncul.</p>
-                    <p>Jika anda <strong>Perempuan</strong> gunakanlah daftar pekerjaan yang tersusun di bagian kanan pada setiap kelompok.</p>
-                    <p>Jika anda <strong>Laki-laki</strong>, gunakanlah daftar pekerjaan yang tersusun di bagian kiri pada setiap kelompok. Selamat bekerja !</p>
+                    <p><strong>Tugas anda adalah mengurutkan pekerjaan-pekerjaan berikut berdasarkan besarnya kadar kesukaan/minat anda terhadap pekerjaan itu dari yang disukai sampai yang paling tidak disukai.</strong></p>
+                    <p>Selamat bekerja!</p>
 		      	</div>
 	      		<div class="modal-footer">
 	        		<button type="button" class="btn btn-primary text-uppercase " data-bs-dismiss="modal">MENGERTI</button>
@@ -132,8 +120,10 @@
 @endsection
 
 @section('js-extra')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
+	    sortable(".sortable");
 		$("#tutorialModal").modal("toggle");
 	    totalQuestion();
 	});
@@ -161,7 +151,7 @@
         countAnswered();
 
         // Enable submit button
-        countAnswered() >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
+        // countAnswered() >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
     });
 
     // Count occurences
@@ -194,6 +184,25 @@
 		$("#total").text(total);
 		return total;
 	}
+
+    // Sortable
+    function sortable(selector) {
+        var sortable = $(selector).sortable({
+            items: "> div:not(.ui-state-disabled)",
+            placeholder: "ui-state-highlight",
+            start: function(event, ui) {
+                $(selector).find(".ui-state-highlight").css("height", $(ui.item).outerHeight());
+            },
+            update: function(event, ui) {
+                var items = $(this).children(".ui-sortable-handle");
+                $(items).each(function(key, elem) {
+                    $(elem).find(".num-order").text(key + 1);
+                });
+            }
+        });
+        $(selector).disableSelection();
+        return sortable;
+    }
 </script>
 @endsection
 
@@ -203,5 +212,7 @@
 	.table {margin-bottom: 0;}
     .table thead tr th {text-align: center;}
     .soal {font-size: 85%;}
+    .ui-sortable-handle {cursor: move;}
+    .ui-state-highlight {height: 2rem; background-color: #f3eeb5;}
 </style>
 @endsection
