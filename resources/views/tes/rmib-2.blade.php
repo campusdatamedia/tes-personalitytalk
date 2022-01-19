@@ -48,7 +48,8 @@
                                     @foreach($soal_array[Auth::user()->jenis_kelamin] as $key=>$occupation)
                                     <div class="list-group-item">
                                         <span class="num-order fw-bold me-2">{{ ($key+1) }}</span> {{ $occupation }}
-                                        <input type="hidden" name="score[{{ $q->nomor }}][]" value="{{ ($key+1) }}">
+                                        <input type="hidden" name="score[{{ $q->nomor }}][{{ $key }}]" value="{{ ($key+1) }}">
+                                        <!-- <input type="hidden" name="score[{{ $q->nomor }}][]" value="{{ ($key+1) }}"> -->
                                     </div>
                                     @endforeach
                                 </div>
@@ -197,6 +198,7 @@
                 var items = $(this).children(".ui-sortable-handle");
                 $(items).each(function(key, elem) {
                     $(elem).find(".num-order").text(key + 1);
+                    $(elem).find("input[type=hidden]").val(key + 1);
                 });
             }
         });

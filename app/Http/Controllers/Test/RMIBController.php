@@ -69,6 +69,11 @@ class RMIBController extends Controller
         $array['answers'] = $request->score;
         $array['occupations'] = $request->occupations;
 
+        // Sort array answers by key
+        foreach($array['answers'] as $key=>$answer) {
+            ksort($array['answers'][$key]);
+        }
+
         // Menyimpan data
         $hasil = new Hasil;
         $hasil->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
