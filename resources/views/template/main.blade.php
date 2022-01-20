@@ -7,7 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
 	@yield('css-extra')
 </head>
-<body>
+<body class="bg-light">
     @include('template/_navbar')
     @yield('content')
     @include('template/_js')

@@ -44,7 +44,7 @@
                             @endphp
         					<div class="card-body">
                                 <p class="text-danger">Tekan dan geser pekerjaan di bawah ini untuk mengurutkannya dari atas sampai bawah!</p>
-                                <div class="list-group sortable" data-id="{{ $q->nomor }}">
+                                <div class="list-group px-4 px-md-0 sortable" data-id="{{ $q->nomor }}">
                                     @foreach($soal_array[Auth::user()->jenis_kelamin] as $key=>$occupation)
                                     <div class="list-group-item">
                                         <span class="num-order fw-bold me-2"></span> {{ $occupation }}
