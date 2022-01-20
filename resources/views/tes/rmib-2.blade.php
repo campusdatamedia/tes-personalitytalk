@@ -44,12 +44,11 @@
                             @endphp
         					<div class="card-body">
                                 <p class="text-danger">Tekan dan geser pekerjaan di bawah ini untuk mengurutkannya dari atas sampai bawah!</p>
-                                <div class="list-group sortable">
+                                <div class="list-group sortable" data-id="{{ $q->nomor }}">
                                     @foreach($soal_array[Auth::user()->jenis_kelamin] as $key=>$occupation)
                                     <div class="list-group-item">
-                                        <span class="num-order fw-bold me-2">{{ ($key+1) }}</span> {{ $occupation }}
+                                        <span class="num-order fw-bold me-2"></span> {{ $occupation }}
                                         <input type="hidden" name="score[{{ $q->nomor }}][{{ $key }}]" value="{{ ($key+1) }}">
-                                        <!-- <input type="hidden" name="score[{{ $q->nomor }}][]" value="{{ ($key+1) }}"> -->
                                     </div>
                                     @endforeach
                                 </div>
@@ -83,14 +82,14 @@
 	<nav class="navbar navbar-expand-lg fixed-bottom navbar-light bg-white shadow">
 		<div class="container">
 			<ul class="navbar nav ms-auto">
-				<li class="nav-item d-none">
+				<li class="nav-item">
 					<span id="answered">0</span>/<span id="total"></span> Soal Terjawab
 				</li>
 				<li class="nav-item ms-3">
 					<a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#tutorialModal" title="Tutorial"><i class="fa fa-question-circle" style="font-size: 1.5rem"></i></a>
 				</li>
 				<li class="nav-item ms-3">
-					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit">Submit</button>
+					<button class="btn btn-md btn-primary text-uppercase " id="btn-submit" disabled>Submit</button>
 				</li>
 			</ul>
 		</div>
@@ -125,58 +124,20 @@
 <script src="{{ asset('assets/js/jquery.mjs.nestedSortable.js') }}"></script>
 <script src="{{ asset('assets/js/touchpunch.min.js') }}"></script>
 <script type="text/javascript">
+    let answered = [];
+
 	$(document).ready(function() {
 	    sortable(".sortable");
 		$("#tutorialModal").modal("toggle");
 	    totalQuestion();
 	});
 
-    // Select score
-    $(document).on("change", ".select-score", function() {
-        var id = $(this).data("id");
-        var key = $(this).data("key");
-        var value = $(this).val();
-        var arrayScore = [];
-        $(".select-score[data-id="+ id +"]").each(function(index, elem) {
-            arrayScore.push($(elem).val());
-        });
-
-        // Count occurences
-        if(countOccurrences(value, arrayScore) > 1) {
-            // Change other scores to be null
-            $(".select-score[data-id="+ id +"]").each(function(index, elem) {
-                if(value === $(elem).val() && index !== key)
-                    $(elem).val(null);
-            });
-        }
-
-        // Count answered question
-        countAnswered();
-
-        // Enable submit button
-        // countAnswered() >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
-    });
-
-    // Count occurences
-    function countOccurrences(val, arr) {
-        var occurences = 0;
-        for(var i=0; i<arr.length; i++) {
-            if(val === arr[i]) occurences++;
-        }
-        return occurences;
-    }
-
 	// Count answered questions
-	function countAnswered() {
-		var total = 0;
-		$(".num").each(function(key, elem) {
-			var id = $(elem).data("id");
-            var selected = 0;
-            $(".select-score[data-id="+ id +"]").each(function(index, elem) {
-                if($(elem).val() !== null) selected++;
-            });
-            if(selected === $(".select-score[data-id="+ id +"]").length) total++;
-		});
+	function countAnswered(num) {        
+        if(answered.indexOf(num) < 0)
+            answered.push(num);
+        
+        var total = answered.length;
 		$("#answered").text(total);
 		return total;
 	}
@@ -202,6 +163,11 @@
                     $(elem).find(".num-order").text(key + 1);
                     $(elem).find("input[type=hidden]").val(key + 1);
                 });
+
+                // Count answered
+                var id = $(this).data("id");
+                countAnswered(id);
+                countAnswered(id) >= totalQuestion() ? $("#btn-submit").removeAttr("disabled") : $("#btn-submit").attr("disabled", "disabled");
             }
         });
         $(selector).disableSelection();
