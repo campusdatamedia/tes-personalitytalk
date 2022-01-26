@@ -33,7 +33,7 @@ class QuestionController extends Controller
         $employee = Karyawan::where('id_user','=',$user_)->first();
 
         // Get the test settings
-        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',$employee->id_hrd)->where('part','=',$part_)->first();
+        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',1)->where('part','=',$part_)->first();
 
         // Get the parts
         $parts = PaketSoal::join('tes','paket_soal.id_tes','=','tes.id_tes')->where('tes.path','=',$test_)->where('status','=',1)->orderBy('part','asc')->get();
@@ -86,7 +86,7 @@ class QuestionController extends Controller
         $employee = Karyawan::where('id_user','=',$request->user)->first();
 
         // Get the test settings
-        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',$employee->id_hrd)->where('part','=',$request->part)->first();
+        $test_settings = TesSettings::join('paket_soal','tes_settings.id_paket','=','paket_soal.id_paket')->where('id_hrd','=',1)->where('part','=',$request->part)->first();
 
         // Success
         if($request->token === $test_settings->access_token) {
