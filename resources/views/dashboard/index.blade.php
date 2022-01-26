@@ -53,8 +53,8 @@
                 @foreach($tes as $key=>$data)
                 <div class="col">
                     <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
+                        <p class="m-0 mb-2">{{ $data->nama_tes }}</p>
                         <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
-                        <p class="m-0">{{ $data->nama_tes }}</p>
                     </a>
                 </div>
                 @endforeach
@@ -91,8 +91,8 @@
                         @foreach($tes as $key=>$data)
                         <div class="col">
                             <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
+                                <p class="m-0 mb-2">{{ $data->nama_tes }}</p>
                                 <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
-                                <p class="m-0">{{ $data->nama_tes }}</p>
                             </a>
                         </div>
                         @endforeach
