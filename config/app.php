@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Ajifatur\FaturHelper\FaturHelperServiceProvider::class,
 
         /*
          * Application Service Providers...

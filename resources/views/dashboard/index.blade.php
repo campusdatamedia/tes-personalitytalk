@@ -9,7 +9,7 @@
         </div>
         <main class="container text-center text-white">
             <h3 class="text-capitalize"><span id="demo"></span></h3>
-            <p>Selamat datang <span class="fw-bold">{{Auth::user()->nama_user}}</span> di Tes Online PersonalityTalk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada di bawah ini.</p>
+            <p>Selamat datang <span class="fw-bold">{{Auth::user()->name}}</span> di Tes Online PersonalityTalk<br>Anda dapat melakukan tes online disini dengan memilih menu tes yang ada di bawah ini.</p>
         </main>
     </div>
 </section>
@@ -35,7 +35,7 @@
         @endif
     @endif
 
-    @if(Auth::user()->role == 1 || Auth::user()->role == 2 || Auth::user()->role == 3 || Auth::user()->role == 5)
+    @if(Auth::user()->role_id == role('admin') || Auth::user()->role_id == role('hrd') || Auth::user()->role_id == role('employee') || Auth::user()->role_id == role('general'))
     <div class="content">
         @if(Session::get('message'))
         <div class="row">
@@ -69,7 +69,7 @@
     </div>
     @endif
 
-    @if(Auth::user()->role == 4)
+    @if(Auth::user()->role_id == role('applicant'))
         @if($seleksi != null)
             @if(strtotime('now') >= strtotime($seleksi->waktu_wawancara))
             <div class="content">
@@ -109,7 +109,7 @@
         @endif
     @endif
 
-    @if(Auth::user()->role == 6)
+    @if(Auth::user()->role_id == role('internship'))
         @if($check != null)
         <div class="row">
             <!-- Alert -->

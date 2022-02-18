@@ -55,15 +55,15 @@ class DISC40Controller extends Controller
         $paket = PaketSoal::where('id_paket','=',$request->id_paket)->where('status','=',1)->first();
 
         // Get data HRD
-        if(Auth::user()->role == 2){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        if(Auth::user()->role_id == role('hrd')){
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
-        elseif(Auth::user()->role == 3){
-            $karyawan = Karyawan::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('employee')){
+            $karyawan = Karyawan::where('id_user','=',Auth::user()->id)->first();
             $hrd = HRD::find($karyawan->id_hrd);
         }
-        elseif(Auth::user()->role == 4){
-            $pelamar = Pelamar::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('applicant')){
+            $pelamar = Pelamar::where('id_user','=',Auth::user()->id)->first();
             $hrd = HRD::find($pelamar->id_hrd);
         }
         
@@ -98,7 +98,7 @@ class DISC40Controller extends Controller
         // Menyimpan data
         $hasil = new Hasil;
         $hasil->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
-        $hasil->id_user = Auth::user()->id_user;
+        $hasil->id_user = Auth::user()->id;
         $hasil->id_tes = $request->id_tes;
         $hasil->id_paket = $request->id_paket;
         $hasil->hasil = json_encode($array);
