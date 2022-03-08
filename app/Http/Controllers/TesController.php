@@ -29,11 +29,11 @@ class TesController extends Controller
 
         // Get tes
         $tes = Tes::where('path','=',$path)->firstOrFail(); // Get tes
-        $check = Auth::user()->role == 6 ? Hasil::where('id_user','=',Auth::user()->id_user)->first() : null; // Check
+        $check = Auth::user()->role_id == 6 ? Hasil::where('id_user','=',Auth::user()->id)->first() : null; // Check
         
         // Jika role pelamar
-        if(Auth::user()->role == 4){
-        	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first(); // Get akun
+        if(Auth::user()->role_id == 4){
+        	$akun = Pelamar::where('id_user','=',Auth::user()->id)->first(); // Get akun
             $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get seleksi
         }
             
@@ -121,11 +121,11 @@ class TesController extends Controller
 
         // Get tes
         $tes = Tes::where('path','=',$path)->firstOrFail(); // Get tes
-        $check = Auth::user()->role == 6 ? Hasil::where('id_user','=',Auth::user()->id_user)->first() : null; // Check
+        $check = Auth::user()->role_id == 6 ? Hasil::where('id_user','=',Auth::user()->id)->first() : null; // Check
         
         // Jika role pelamar
-        if(Auth::user()->role == 4){
-        	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first(); // Get akun
+        if(Auth::user()->role_id == 4){
+        	$akun = Pelamar::where('id_user','=',Auth::user()->id)->first(); // Get akun
             $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get seleksi
         }
 
