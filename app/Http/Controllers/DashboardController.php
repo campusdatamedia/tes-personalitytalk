@@ -31,9 +31,9 @@ class DashboardController extends Controller
         $gambar = ['lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg','lightning-bolts.svg','arrows.svg','thoughts.svg','gears.svg','keys.svg'];
 
         // Jika role karyawan
-        if(Auth::user()->role == 3){
+        if(Auth::user()->role_id == 3){
             // Get akun
-            $akun = Karyawan::where('id_user','=',Auth::user()->id_user)->first();
+            $akun = Karyawan::where('id_user','=',Auth::user()->id)->first();
             
             // Tes
             $posisi = Posisi::find($akun->posisi);
@@ -41,16 +41,16 @@ class DashboardController extends Controller
             $tes = !empty($posisi->tes) ? Tes::whereIn('id_tes', $posisi->tes)->get() : array();
         }
         // Jika role pelamar
-        elseif(Auth::user()->role == 4){
+        elseif(Auth::user()->role_id == 4){
         	// Get akun
-        	$akun = Pelamar::where('id_user','=',Auth::user()->id_user)->first();
+        	$akun = Pelamar::where('id_user','=',Auth::user()->id)->first();
             
             // Seleksi
             $seleksi = Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first();
             
             // Hasil
             $ids = array();
-            $hasil = Hasil::where('id_user','=',Auth::user()->id_user)->get();
+            $hasil = Hasil::where('id_user','=',Auth::user()->id)->get();
             if(count($hasil) > 0){
                 foreach($hasil as $h){
                     if(!in_array($h->id_tes, $ids)){
@@ -68,14 +68,14 @@ class DashboardController extends Controller
         // Jika role bukan pelamar dan karyawan
         else{
         	// Get akun
-        	$akun = User::find(Auth::user()->id_user);
+        	$akun = User::find(Auth::user()->id);
             
             // Tes
             $tes = Tes::all();
 			
 			// Check jika role magang
-			if(Auth::user()->role == 6){
-				$check = Hasil::where('id_user','=',Auth::user()->id_user)->first();
+			if(Auth::user()->role_id == 6){
+				$check = Hasil::where('id_user','=',Auth::user()->id)->first();
 			}
         }
 
