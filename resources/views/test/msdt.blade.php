@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
-        <h3>{{ $paket->nama_paket }}</h3>
+        <h3>{{ $packet->name }}</h3>
     </div>
 </div>
 <div class="custom-shape-divider-top-1617767620">
@@ -12,56 +12,56 @@
     </svg>
 </div>
 <div class="container main-container">
-    @if($seleksi != null)
-	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+	    @if(strtotime('now') < strtotime($selection->test_time))
 	    <div class="row">
 	        <!-- Alert -->
 	        <div class="col-12 mb-2">
 	            <div class="alert alert-danger fade show text-center" role="alert">
-	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	                Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
 	            </div>
 	        </div>
 	    </div>
 	    @endif
     @endif
-    @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
+    @if($selection == null || ($selection != null && strtotime('now') >= strtotime($selection->test_time)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
 			<form id="form" method="post" action="/tes/{{ $path }}/store">
-			    {{ csrf_field() }}
+			    @csrf
 			    <input type="hidden" name="path" value="{{ $path }}">
-			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="packet_id" value="{{ $packet->id }}">
+			    <input type="hidden" name="test_id" value="{{ $test->id }}">
 				<div class="">
 					<div class="row">
-					    @foreach($soal->soal as $data)
+					    @foreach($questions->description as $question)
 					    <div class="col-12">
                             <div class="card soal rounded-1 mb-3">
                       			<div class="card-header bg-transparent">
-					    			<span class="num fw-bold"><i class="fa fa-edit"></i> Soal {{$data['id']}}</span>
+					    			<span class="num fw-bold"><i class="fa fa-edit"></i> Soal {{$question['id']}}</span>
 					    		</div>
                                 <div class="card-body">
                                     <table class="table table-borderless">
                                         <tr>
                                             <td>
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="form-check-input radio{{$data['id']}}"
-                                                        id="customRadio{{$data['id']}}a" name="p[{{$data['id']}}]"
+                                                    <input type="radio" class="form-check-input radio{{$question['id']}}"
+                                                        id="customRadio{{$question['id']}}a" name="p[{{$question['id']}}]"
                                                         value="A">
-                                                    <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}a">
+                                                    <label class="custom-control-label text-justify" for="customRadio{{$question['id']}}a">
                                                         <span>
-                                                            {{$data['pilihan1']}}
+                                                            {{$question['pilihan1']}}
                                                         </span>
                                                     </label>
                                                 </div>
             
                                                 <div class="custom-control custom-radio mt-3">
-                                                    <input type="radio" class="form-check-input radio{{$data['id']}}"
-                                                        id="customRadio{{$data['id']}}b" name="p[{{$data['id']}}]"
+                                                    <input type="radio" class="form-check-input radio{{$question['id']}}"
+                                                        id="customRadio{{$question['id']}}b" name="p[{{$question['id']}}]"
                                                         value="B">
-                                                    <label class="custom-control-label text-justify" for="customRadio{{$data['id']}}b">
+                                                    <label class="custom-control-label text-justify" for="customRadio{{$question['id']}}b">
                                                         <span>
-                                                            {{$data['pilihan2']}}
+                                                            {{$question['pilihan2']}}
                                                         </span>
                                                     </label>
                                                 </div>

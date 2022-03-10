@@ -6,16 +6,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends \Ajifatur\FaturHelper\Models\User
 {
     use Notifiable;
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    // protected $primaryKey = 'id_user';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'nama_user', 'tanggal_lahir', 'jenis_kelamin', 'username', 'email', 'password', 'password_str', 'foto', 'role', 'has_access', 'created_at',
+        'nama_user', 'tanggal_lahir', 'jenis_kelamin', 'username', 'email', 'password', 'password_str', 'foto', 'role', 'has_access', 'status', 'last_visit', 'created_at',
     ];
 
     /**
@@ -45,9 +38,34 @@ class User extends Authenticatable
     ];
 
     /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
+     * Get the attribute associated with the user.
      */
-    public $timestamps = false;
+    public function attribute()
+    {
+        return $this->hasOne(UserAttribute::class);
+    }
+
+    /**
+     * Get the socmed associated with the user.
+     */
+    public function socmed()
+    {
+        return $this->hasOne(UserSocmed::class);
+    }
+
+    /**
+     * Get the guardian associated with the user.
+     */
+    public function guardian()
+    {
+        return $this->hasOne(UserGuardian::class);
+    }
+
+    /**
+     * Get the attachments for the packet.
+     */
+    public function attachments()
+    {
+        return $this->hasMany(UserAttachment::class);
+    }
 }

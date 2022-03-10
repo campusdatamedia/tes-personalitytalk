@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-    <h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
+    <h3 class="m-0 text-center text-white">{{ $packet->name }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -10,25 +10,25 @@
     </svg>
 </div>
 <div class="container main-container">
-    @if($seleksi != null)
-	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+	    @if(strtotime('now') < strtotime($selection->test_time))
 	    <div class="row">
 	        <!-- Alert -->
 	        <div class="col-12 mb-2">
 	            <div class="alert alert-danger fade show text-center" role="alert">
-	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	                Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
 	            </div>
 	        </div>
 	    </div>
 	    @endif
     @endif
-    @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
+    @if($selection == null || ($selection != null && strtotime('now') >= strtotime($selection->test_time)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
 		    <form id="form" method="post" action="/tes/{{ $path }}/store">
 			    <input type="hidden" name="path" value="{{ $path }}">
-			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="packet_id" value="{{ $packet->id }}">
+			    <input type="hidden" name="test_id" value="{{ $test->id }}">
 		        <input type="hidden" id="D" name="Dm">
             	<input type="hidden" id="I" name="Im">
             	<input type="hidden" id="S" name="Sm">
@@ -44,11 +44,11 @@
         			@php
         				$totalsoal = 0;
         			@endphp
-        			@foreach($soal as $data)
+        			@foreach($questions as $question)
         			<div class="col-lg-6" style="margin-top: 20px;">
         				<div class="card soal rounded-1">
                             <div class="card-header bg-transparent">
-                                <span class="num fw-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+                                <span class="num fw-bold" data-id="{{ $question->number }}"><i class="fa fa-edit"></i> Soal {{ $question->number }}</span>
                             </div>
         					<div class="card-body">
         						<table width="100%">
@@ -61,7 +61,7 @@
 										$huruf = ['A', 'B', 'C' , 'D'];
 										$num = -1;
 										$totalsoal = $totalsoal+1;
-										$json = json_decode($data->soal);
+										$json = json_decode($question->description);
 									@endphp
 									@foreach($json as $pilihan)
 										@php
@@ -70,10 +70,10 @@
 										@endphp
 										<tr>
 											<td width="30" valign="top">
-												<input type="radio" name="y[{{$data->nomor}}]" id="{{$pilihan->keym}}m" class="form-check-input {{$data->nomor}}-y" value="{{$key}}">
+												<input type="radio" name="y[{{$question->number}}]" id="{{$pilihan->keym}}m" class="form-check-input {{$question->number}}-y" value="{{$key}}">
 											</td>
 											<td width="30" valign="top">
-												<input type="radio" name="n[{{$data->nomor}}]" id="{{$pilihan->keyl}}l" class="form-check-input {{$data->nomor}}-n" value="{{$key}}">
+												<input type="radio" name="n[{{$question->number}}]" id="{{$pilihan->keyl}}l" class="form-check-input {{$question->number}}-n" value="{{$key}}">
 											</td>
 											<td><p>{{$pilihan->pilihan}}</p></td>
 										</tr>

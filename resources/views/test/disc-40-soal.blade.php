@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-	<h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
+	<h3 class="m-0 text-center text-white">{{ $packet->nama_paket }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -10,34 +10,13 @@
     </svg>
 </div>
 <div class="container main-container">
-    @if($seleksi != null)
-		@if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+		@if(strtotime('now') < strtotime($selection->test_time))
 		<div class="row">
 			<!-- Alert -->
 			<div class="col-12 mb-2">
 				<div class="alert alert-danger fade show text-center" role="alert">
-					Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
-				</div>
-			</div>
-		</div>
-		@endif
-    @endif
-    @if(Auth::user()->role == 6)
-		@if($tes->waktu_tes != null && strtotime('now') < strtotime($tes->waktu_tes))
-		<div class="row">
-			<!-- Alert -->
-			<div class="col-12 mb-2">
-				<div class="alert alert-danger fade show text-center" role="alert">
-					Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($tes->waktu_tes) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($tes->waktu_tes)) }}</strong>.
-				</div>
-			</div>
-		</div>
-		@elseif($check != null)
-		<div class="row">
-			<!-- Alert -->
-			<div class="col-12 mb-2">
-				<div class="alert alert-danger fade show text-center" role="alert">
-					Anda sudah melakukan tes.
+					Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
 				</div>
 			</div>
 		</div>
@@ -48,15 +27,15 @@
 			<form id="form" method="post" action="/tes/{{ $path }}/store">
 			    {{ csrf_field() }}
 			    <input type="hidden" name="path" value="{{ $path }}">
-			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="packet_id" value="{{ $packet->id }}">
+			    <input type="hidden" name="test_id" value="{{ $test->id }}">
 				<div class="container-fluid">
 					<div class="row">
-					    @foreach($soal as $data)
+					    @foreach($questions as $question)
 					    <div class="col-lg-6 mb-3">
 					    	<div class="card soal rounded-1">
 					    		<div class="card-header bg-transparent">
-					    			<span class="num fw-bold" data-id="{{ $data->nomor }}"><i class="fa fa-edit"></i> Soal {{ $data->nomor }}</span>
+					    			<span class="num fw-bold" data-id="{{ $question->number }}"><i class="fa fa-edit"></i> Soal {{ $question->number }}</span>
 					    		</div>
     							<div class="card-body">
     								<div class="row">
@@ -65,24 +44,24 @@
 	    								<div class="col-8"><span class="fw-bold">Karakteristik</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="A"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="A"></div>
-	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['A'] }}</span></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $question->number }}]" class="form-check-input {{ $question->number }}m" value="A"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $question->number }}]" class="form-check-input {{ $question->number }}l" value="A"></div>
+	    								<div class="col-8"><span>{{ $question->description[0]['pilihan']['A'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="B"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="B"></div>
-	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['B'] }}</span></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $question->number }}]" class="form-check-input {{ $question->number }}m" value="B"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $question->number }}]" class="form-check-input {{ $question->number }}l" value="B"></div>
+	    								<div class="col-8"><span>{{ $question->description[0]['pilihan']['B'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="C"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="C"></div>
-	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['C'] }}</span></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $question->number }}]" class="form-check-input {{ $question->number }}m" value="C"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $question->number }}]" class="form-check-input {{ $question->number }}l" value="C"></div>
+	    								<div class="col-8"><span>{{ $question->description[0]['pilihan']['C'] }}</span></div>
 	    							</div>
 	    							<div class="row">
-	    								<div class="col-2"><input type="radio" name="m[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}m" value="D"></div>
-	    								<div class="col-2"><input type="radio" name="l[{{ $data->nomor }}]" class="form-check-input {{ $data->nomor }}l" value="D"></div>
-	    								<div class="col-8"><span>{{ $data->soal[0]['pilihan']['D'] }}</span></div>
+	    								<div class="col-2"><input type="radio" name="m[{{ $question->number }}]" class="form-check-input {{ $question->number }}m" value="D"></div>
+	    								<div class="col-2"><input type="radio" name="l[{{ $question->number }}]" class="form-check-input {{ $question->number }}l" value="D"></div>
+	    								<div class="col-8"><span>{{ $question->description[0]['pilihan']['D'] }}</span></div>
 	    							</div>
     							</div>
     						</div>

@@ -29,7 +29,9 @@ class Tes extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'nama_tes', 'path', 'waktu_tes'
+        'nama_tes',
+        'path',
+		'waktu_tes'
 	];
 
     /**

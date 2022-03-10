@@ -4,7 +4,7 @@
 
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
-        <h3>{{ $paket->nama_paket }}</h3>
+        <h3>{{ $packet->name }}</h3>
 		<p class="m-0"><a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#tutorialModal"><u>Lihat Petunjuk Pengerjaan Disini</u></a></p>
     </div>
 </div>
@@ -15,15 +15,15 @@
     </svg>
 </div>
 
-<input type="hidden" id="user_id" value="{{ Auth::user()->id_user }}">
+<input type="hidden" id="user_id" value="{{ Auth::user()->id }}">
 
 <div class="container main-container">
-    @if($seleksi != null)
-	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+	    @if(strtotime('now') < strtotime($selection->test_time))
 	    <div class="row">
 	        <div class="col-12 mb-2">
 	            <div class="alert alert-danger fade show text-center" role="alert">
-	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	                Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
 	            </div>
 	        </div>
 	    </div>
@@ -96,7 +96,7 @@ class App extends React.Component {
 						items: data.questions,
 						examples: data.examples,
 						activeItem: data.questions.length > 0 ? data.questions[0] : {},
-						activeNumber: data.questions.length > 0 ? data.questions[0].nomor : null,
+						activeNumber: data.questions.length > 0 ? data.questions[0].number : null,
 						needAuth: data.questions.length > 0 && data.questions[0].is_auth === 1 ? true : false,
 						isAuth: data.questions.length > 0 && data.questions[0].is_auth === 1 ? false : true
 					});
@@ -179,7 +179,7 @@ class App extends React.Component {
 
 		if(items.length > 0) {
 			for(let i = 0; i < items.length; i++) {
-				if(number === items[i].nomor) {
+				if(number === items[i].number) {
 					item = items[i];
 				}
 			}
@@ -194,7 +194,7 @@ class App extends React.Component {
 
 		if(items.length > 0) {
 			for(let i = 0; i < items.length; i++) {
-				if((activeNumber - 1) === items[i].nomor) {
+				if((activeNumber - 1) === items[i].number) {
 					item = items[i];
 				}
 			}
@@ -209,7 +209,7 @@ class App extends React.Component {
 
 		if(items.length > 0) {
 			for(let i = 0; i < items.length; i++) {
-				if((activeNumber + 1) === items[i].nomor) {
+				if((activeNumber + 1) === items[i].number) {
 					item = items[i];
 				}
 			}
@@ -397,7 +397,7 @@ class ModalTutorial extends React.Component {
 	handleHide = () => {
 		this.setState({
 			isTrying: 0,
-			isMemorizing: this.props.item.tipe_soal === 'choice-memo' ? 1 : null,
+			isMemorizing: this.props.item.type === 'choice-memo' ? 1 : null,
 			answers: [],
 			checkAnswers: [],
 			keyAnswers: []
@@ -411,7 +411,7 @@ class ModalTutorial extends React.Component {
 	handleTry = () => {
 		this.setState({
 			isTrying: 1,
-			isMemorizing: this.props.item.tipe_soal === 'choice-memo' ? 1 : null
+			isMemorizing: this.props.item.type === 'choice-memo' ? 1 : null
 		});
 	}
 
@@ -537,17 +537,17 @@ class ModalTutorial extends React.Component {
 		const item = this.props.item;
 
 		if(isTrying === 1) {
-			if(item.tipe_soal === 'choice' || item.tipe_soal === 'choice-memo') {
+			if(item.type === 'choice' || item.type === 'choice-memo') {
 				return (
 					<React.Fragment>
 						<hr/>
 						{
 							this.props.examples.map((example, index) => {
-								const choices = Object.entries(example.soal[0].pilihan);
+								const choices = Object.entries(example.description[0].pilihan);
 								return (
 									<div class="mb-3">
-										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
-										<p class="mb-1">{example.soal !== undefined ? example.soal[0].soal : ''}</p>
+										<p class="mb-1"><strong>Contoh Soal {example.number}:</strong></p>
+										<p class="mb-1">{example.description !== undefined ? example.description[0].soal : ''}</p>
 										{
 											choices.map((choice) => {
 												return (
@@ -555,21 +555,21 @@ class ModalTutorial extends React.Component {
 														<input
 															class="form-check-input"
 															type="radio"
-															name={`choicex[${example.nomor}]`}
-															id={`choice-${example.nomor}-${choice[0]}`}
+															name={`choicex[${example.number}]`}
+															id={`choice-${example.number}-${choice[0]}`}
 															value={choice[0]}
-															onChange={() => this.handleChoice(example.nomor, choice[0])}
+															onChange={() => this.handleChoice(example.number, choice[0])}
 														/>
-														<label class="form-check-label" for={`choice-${example.nomor}-${choice[0]}`}>{choice[1]}</label>
+														<label class="form-check-label" for={`choice-${example.number}-${choice[0]}`}>{choice[1]}</label>
 													</div>
 												)
 											})
 										}
-										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
-											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
-											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+										<div class={`alert ${checkAnswers[example.number] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.number] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.number] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.number] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.number]}</strong>.</span>
 											<br/>
-											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+											<u>Pembahasan:</u> {example.description[0].pembahasan !== undefined ? example.description[0].pembahasan : '-'}
 										</div>
 									</div>
 								)
@@ -578,7 +578,7 @@ class ModalTutorial extends React.Component {
 					</React.Fragment>
 				);
 			}
-			else if(item.tipe_soal === 'essay') {
+			else if(item.type === 'essay') {
 				return (
 					<React.Fragment>
 						<hr/>
@@ -586,20 +586,20 @@ class ModalTutorial extends React.Component {
 							this.props.examples.map((example, index) => {
 								return (
 									<div class="mb-3">
-										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
-										<p class="mb-1">{example.soal !== undefined ? example.soal[0].soal : ''}</p>
+										<p class="mb-1"><strong>Contoh Soal {example.number}:</strong></p>
+										<p class="mb-1">{example.description !== undefined ? example.description[0].soal : ''}</p>
 										<textarea
 											class="form-control form-control-sm mb-2"
 											rows="1"
 											placeholder="Jawaban Anda..."
-											data-number={example.nomor}
+											data-number={example.number}
 											onChange={this.handleTextField}
 										/>
-										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
-											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
-											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+										<div class={`alert ${checkAnswers[example.number] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.number] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.number] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.number] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.number]}</strong>.</span>
 											<br/>
-											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+											<u>Pembahasan:</u> {example.description[0].pembahasan !== undefined ? example.description[0].pembahasan : '-'}
 										</div>
 									</div>
 								)
@@ -608,7 +608,7 @@ class ModalTutorial extends React.Component {
 					</React.Fragment>
 				);
 			}
-			else if(item.tipe_soal === 'number') {
+			else if(item.type === 'number') {
 				return (
 					<React.Fragment>
 						<hr/>
@@ -621,27 +621,27 @@ class ModalTutorial extends React.Component {
 											<input
 												class="form-check-input"
 												type="checkbox"
-												name={`checkboxx[${example.nomor}]`}
+												name={`checkboxx[${example.number}]`}
 												value={i}
-												id={`checkbox-${example.nomor}-${i}`}
-												data-number={example.nomor}
+												id={`checkbox-${example.number}-${i}`}
+												data-number={example.number}
 												onChange={this.handleCheckbox}
 											/>
-											<label class="form-check-label" for={`checkbox-${example.nomor}-${i}`}>{i}</label>
+											<label class="form-check-label" for={`checkbox-${example.number}-${i}`}>{i}</label>
 										</div>
 									);
 								}
 
 								return (
 									<div class="mb-3">
-										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
-										<p class="mb-1">{example.soal !== undefined ? example.soal[0].soal : ''}</p>
+										<p class="mb-1"><strong>Contoh Soal {example.number}:</strong></p>
+										<p class="mb-1">{example.description !== undefined ? example.description[0].soal : ''}</p>
 										{elements}
-										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
-											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
-											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+										<div class={`alert ${checkAnswers[example.number] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.number] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.number] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.number] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.number]}</strong>.</span>
 											<br/>
-											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+											<u>Pembahasan:</u> {example.description[0].pembahasan !== undefined ? example.description[0].pembahasan : '-'}
 										</div>
 									</div>
 								)
@@ -650,7 +650,7 @@ class ModalTutorial extends React.Component {
 					</React.Fragment>
 				);
 			}
-			else if(item.tipe_soal === 'image') {
+			else if(item.type === 'image') {
 				const {answers} = this.state;
 
 				return (
@@ -658,11 +658,11 @@ class ModalTutorial extends React.Component {
 						<hr/>
 						{
 							this.props.examples.map((example, index) => {
-								const choices = Object.entries(example.soal[0].pilihan);
+								const choices = Object.entries(example.description[0].pilihan);
 								return (
 									<div class="mb-3">
-										<p class="mb-1"><strong>Contoh Soal {example.nomor}:</strong></p>
-										<p class="mb-1"><img width="125" src={`/assets/images/tes/ist/${example.soal !== undefined ? example.soal[0].soal : ''}`}/></p>
+										<p class="mb-1"><strong>Contoh Soal {example.number}:</strong></p>
+										<p class="mb-1"><img width="125" src={`/assets/images/tes/ist/${example.description !== undefined ? example.description[0].soal : ''}`}/></p>
 										<p class="mb-1">Pilih Jawaban:</p>
 										{
 											choices.map((choice) => {
@@ -671,23 +671,23 @@ class ModalTutorial extends React.Component {
 														<input
 															class="form-check-input d-none"
 															type="radio"
-															name={`choice[${example.nomor}]`}
-															id={`choice-${example.nomor}-${choice[0]}`}
+															name={`choice[${example.number}]`}
+															id={`choice-${example.number}-${choice[0]}`}
 															value={choice[0]}
-															onChange={() => this.handleImage(example.nomor, choice[0])}
+															onChange={() => this.handleImage(example.number, choice[0])}
 														/>
-														<label class={`form-check-label border ${answers[example.nomor] === choice[0] ? 'border-primary' : ''}`} for={`choice-${example.nomor}-${choice[0]}`}>
+														<label class={`form-check-label border ${answers[example.number] === choice[0] ? 'border-primary' : ''}`} for={`choice-${example.number}-${choice[0]}`}>
 															<img width="100" src={`/assets/images/tes/ist/${choice[1]}`}/>
 														</label>
 													</div>
 												)
 											})
 										}
-										<div class={`alert ${checkAnswers[example.nomor] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.nomor] !== undefined ? '' : 'd-none'}`}>
-											<strong>Jawaban Anda {checkAnswers[example.nomor] ? 'benar' : 'salah'}!</strong>&nbsp;
-											<span class={checkAnswers[example.nomor] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.nomor]}</strong>.</span>
+										<div class={`alert ${checkAnswers[example.number] ? 'alert-success' : 'alert-danger'} ${checkAnswers[example.number] !== undefined ? '' : 'd-none'}`}>
+											<strong>Jawaban Anda {checkAnswers[example.number] ? 'benar' : 'salah'}!</strong>&nbsp;
+											<span class={checkAnswers[example.number] === false ? '' : 'd-none'}>Jawaban yang tepat adalah <strong>{keyAnswers[example.number]}</strong>.</span>
 											<br/>
-											<u>Pembahasan:</u> {example.soal[0].pembahasan !== undefined ? example.soal[0].pembahasan : '-'}
+											<u>Pembahasan:</u> {example.description[0].pembahasan !== undefined ? example.description[0].pembahasan : '-'}
 										</div>
 									</div>
 								)
@@ -717,7 +717,7 @@ class ModalTutorial extends React.Component {
 						<div class="modal-body">
 							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
 							<div class="mt-2">
-								<button type="button" class={`btn btn-sm btn-info ${this.props.item.tipe_soal === 'choice-memo' && isMemorizing !== 1 ? '' : 'd-none'}`} onClick={this.handleMemorize}>
+								<button type="button" class={`btn btn-sm btn-info ${this.props.item.type === 'choice-memo' && isMemorizing !== 1 ? '' : 'd-none'}`} onClick={this.handleMemorize}>
 									<i class="fa fa-clipboard me-1"></i>Membaca Hafalan
 								</button>
 							</div>
@@ -728,7 +728,7 @@ class ModalTutorial extends React.Component {
 							<div class="examples">{this.renderExamples()}</div>
 						</div>
 						<div class={`modal-footer ${this.props.examples.length === 0 ? '' : 'justify-content-between'}`}>
-							<button type="button" class={`btn btn-sm btn-warning ${this.props.examples.length === 0 || isTrying === 1 || (this.props.item.tipe_soal === 'choice-memo' && isMemorizing === null) ? 'd-none' : ''}`} onClick={this.handleTry}>
+							<button type="button" class={`btn btn-sm btn-warning ${this.props.examples.length === 0 || isTrying === 1 || (this.props.item.type === 'choice-memo' && isMemorizing === null) ? 'd-none' : ''}`} onClick={this.handleTry}>
 								<i class="fa fa-pencil me-1"></i>Latihan Soal
 							</button>
 							<button type="button" class={`btn btn-sm btn-info ${isTrying === 1 ? '' : 'd-none'}`} onClick={this.handleCheck}>
@@ -771,26 +771,26 @@ class ButtonNav extends React.Component {
 						items.map((item, index) => {
 							// Set button color
 							let buttonColor;
-							if(doubts[item.nomor] === true) buttonColor = 'btn-warning';
-							else if(answers[item.nomor] !== undefined && (((item.tipe_soal === 'choice' || item.tipe_soal === 'image' || item.tipe_soal === 'choice-memo') && answers[item.nomor] !== null) || (item.tipe_soal === 'essay' && answers[item.nomor] !== '') || (item.tipe_soal === 'number' && answers[item.nomor].length > 0))) buttonColor = 'btn-primary';
-							else if(item.nomor === activeNumber && (answers[item.nomor] === undefined || answers[item.nomor] === null || answers[item.nomor] === '' || answers[item.nomor].length === 0)) buttonColor = 'btn-info';
+							if(doubts[item.number] === true) buttonColor = 'btn-warning';
+							else if(answers[item.number] !== undefined && (((item.type === 'choice' || item.type === 'image' || item.type === 'choice-memo') && answers[item.number] !== null) || (item.type === 'essay' && answers[item.number] !== '') || (item.type === 'number' && answers[item.number].length > 0))) buttonColor = 'btn-primary';
+							else if(item.number === activeNumber && (answers[item.number] === undefined || answers[item.number] === null || answers[item.number] === '' || answers[item.number].length === 0)) buttonColor = 'btn-info';
 							else buttonColor = 'btn-outline-dark';
 
 							// Set button note
 							let buttonNote = '-';
-							if(answers[item.nomor] !== undefined) {
-								if((item.tipe_soal === 'choice' || item.tipe_soal === 'choice-memo') && answers[item.nomor] !== null) buttonNote = answers[item.nomor];
-								else if(item.tipe_soal === 'essay' && answers[item.nomor] !== '') buttonNote = 'Y';
-								else if(item.tipe_soal === 'number' && answers[item.nomor].length > 0) buttonNote = 'Y';
-								else if(item.tipe_soal === 'image' && answers[item.nomor] !== null) buttonNote = answers[item.nomor];
+							if(answers[item.number] !== undefined) {
+								if((item.type === 'choice' || item.type === 'choice-memo') && answers[item.number] !== null) buttonNote = answers[item.number];
+								else if(item.type === 'essay' && answers[item.number] !== '') buttonNote = 'Y';
+								else if(item.type === 'number' && answers[item.number].length > 0) buttonNote = 'Y';
+								else if(item.type === 'image' && answers[item.number] !== null) buttonNote = answers[item.number];
 							}
 
 							return (
 								<button
 									class={`btn btn-sm ${buttonColor}`}
-									onClick={() => this.handleClick(item.nomor)}
+									onClick={() => this.handleClick(item.number)}
 								>
-									{item.nomor} ({buttonNote})
+									{item.number} ({buttonNote})
 								</button>
 							);
 						})
@@ -929,22 +929,22 @@ class Card extends React.Component {
 	renderForm = () => {
 		const {answers, doubts} = this.state;
 		const item = this.props.item;
-		const question = this.props.item.soal;
+		const question = this.props.item.description;
 		const choices = (question !== undefined && question[0].pilihan !== undefined) ? Object.entries(question[0].pilihan) : [];
 
-		if(item.tipe_soal === 'choice' || item.tipe_soal === 'choice-memo') {
+		if(item.type === 'choice' || item.type === 'choice-memo') {
 			return (
 				<React.Fragment>
-					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					<p>{item.description !== undefined ? item.description[0].soal : ''}</p>
 					{
 						choices.map((choice) => {
 							return (
 								<Choice
 									parentCallback={this.handleChoiceCallback}
-									number={item.nomor}
+									number={item.number}
 									option={choice[0]}
 									description={choice[1]}
-									isChecked={answers[item.nomor] === choice[0] ? true : false}
+									isChecked={answers[item.number] === choice[0] ? true : false}
 								/>
 							)
 						})
@@ -952,44 +952,44 @@ class Card extends React.Component {
 				</React.Fragment>
 			);
 		}
-		else if(item.tipe_soal === 'essay') {
+		else if(item.type === 'essay') {
 			return (
 				<React.Fragment>
-					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					<p>{item.description !== undefined ? item.description[0].soal : ''}</p>
 					<TextField
 						parentCallback={this.handleChoiceCallback}
-						number={item.nomor}
-						value={answers[item.nomor] !== undefined ? answers[item.nomor] : ''}
+						number={item.number}
+						value={answers[item.number] !== undefined ? answers[item.number] : ''}
 					/>
 				</React.Fragment>
 			);
 		}
-		else if(item.tipe_soal === 'number') {
+		else if(item.type === 'number') {
 			return (
 				<React.Fragment>
-					<p>{item.soal !== undefined ? item.soal[0].soal : ''}</p>
+					<p>{item.description !== undefined ? item.description[0].soal : ''}</p>
 					<CheckboxNumber
 						parentCallback={this.handleCheckboxNumberCallback}
-						number={item.nomor}
-						checkeds={answers[item.nomor] !== undefined ? answers[item.nomor] : []}
+						number={item.number}
+						checkeds={answers[item.number] !== undefined ? answers[item.number] : []}
 					/>
 				</React.Fragment>
 			);
 		}
-		else if(item.tipe_soal === 'image') {
+		else if(item.type === 'image') {
 			return (
 				<React.Fragment>
-					<p><img width="125" src={`/assets/images/tes/ist/${item.soal !== undefined ? item.soal[0].soal : ''}`}/></p>
+					<p><img width="125" src={`/assets/images/tes/ist/${item.description !== undefined ? item.description[0].soal : ''}`}/></p>
 					<p>Pilih Jawaban:</p>
 					{
 						choices.map((choice) => {
 							return (
 								<ImageChoice
 									parentCallback={this.handleChoiceCallback}
-									number={item.nomor}
+									number={item.number}
 									option={choice[0]}
 									description={choice[1]}
-									isChecked={answers[item.nomor] === choice[0] ? true : false}
+									isChecked={answers[item.number] === choice[0] ? true : false}
 								/>
 							)
 						})
@@ -1007,7 +1007,7 @@ class Card extends React.Component {
 		return (
 			<div class="card card-question">
 				<div class="card-header d-flex justify-content-between">
-					<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.nomor}</span>
+					<span class="fw-bold"><i class="fa fa-edit"></i> Soal {item.number}</span>
 					<span>
 						<Timer
 							parentCallback={this.handleTimerCallback}
@@ -1024,17 +1024,17 @@ class Card extends React.Component {
 				<div class="card-footer bg-white d-md-flex justify-content-between text-center">
 					<ButtonDoubt
 						parentCallback={this.handleButtonDoubtCallback}
-						number={item.nomor}
-						isDoubt={doubts[item.nomor] ? true : false}
+						number={item.number}
+						isDoubt={doubts[item.number] ? true : false}
 					/>
 					<div>
 						<ButtonPrevious
 							parentCallback={this.handleButtonPreviousCallback}
-							number={this.props.previousItem !== undefined ? this.props.previousItem.nomor : 0}
+							number={this.props.previousItem !== undefined ? this.props.previousItem.number : 0}
 						/>
 						<ButtonNext
 							parentCallback={this.handleButtonNextCallback}
-							number={this.props.nextItem !== undefined ? this.props.nextItem.nomor : 0}
+							number={this.props.nextItem !== undefined ? this.props.nextItem.number : 0}
 						/>
 					</div>
 					<ButtonSubmit

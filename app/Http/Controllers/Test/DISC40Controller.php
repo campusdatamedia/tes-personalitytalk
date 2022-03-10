@@ -5,67 +5,47 @@ namespace App\Http\Controllers\Test;
 use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Hasil;
-use App\Models\HRD;
-use App\Models\Karyawan;
-use App\Models\PaketSoal;
-use App\Models\Pelamar;
-use App\Models\Soal;
-use App\Models\Tes;
-use App\Models\User;
+use App\Models\Packet;
+use App\Models\Result;
 
 class DISC40Controller extends Controller
 {    
     /**
-     * Menampilkan halaman tes
+     * Display
      * 
-     * string $path
-     * @return \Illuminate\Http\Request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public static function index(Request $request, $path, $tes, $seleksi, $check)
+    public static function index(Request $request, $path, $test, $selection)
     {
-        // Tes
-        $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->first();
-        $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
-        foreach($soal as $data){
-            $data->soal = json_decode($data->soal, true);
+        // Get the packet and questions
+        $packet = Packet::where('test_id','=',$test->id)->where('status','=',1)->first();
+        $questions = $packet ? $packet->questions()->orderBy('number','asc')->get() : [];
+        foreach($questions as $question) {
+            $question->description = json_decode($question->description, true);
         }
 
         // View
-        return view('tes/'.$path, [
-            'check' => $check,
-            'paket' => $paket,
+        return view('test/'.$path, [
+            'packet' => $packet,
             'path' => $path,
-            'seleksi' => $seleksi,
-            'soal' => $soal,
-            'tes' => $tes,
+            'questions' => $questions,
+            'selection' => $selection,
+            'test' => $test,
         ]);
     }
 
     /**
-     * Memproses dan menyimpan tes
+     * Store
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public static function store(Request $request)
     {
-        // Tes
-        $paket = PaketSoal::where('id_paket','=',$request->id_paket)->where('status','=',1)->first();
-
-        // Get data HRD
-        if(Auth::user()->role_id == role('hrd')){
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-        }
-        elseif(Auth::user()->role_id == role('employee')){
-            $karyawan = Karyawan::where('id_user','=',Auth::user()->id)->first();
-            $hrd = HRD::find($karyawan->id_hrd);
-        }
-        elseif(Auth::user()->role_id == role('applicant')){
-            $pelamar = Pelamar::where('id_user','=',Auth::user()->id)->first();
-            $hrd = HRD::find($pelamar->id_hrd);
-        }
+        // Get the packet and questions
+        $packet = Packet::where('test_id','=',$request->test_id)->where('status','=',1)->first();
+        $questions = $packet ? $packet->questions()->orderBy('number','asc')->get() : [];
         
         // Declare variables
         $m = $request->get('m');
@@ -75,14 +55,13 @@ class DISC40Controller extends Controller
         $disc_l = array();
         $disc_score_m = array();
         $disc_score_l = array();
-        $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
-        foreach($soal as $data){
-            $json = json_decode($data->soal, true);
-            array_push($disc_m, $json[0]['disc'][$m[$data->nomor]]);
-            array_push($disc_l, $json[0]['disc'][$l[$data->nomor]]);
+        foreach($questions as $question) {
+            $json = json_decode($question->description, true);
+            array_push($disc_m, $json[0]['disc'][$m[$question->number]]);
+            array_push($disc_l, $json[0]['disc'][$l[$question->number]]);
         }
 
-        // Hitung score MOST dan LEAST
+        // MOST dan LEAST
         $array_count_m = array_count_values($disc_m);
         $array_count_l = array_count_values($disc_l);
         foreach($disc as $letter){
@@ -95,17 +74,16 @@ class DISC40Controller extends Controller
         $array['answers']['m'] = $request->m;
         $array['answers']['l'] = $request->l;
 
-        // Menyimpan data
-        $hasil = new Hasil;
-        $hasil->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
-        $hasil->id_user = Auth::user()->id;
-        $hasil->id_tes = $request->id_tes;
-        $hasil->id_paket = $request->id_paket;
-        $hasil->hasil = json_encode($array);
-        $hasil->test_at = date("Y-m-d H:i:s");
-        $hasil->save();
+        // Save the result
+        $result = new Result;
+        $result->user_id = Auth::user()->id;
+        $result->company_id = Auth::user()->attribute->company_id;
+        $result->test_id = $request->test_id;
+        $result->packet_id = $request->packet_id;
+        $result->result = json_encode($array);
+        $result->save();
 
         // Return
-        return redirect('/dashboard')->with(['message' => 'Berhasil mengerjakan tes DISC 40 Soal']);
+        return redirect('/dashboard')->with(['message' => 'Berhasil mengerjakan tes '.$packet->test->name]);
     }
 }

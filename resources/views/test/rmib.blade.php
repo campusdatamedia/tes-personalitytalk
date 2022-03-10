@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-theme-1 bg-header">
-    <h3 class="m-0 text-center text-white">{{ $paket->nama_paket }}</h3>
+    <h3 class="m-0 text-center text-white">{{ $packet->name }}</h3>
 </div>
 <div class="custom-shape-divider-top-1617767620">
     <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -10,36 +10,36 @@
     </svg>
 </div>
 <div class="container main-container">
-    @if($seleksi != null)
-	    @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+	    @if(strtotime('now') < strtotime($selection->test_time))
 	    <div class="row">
 	        <!-- Alert -->
 	        <div class="col-12 mb-2">
 	            <div class="alert alert-danger fade show text-center" role="alert">
-	                Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+	                Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
 	            </div>
 	        </div>
 	    </div>
 	    @endif
     @endif
-    @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
+    @if($selection == null || ($selection != null && strtotime('now') >= strtotime($selection->test_time)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
 		    <form id="form" method="post" action="/tes/{{ $path }}/store">
 			    <input type="hidden" name="path" value="{{ $path }}">
-			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="packet_id" value="{{ $packet->id }}">
+			    <input type="hidden" name="test_id" value="{{ $test->id }}">
         		@csrf
         		<div class="row justify-content-center">
                     @php $letters = ['A','B','C','D','E','F','G','H','I']; @endphp
-                    @foreach($soal as $keysoal=>$q)
+                    @foreach($questions as $keysoal=>$q)
         			<div class="col-lg-8 mx-auto" style="margin-top: 20px;">
         				<div class="card soal rounded-1">
                             <div class="card-header bg-transparent">
-                                <span class="num fw-bold" data-id="{{ $q->nomor }}"><i class="fa fa-edit"></i> Soal {{ $q->nomor }}</span>
+                                <span class="num fw-bold" data-id="{{ $q->number }}"><i class="fa fa-edit"></i> Soal {{ $q->number }}</span>
                             </div>
                             @php
-                                $soal_array = json_decode($q->soal, true);
+                                $questions_array = json_decode($q->description, true);
                             @endphp
         					<div class="card-body">
         						<table class="table table-sm table-bordered">
@@ -51,18 +51,18 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($soal_array['L'] as $key=>$occupation)
+                                        @foreach($questions_array['L'] as $key=>$occupation)
                                         <tr>
-                                            <td>{{ $soal_array['L'][$key] }}</td>
+                                            <td>{{ $questions_array['L'][$key] }}</td>
                                             <td>
-                                                <select name="score[{{ $q->nomor }}][]" class="form-select form-select-sm select-score" data-id="{{ $q->nomor }}" data-key="{{ $key }}">
+                                                <select name="score[{{ $q->number }}][]" class="form-select form-select-sm select-score" data-id="{{ $q->number }}" data-key="{{ $key }}">
                                                     <option value="" disabled selected>--Pilih--</option>
-                                                    @for($i=1; $i<=count($soal_array['L']); $i++)
+                                                    @for($i=1; $i<=count($questions_array['L']); $i++)
                                                     <option value="{{ $i }}">{{ $i }}</option>
                                                     @endfor
                                                 </select>
                                             </td>
-                                            <td>{{ $soal_array['P'][$key] }}</td>
+                                            <td>{{ $questions_array['P'][$key] }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

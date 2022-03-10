@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use App\Models\Verification;
+// use App\Models\Verification;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
@@ -113,19 +113,19 @@ class UserLoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         // if role = 5
-        if($user->role == 5){
-            // Check verification data
-            $verification = Verification::where('id_user','=',$user->id_user)->first();
-            if($verification->status == 0){
-                $this->guard()->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return view('auth/login', ['message' => 'Anda belum melakukan verifikasi akun!']);
-            }
-            else{
-                return redirect('/dashboard');
-            }
-        }
+        // if($user->role == 5){
+        //     // Check verification data
+        //     $verification = Verification::where('id_user','=',$user->id_user)->first();
+        //     if($verification->status == 0){
+        //         $this->guard()->logout();
+        //         $request->session()->invalidate();
+        //         $request->session()->regenerateToken();
+        //         return view('auth/login', ['message' => 'Anda belum melakukan verifikasi akun!']);
+        //     }
+        //     else{
+        //         return redirect('/dashboard');
+        //     }
+        // }
     }
 
     /**

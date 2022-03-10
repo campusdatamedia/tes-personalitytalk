@@ -5,55 +5,46 @@ namespace App\Http\Controllers\Test;
 use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Hasil;
-use App\Models\HRD;
-use App\Models\Karyawan;
-use App\Models\PaketSoal;
-use App\Models\Pelamar;
-use App\Models\Soal;
-use App\Models\TempTes;
-use App\Models\Tes;
-use App\Models\User;
+use App\Models\Packet;
+use App\Models\Result;
 
 class ISTController extends Controller
 {    
     /**
-     * Menampilkan halaman tes
+     * Display
      * 
-     * string $path
-     * @return \Illuminate\Http\Request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public static function index(Request $request, $path, $tes, $seleksi, $check)
+    public static function index(Request $request, $path, $test, $selection)
     {
         // Vars
-        $first_soal = '';
-        $last_soal = '';
+        $first_question = '';
+        $last_question = '';
 
-        // Tes
+        // Get the part, packet and questions
         $part = $request->query('part') ?: 1;
-        $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('part','=',$part)->where('status','=',1)->firstOrFail();
-        $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('part','=',$part)->where('soal.id_paket','=',$paket->id_paket)->where('status','=',1)->orderBy('nomor','asc')->get();
-        if(count($soal)>0){
-            foreach($soal as $key=>$data){
-                $data->soal = json_decode($data->soal, true);
-                if($key == 0) $first_soal = $data->nomor;
-                if($key == count($soal)-1) $last_soal = $data->nomor;
+        $packet = Packet::where('test_id','=',$test->id)->where('part','=',$part)->where('status','=',1)->first();
+        $questions = $packet ? $packet->questions()->orderBy('number','asc')->get() : [];
+        if(count($questions) > 0) {
+            foreach($questions as $key=>$question) {
+                $question->description = json_decode($question->description, true);
+                if($key == 0) $first_question = $question->number;
+                if($key == count($questions)-1) $last_question = $question->number;
             }
         }
-        $range_soal = count($soal) > 1 ? $first_soal.'-'.$last_soal : $first_soal; // Range soal
-        $last_part = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->latest('part')->first(); // Part paket soal terakhir
+        $question_range = count($questions) > 1 ? $first_question.'-'.$last_question : $first_question; // Range soal
+        $last_part = Packet::where('test_id','=',$test->id)->where('status','=',1)->latest('part')->first(); // Part paket soal terakhir
 
         // View
-        return view('tes/'.$path, [
-            'check' => $check,
-            'paket' => $paket,
+        return view('test/'.$path, [
+            'packet' => $packet,
             'path' => $path,
             'part' => $part,
-            'range_soal' => $range_soal,
-            'seleksi' => $seleksi,
-            'soal' => $soal,
-            'tes' => $tes,
+            'questions' => $questions,
+            'selection' => $selection,
+            'test' => $test,
+            'question_range' => $question_range,
             'last_part' => $last_part,
         ]);
     }
@@ -3795,37 +3786,18 @@ class ISTController extends Controller
 
 
 
-    public static function try(Request $request, $path, $tes, $seleksi, $check)
+    public static function try(Request $request, $path, $test, $selection)
     {
-        // Vars
-        $first_soal = '';
-        $last_soal = '';
-
-        // Tes
+        // Get the part, packet and questions
         $part = $request->query('part') ?: 1;
-        $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('part','=',$part)->where('status','=',1)->firstOrFail();
-        $soal = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('part','=',$part)->where('soal.id_paket','=',$paket->id_paket)->where('status','=',1)->orderBy('nomor','asc')->get();
-        if(count($soal)>0){
-            foreach($soal as $key=>$data){
-                $data->soal = json_decode($data->soal, true);
-                if($key == 0) $first_soal = $data->nomor;
-                if($key == count($soal)-1) $last_soal = $data->nomor;
-            }
-        }
-        $range_soal = count($soal) > 1 ? $first_soal.'-'.$last_soal : $first_soal; // Range soal
-        $last_part = PaketSoal::where('id_tes','=',$tes->id_tes)->where('status','=',1)->latest('part')->first(); // Part paket soal terakhir
+        $packet = Packet::where('test_id','=',$test->id)->where('part','=',$part)->where('status','=',1)->first();
 
         // View
-        return view('tes/ist-2', [
-            'check' => $check,
-            'paket' => $paket,
+        return view('test/ist-2', [
             'path' => $path,
-            'part' => $part,
-            'range_soal' => $range_soal,
-            'seleksi' => $seleksi,
-            'soal' => $soal,
-            'tes' => $tes,
-            'last_part' => $last_part,
+            'packet' => $packet,
+            'test' => $test,
+            'selection' => $selection,
         ]);
     }
 }

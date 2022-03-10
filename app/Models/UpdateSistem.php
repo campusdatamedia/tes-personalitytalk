@@ -4,21 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HRD extends Model
+class UpdateSistem extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'hrd';
+    protected $table = 'update_sistem';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_hrd';
+    protected $primaryKey = 'id_update';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,17 +29,9 @@ class HRD extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'id_user',
-        'nama_lengkap',
-		'tanggal_lahir',
-        'jenis_kelamin',
-		'email',
-		'kode',
-		'perusahaan',
-		'alamat_perusahaan',
-		'telepon_perusahaan',
-		'akses_tes',
-        'akses_stifin'
+        'judul_update',
+        'deskripsi_update',
+		'update_at'
 	];
 
     /**

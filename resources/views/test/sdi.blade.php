@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-theme-1 bg-header">
     <div class="container text-center text-white">
-        <h3>{{ $paket->nama_paket }}</h3>
+        <h3>{{ $packet->name }}</h3>
         <hr class="rounded-2" style="border-top: 5px solid rgba(255,255,255,.3)">
         <p class="m-0"><b>ITEM 1-20</b> : Saat anda memberikan 10 poin pada masing-masing dari sepuluh pernyataan di bawah ini, berpikir tentang situasi di tempat kerja, di sekolah, di rumah, dan bersama teman-teman, tetapi selalu berpikir tentang situasi……</br><b>di mana segala sesuatu tak beres dan anda berkonflik dengan orang lain.</b></p>
     </div>
@@ -14,29 +14,29 @@
     </svg>
 </div>
 <div class="container main-container">
-    @if($seleksi != null)
-        @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+        @if(strtotime('now') < strtotime($selection->test_time))
         <div class="row">
             <!-- Alert -->
             <div class="col-12 mb-2">
                 <div class="alert alert-danger fade show text-center" role="alert">
-                    Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+                    Tes akan dilaksanakan pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
                 </div>
             </div>
         </div>
         @endif
     @endif
-    @if($seleksi == null || ($seleksi != null && strtotime('now') >= strtotime($seleksi->waktu_wawancara)))
+    @if($selection == null || ($selection != null && strtotime('now') >= strtotime($selection->test_time)))
 	<div class="row" style="margin-bottom:100px">
 	    <div class="col-12">
             <form id="form" method="post" action="/tes/{{ $path }}/store">
-                <input type="hidden" name="_token" value="<?php echo csrf_token() ?>">
+                @csrf
 			    <input type="hidden" name="path" value="{{ $path }}">
-			    <input type="hidden" name="id_paket" value="{{ $paket->id_paket }}">
-			    <input type="hidden" name="id_tes" value="{{ $paket->id_tes }}">
+			    <input type="hidden" name="packet_id" value="{{ $packet->id }}">
+			    <input type="hidden" name="test_id" value="{{ $test->id }}">
                 @csrf
                 @php $nomor = 0; @endphp
-                @foreach ($soal1 as $value)
+                @foreach ($questions1 as $value)
                 @php $nomor++; @endphp
                 <div class="card soal rounded-1 mb-3">
                     <div class="card-header bg-transparent">
@@ -79,7 +79,7 @@
                 </div>
                 @endforeach                        
                     
-                @foreach ($soal2 as $value)
+                @foreach ($questions2 as $value)
                 @php $nomor++; @endphp
                 <div class="card soal rounded-1 mb-3">
                     <div class="card-header bg-transparent">
@@ -145,7 +145,7 @@
 @section('js-extra')
 <script type="text/javascript">
 	// vertical align modal
-	$(document).ready(function(){
+	$(document).ready(function() {
 	    totalQuestion();
 	});
 
