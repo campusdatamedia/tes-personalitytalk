@@ -23,11 +23,11 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::post('/login', 'UserLoginController@login');
 
 	// Register
-	Route::get('/daftar', 'Auth\RegisterController@showRegistrationForm');
-	Route::post('/daftar', 'Auth\RegisterController@register');
+	// Route::get('/daftar', 'Auth\RegisterController@showRegistrationForm');
+	// Route::post('/daftar', 'Auth\RegisterController@register');
 
 	// Verification
-	Route::get('/verification/token/{token}', 'Auth\RegisterController@verification');
+	// Route::get('/verification/token/{token}', 'Auth\RegisterController@verification');
 });
 
 // User Capabilities...
@@ -39,22 +39,21 @@ Route::group(['middleware' => ['user']], function() {
 	Route::get('/dashboard', 'DashboardController@index');
 
 	// Tes
-	Route::get('/tes/{path}', 'TesController@tes');
-	Route::post('/tes/{path}/store', 'TesController@store');
-	Route::post('/tes/{path}/delete', 'TesController@delete');
-	Route::get('/tes/ist/beta', 'TesController@try');
+	Route::get('/tes/{path}', 'TestController@test');
+	Route::post('/tes/{path}/store', 'TestController@store');
+	Route::post('/tes/{path}/delete', 'TestController@delete');
 });
 
-// Admin Capabilities...
-Route::group(['middleware' => ['admin']], function() {
-	// Ringkasan
-	Route::get('/admin', 'Admin\RingkasanController@index');
+// // Admin Capabilities...
+// Route::group(['middleware' => ['admin']], function() {
+// 	// Ringkasan
+// 	Route::get('/admin', 'Admin\RingkasanController@index');
 
-	// Tes
-	Route::get('/admin/tes', 'Admin\TesController@index');
+// 	// Tes
+// 	Route::get('/admin/tes', 'Admin\TesController@index');
 
-	// Paket Soal
-	Route::get('/admin/paket-soal', 'Admin\PaketSoalController@index');
-	Route::get('/admin/paket-soal/detail/{id}', 'Admin\PaketSoalController@detail');
-	Route::get('/admin/paket-soal/soal/{id}', 'Admin\PaketSoalController@questions');
-});
+// 	// Paket Soal
+// 	Route::get('/admin/paket-soal', 'Admin\PaketSoalController@index');
+// 	Route::get('/admin/paket-soal/detail/{id}', 'Admin\PaketSoalController@detail');
+// 	Route::get('/admin/paket-soal/soal/{id}', 'Admin\PaketSoalController@questions');
+// });

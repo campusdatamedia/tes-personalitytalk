@@ -4,67 +4,61 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
-use App\Models\Hasil;
-use App\Models\PaketSoal;
-use App\Models\Pelamar;
-use App\Models\Seleksi;
-use App\Models\Soal;
-use App\Models\TempTes;
-use App\Models\Tes;
-use App\Models\User;
+use App\Models\Test;
+use App\Models\Selection;
 
-class TesController extends Controller
+class TestController extends Controller
 {    
     /**
-     * Menampilkan halaman tes
+     * Display test page
      * 
-     * @return \Illuminate\Http\Request
+     * @param  string $path
+     * @param  \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function tes(Request $request, $path)
+    public function test(Request $request, $path)
     {
         // Variables
-        $part = null;
-        $seleksi = false;
+        // $part = null;
+        $selection = false;
 
-        // Get tes
-        $tes = Tes::where('path','=',$path)->firstOrFail(); // Get tes
-        $check = Auth::user()->role_id == 6 ? Hasil::where('id_user','=',Auth::user()->id)->first() : null; // Check
+        // Get the test
+        $test = Test::where('code','=',$path)->firstOrFail(); // Get tes
+        // $check = Auth::user()->role_id == 6 ? Hasil::where('id_user','=',Auth::user()->id)->first() : null; // Check
         
-        // Jika role pelamar
-        if(Auth::user()->role_id == 4){
-        	$akun = Pelamar::where('id_user','=',Auth::user()->id)->first(); // Get akun
-            $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get seleksi
+        // Get the selection
+        if(Auth::user()->role_id == role('applicant')) {
+            $selection = Selection::where('user_id','=',Auth::user()->id)->first();
         }
             
-        // Tes DISC 40
+        // Test DISC 40
         if($path == 'disc-40-soal')
-            return \App\Http\Controllers\Test\DISC40Controller::index($request, $path, $tes, $seleksi, $check);
-        // Tes DISC 24
+            return \App\Http\Controllers\Test\DISC40Controller::index($request, $path, $test, $selection);
+        // Test DISC 24
         elseif($path == 'disc-24-soal')
-            return \App\Http\Controllers\Test\DISC24Controller::index($request, $path, $tes, $seleksi, $check);
-        // Tes Papikostick
+            return \App\Http\Controllers\Test\DISC24Controller::index($request, $path, $test, $selection);
+        // Test Papikostick
         elseif($path == 'papikostick')
-            return \App\Http\Controllers\Test\PapikostickController::index($request, $path, $tes, $seleksi, $check);
-        // Tes SDI
+            return \App\Http\Controllers\Test\PapikostickController::index($request, $path, $test, $selection);
+        // Test SDI
         elseif($path == 'sdi')
-            return \App\Http\Controllers\Test\SDIController::index($request, $path, $tes, $seleksi, $check);
-        // Tes MSDT
+            return \App\Http\Controllers\Test\SDIController::index($request, $path, $test, $selection);
+        // Test MSDT
         elseif($path == 'msdt')
-            return \App\Http\Controllers\Test\MSDTController::index($request, $path, $tes, $seleksi, $check);
-        // Tes IST
+            return \App\Http\Controllers\Test\MSDTController::index($request, $path, $test, $selection);
+        // Test IST
         elseif($path == 'ist')
-            // return \App\Http\Controllers\Test\ISTController::index($request, $path, $tes, $seleksi, $check);
-            return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $seleksi, $check);
-        // Tes RMIB
+            // return \App\Http\Controllers\Test\ISTController::index($request, $path, $tes, $selection);
+            return \App\Http\Controllers\Test\ISTController::try($request, $path, $test, $selection);
+        // Test RMIB
         elseif($path == 'rmib' || $path == 'rmib-2')
-            return \App\Http\Controllers\Test\RMIBController::index($request, $path, $tes, $seleksi, $check);
+            return \App\Http\Controllers\Test\RMIBController::index($request, $path, $test, $selection);
         else
             abort(404);
     }
 
     /**
-     * Memproses dan menyimpan tes
+     * Store
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -95,7 +89,7 @@ class TesController extends Controller
     }
 
     /**
-     * Menghapus temp tes (jika ada)
+     * Delete test temp
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -117,7 +111,7 @@ class TesController extends Controller
         // Variables
         $path = 'ist';
         $part = null;
-        $seleksi = false;
+        $selection = false;
 
         // Get tes
         $tes = Tes::where('path','=',$path)->firstOrFail(); // Get tes
@@ -126,10 +120,10 @@ class TesController extends Controller
         // Jika role pelamar
         if(Auth::user()->role_id == 4){
         	$akun = Pelamar::where('id_user','=',Auth::user()->id)->first(); // Get akun
-            $seleksi = $akun ? Seleksi::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get seleksi
+            $selection = $akun ? selection::where('id_pelamar','=',$akun->id_pelamar)->first() : false; // Get selection
         }
 
         // Return
-        return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $seleksi, $check);
+        return \App\Http\Controllers\Test\ISTController::try($request, $path, $tes, $selection);
     }
 }

@@ -36,7 +36,13 @@ class Karyawan extends Model
         'jenis_kelamin',
 		'email',
 		'nomor_hp',
+		'nik_cis',
+		'nik',
+		'alamat',
+		'pendidikan_terakhir',
+		'awal_bekerja',
 		'posisi',
+		'kantor',
 	];
 
     /**

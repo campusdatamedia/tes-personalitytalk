@@ -22,20 +22,20 @@
 </div>
 
 <section class="container py-2">
-    @if($seleksi != null)
-        @if(strtotime('now') < strtotime($seleksi->waktu_wawancara))
+    @if($selection != null)
+        @if(strtotime('now') < strtotime($selection->test_time))
         <div class="row">
             <!-- Alert -->
             <div class="col-12 mb-2">
                 <div class="alert alert-danger fade show text-center" role="alert">
-                    Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($seleksi->waktu_wawancara) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($seleksi->waktu_wawancara)) }}</strong>.
+                    Tes akan dilaksanakan pada tanggal <strong>{{ setFullDate($selection->test_time) }}</strong> mulai pukul <strong>{{ date('H:i:s', strtotime($selection->test_time)) }}</strong>.
                 </div>
             </div>
         </div>
         @endif
     @endif
 
-    @if(Auth::user()->role_id == role('admin') || Auth::user()->role_id == role('hrd') || Auth::user()->role_id == role('employee') || Auth::user()->role_id == role('general'))
+    @if(Auth::user()->role_id == role('super-admin') || Auth::user()->role_id == role('hrd') || Auth::user()->role_id == role('employee') || Auth::user()->role_id == role('general'))
     <div class="content">
         @if(Session::get('message'))
         <div class="row">
@@ -48,13 +48,13 @@
             </div>
         </div>
         @endif
-        <div class="row text-center">
-            @if(count($tes)>0)
-                @foreach($tes as $key=>$data)
+        <div class="row justify-content-center">
+            @if(count($tests)>0)
+                @foreach($tests as $key=>$test)
                 <div class="col-auto">
-                    <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
-                        <p class="m-0 mb-2">{{ $data->nama_tes }}</p>
-                        <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
+                    <a href="/tes/{{ $test->code }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
+                        <p class="m-0 mb-2">{{ $test->name }}</p>
+                        <img width="100" src="{{asset('assets/images/icon/'.$images[$key])}}">
                     </a>
                 </div>
                 @endforeach
@@ -70,8 +70,8 @@
     @endif
 
     @if(Auth::user()->role_id == role('applicant'))
-        @if($seleksi != null)
-            @if(strtotime('now') >= strtotime($seleksi->waktu_wawancara))
+        @if($selection)
+            @if(strtotime('now') >= strtotime($selection->test_time))
             <div class="content">
                 @if(Session::get('message'))
                 <div class="row">
@@ -79,7 +79,7 @@
                     <div class="col-12 mb-2">
                         <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                             {{ Session::get('message') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -87,12 +87,12 @@
                 </div>
                 @endif
                 <div class="row justify-content-center">
-                    @if(count($tes)>0)
-                        @foreach($tes as $key=>$data)
+                    @if(count($tests)>0)
+                        @foreach($tests as $key=>$test)
                         <div class="col-auto">
-                            <a href="/tes/{{ $data->path }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
-                                <p class="m-0 mb-2">{{ $data->nama_tes }}</p>
-                                <img width="100" src="{{asset('assets/images/icon/'.$gambar[$key])}}">
+                            <a href="/tes/{{ $test->code }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
+                                <p class="m-0 mb-2">{{ $test->name }}</p>
+                                <img width="100" src="{{asset('assets/images/icon/'.$images[$key])}}">
                             </a>
                         </div>
                         @endforeach
@@ -127,7 +127,7 @@
                 <div class="col-12 mb-2">
                     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                         {{ Session::get('message') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -135,12 +135,22 @@
             </div>
             @endif
             <div class="row justify-content-center">
-                <div class="col">
-                    <a href="/tes/disc-40-soal" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
-                        <img width="100" src="{{asset('assets/images/icon/lightning-bolts.svg')}}">
-                        <p class="m-0">DISC 40 Soal</p>
-                    </a>
-                </div>
+                @if(count($tests)>0)
+                    @foreach($tests as $key=>$test)
+                    <div class="col-auto">
+                        <a href="/tes/{{ $test->code }}" class="btn btn-md btn-block btn-outline-dark border-0 fw-bold py-3 my-3">
+                            <p class="m-0 mb-2">{{ $test->name }}</p>
+                            <img width="100" src="{{asset('assets/images/icon/'.$images[$key])}}">
+                        </a>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="col-12 mb-0">
+                        <div class="alert alert-danger fade show text-center mb-0" role="alert">
+                            Tidak ada tes yang akan dilakukan.
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
         @endif

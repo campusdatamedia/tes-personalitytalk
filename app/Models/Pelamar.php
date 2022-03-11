@@ -38,7 +38,6 @@ class Pelamar extends Model
         'nomor_hp',
 		'alamat',
 		'pendidikan_terakhir',
-        'umur',
         'nomor_ktp',
         'nomor_telepon',
         'status_hubungan',
@@ -47,14 +46,14 @@ class Pelamar extends Model
         'akun_sosmed',
         'pendidikan_formal',
         'pendidikan_non_formal',
-        'pengalaman_kerja',
+        'riwayat_pekerjaan',
         'keahlian',
         'pertanyaan',
 		'pas_foto',
 		'foto_ijazah',
         'id_user',
 		'posisi',
-		'created_at',
+		'pelamar_at',
 	];
 
     /**

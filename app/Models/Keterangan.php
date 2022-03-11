@@ -31,10 +31,7 @@ class Keterangan extends Model
     protected $fillable = [
         'id_tes',
         'id_paket',
-		'd',
-		'i',
-		's',
-		'c',
+		'keterangan',
 	];
 
     /**
