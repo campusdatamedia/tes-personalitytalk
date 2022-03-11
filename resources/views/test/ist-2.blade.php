@@ -486,10 +486,10 @@ class ModalTutorial extends React.Component {
 	handleMemorize = () => {
 		this.setState({
 			isMemorizing: 0,
-			timeMemorizing: this.props.item.waktu_hafalan
+			timeMemorizing: this.props.item.memorizing_time
 		});
 
-		let time = this.props.item.waktu_hafalan;
+		let time = this.props.item.memorizing_time;
 		this.timer = window.setInterval(() => {
 			time--; // Decrement time
 			if(time <= 0) {
@@ -715,7 +715,7 @@ class ModalTutorial extends React.Component {
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={this.handleHide}></button>
 						</div>
 						<div class="modal-body">
-							{HTMLEntityDecode(this.props.item.deskripsi_paket)}
+							{HTMLEntityDecode(this.props.item.tutorial)}
 							<div class="mt-2">
 								<button type="button" class={`btn btn-sm btn-info ${this.props.item.type === 'choice-memo' && isMemorizing !== 1 ? '' : 'd-none'}`} onClick={this.handleMemorize}>
 									<i class="fa fa-clipboard me-1"></i>Membaca Hafalan
@@ -1012,7 +1012,7 @@ class Card extends React.Component {
 						<Timer
 							parentCallback={this.handleTimerCallback}
 							part={item.part}
-							time={item.waktu_pengerjaan}
+							time={item.exam_time}
 							timeIsRunning={this.props.timeIsRunning}
 							nextPart={this.props.nextPart !== undefined ? this.props.nextPart.part : 0}
 						/>
