@@ -42,7 +42,6 @@ Route::group(['middleware' => ['user']], function() {
 	Route::get('/tes/{path}', 'TestController@test');
 	Route::post('/tes/{path}/store', 'TestController@store');
 	Route::post('/tes/{path}/delete', 'TestController@delete');
-	// Route::get('/tes/ist/beta', 'TestController@try');
 });
 
 // // Admin Capabilities...
