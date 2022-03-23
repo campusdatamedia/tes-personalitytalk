@@ -9,8 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.3",
-        "ajifatur/faturhelper": "^3.2",
         "barryvdh/laravel-dompdf": "^0.8.5",
+        "campusdatamedia/faturhelper": "^3.0",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.14",
