@@ -12,10 +12,10 @@ use App\Models\Packet;
 use App\Models\Question;
 use App\Models\Result;
 
-class QuestionController extends Controller
+class DISC24Controller extends Controller
 {
     /**
-     * Retrieve the question by part and packet
+     * Retrieve the question by test and part
      * 
      * @return \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
@@ -23,94 +23,31 @@ class QuestionController extends Controller
     public function index(Request $request)
     {
         // Get query requests
-        $test_ = $request->query('test');
-        $part_ = $request->query('part');
+        $part = $request->query('part');
 
         // Get the test
-        $test = Test::where('code','=',$test_)->first();
-
-        // Get the test settings
-        $test_settings = TestSetting::whereHas('packet', function (Builder $query) use ($part_) {
-            return $query->where('part','=',$part_)->where('status','=',1);
-        })->where('company_id','=',1)->first();
+        $test = Test::where('code','=','disc-24-soal')->first();
 
         // Get the parts
         $parts = Packet::where('test_id','=',$test->id)->where('status','=',1)->orderBy('part','asc')->get();
 
         // Get questions
-        $questions = Question::whereHas('packet', function (Builder $query) use ($test, $part_) {
-            return $query->where('test_id','=',$test->id)->where('part','=',$part_)->where('status','=',1);
+        $questions = Question::whereHas('packet', function (Builder $query) use ($test, $part) {
+            return $query->where('test_id','=',$test->id)->where('part','=',$part)->where('status','=',1);
         })->where('is_example','=',0)->orderBy('number','asc')->get();
         if(count($questions) > 0){
             foreach($questions as $key=>$question) {
                 $q = json_decode($question->description, true);
                 unset($q[0]['jawaban']);
                 $question->description = $q;
-
-                $questions[$key]->part = $questions[$key]->packet->part;
-                $questions[$key]->type = $questions[$key]->packet->type;
-                $questions[$key]->tutorial = $questions[$key]->packet->description;
-                $questions[$key]->exam_time = $test_settings ? $test_settings->exam_time : 0;
-                $questions[$key]->memorizing_time = $test_settings ? $test_settings->memorizing_time : 0;
-                $questions[$key]->is_auth = $test_settings ? $test_settings->is_auth : 0;
-                $questions[$key]->access_token = $test_settings ? $test_settings->access_token : '';
-            }
-        }
-
-        // Get the examples
-        $examples = Question::whereHas('packet', function (Builder $query) use ($test, $part_) {
-            return $query->where('test_id','=',$test->id)->where('part','=',$part_)->where('status','=',1);
-        })->where('is_example','=',1)->orderBy('number','asc')->get();
-        if(count($examples) > 0){
-            foreach($examples as $key=>$example) {
-                $example->makeHidden('access_token'); // Hide column
-                $q = json_decode($example->description, true);
-                unset($q[0]['jawaban']);
-                $example->description = $q;
-                $examples[$key]->part = $examples[$key]->packet->part;
-                $examples[$key]->type = $examples[$key]->packet->type;
             }
         }
 
         // Response
         return response()->json([
             'parts' => $parts,
-            'questions' => $questions,
-            'examples' => $examples,
-            'test_settings' => $test_settings
+            'questions' => $questions
         ], 200);
-    }
-
-    /**
-     * Authenticate the test by part and packet
-     * 
-     * @return \Illuminate\Http\Request
-     * @return \Illuminate\Http\Response
-     */
-    public function auth(Request $request)
-    {
-        // Get the part
-        $part_ = $request->part;
-
-        // Get the test settings
-        $test_settings = TestSetting::whereHas('packet', function (Builder $query) use ($part_) {
-            return $query->where('part','=',$part_)->where('status','=',1);
-        })->where('company_id','=',1)->first();
-
-        // Success
-        if($request->token === $test_settings->access_token) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Autentikasi berhasil!'
-            ]);
-        }
-        // Failed
-        else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Autentikasi gagal!'
-            ]);
-        }
     }
 
     /**

@@ -2,7 +2,6 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: document.getElementById('user_id').value,
 			test: 'ist',
 			part: 1,
 			parts: [],
@@ -19,12 +18,12 @@ export default class App extends React.Component {
 	}
 
 	componentDidMount = () => {
-		this.getRequest(this.state.test, this.state.part, this.state.user);
+		this.getRequest(this.state.test, this.state.part);
 	}
 
 	getRequest = (test, part) => {
 		// Fetch data
-		fetch('/api/question?test=' + test + '&part=' + part + '&user=' + this.state.user)
+		fetch('/api/question?test=' + test + '&part=' + part)
 			.then(response => response.json())
 			.then(data => {
 					this.setState({

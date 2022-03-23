@@ -21,3 +21,5 @@ Route::get('/question', 'API\QuestionController@index');
 Route::post('/question/auth', 'API\QuestionController@auth');
 Route::post('/question/submit', 'API\QuestionController@submit');
 Route::post('/question/example/submit', 'API\QuestionController@submitExample');
+
+Route::get('/question/disc-24-soal', 'API\DISC24Controller@index');
